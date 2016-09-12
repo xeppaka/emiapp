@@ -1,0 +1,12 @@
+task installDependencies(type: Exec) {
+    commandLine 'npm', 'install'
+    inputs.files file('package.json')
+}
+
+task buildUI(type: Exec, group: 'build') {
+    commandLine './node_modules/.bin/webpack'
+}
+
+task runDevServer(type: Exec) {
+    commandLine 'npm', 'run', 'dev-server'
+}
