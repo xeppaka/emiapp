@@ -5,15 +5,15 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry:  './src/index.js',
+    entry:  './src/emi/index.js',
     output: {
-        path:     'build/libs',
+        path:     'build/tmp/emi-app-ui',
         filename: 'app.js'
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'MSM/E',
-            template: './src/index.html',
+            title: 'EMi',
+            template: './src/emi/index.html',
             inject: 'body'
         }),
         new ExtractTextPlugin("styles.css", {

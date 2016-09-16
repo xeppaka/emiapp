@@ -1,12 +1,25 @@
+plugins {
+    id 'java'
+}
+
 task installDependencies(type: Exec) {
     commandLine 'npm', 'install'
     inputs.files file('package.json')
 }
 
-task buildUI(type: Exec, group: 'build') {
+task compileUi(type: Exec) {
     commandLine './node_modules/.bin/webpack'
 }
 
 task runDevServer(type: Exec) {
     commandLine 'npm', 'run', 'dev-server'
 }
+
+processResources {
+    from ("$buildDir/tmp/emi-app-ui") {
+        include '**'
+        into 'public'
+    }
+}
+
+processResources.dependsOn compileUi

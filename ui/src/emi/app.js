@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductList from './components/productlist';
+import ProductTable from './components/producttable';
 
 const mapStateToProps = (state) => {
     return {
@@ -13,7 +13,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const App = () => (
     <div>
-        <ProductList />
+        <ProductTable />
     </div>
 )
 

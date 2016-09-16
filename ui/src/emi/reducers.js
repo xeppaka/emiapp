@@ -1,22 +1,34 @@
+import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
-import { ADD_PRODUCT, REMOVE_PRODUCT } from './actions';
+import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED } from './actions';
 
-function products(state = [], action) {
+const initialState = {
+    products: {
+        productsList: [],
+        loadingInProgress: false
+    }
+};
+
+function products(state = initialState.products, action) {
     switch (action.type) {
-        case ADD_PRODUCT:
-            return [
-                ...state,
-                {
-                    name: 'Some product'
-                }
-            ];
-        case REMOVE_PRODUCT:
-            var newProducts = state.slice();
-            newProducts.splice(action.idx, 1);
-            return newProducts;
+        case LOAD_PRODUCTS:
+            return state;
+        case LOAD_PRODUCTS_STARTED:
+            return Object.assign({}, state, {
+                loadingInProgress: true
+            });
+        case LOAD_PRODUCTS_FINISHED:
+            return Object.assign({}, state, {
+                productsList: action.productsList,
+                loadingInProgress: false
+            });
         default:
             return state;
     }
 }
 
-export default product;
+const emiApp = combineReducers({
+    products
+});
+
+export default emiApp;

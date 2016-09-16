@@ -1,3 +1,4 @@
 rootProject.name = 'emi-app'
 
 include ':ui'
+include ':server'
