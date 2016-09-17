@@ -1,13 +1,27 @@
 import React, { PropTypes } from 'react';
+import ProductItemQuantity from './productitemquantity';
 
-const ProductItem = ({ row, name, price }) => (
-    <tr>
-        <th scope="row">{row}</th>
+const ProductItem = ({ idx, name, price, quantity, productQuantityChanged }) => {
+    var calculatedPrice = price * quantity;
+    var calculatedPriceStr = "";
+
+    if (calculatedPrice > 0) {
+        calculatedPriceStr = String(calculatedPrice.toFixed(2));
+    }
+
+    return (<tr>
+        <td className="mdl-data-table__cell--non-numeric" scope="row">{idx + 1}</td>
         <td>{name}</td>
         <td>{price}</td>
-        <td><input type="number" value="0" min="0" step="5" /></td>
-    </tr>
-);
+        <td>
+            <ProductItemQuantity
+                idx={idx}
+                quantity={quantity}
+                productQuantityChanged={productQuantityChanged} />
+        </td>
+        <td>{calculatedPriceStr}</td>
+    </tr>)
+};
 
 ProductItem.propTypes = {
     name: PropTypes.string.isRequired

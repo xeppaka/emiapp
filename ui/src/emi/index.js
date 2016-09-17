@@ -7,10 +7,11 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 
-import '../../node_modules/bootstrap/dist/js/bootstrap.js';
-import '../../node_modules/bootstrap/scss/bootstrap.scss';
+import '../../node_modules/material-design-lite/src/material-design-lite.scss'
+import '../../node_modules/material-design-lite/material'
 
 import ProductsContainer from './containers/productscontainer';
+import ProductsTotalContainer from './containers/productstotalcontainer';
 import emiApp from './reducers';
 import { loadProducts } from './actions';
 
@@ -28,10 +29,22 @@ store.dispatch(loadProducts());
 render(
     <Provider store={store}>
         <div className="mdl-grid">
-            <div className="mdl-cell mdl-cell--4-col mdl-cell--4-offset">
+            <div className="mdl-cell mdl-cell--7-col">
                 <ProductsContainer />
+            </div>
+            <div id="#productsTableTotal">
+                <ProductsTotalContainer />
             </div>
         </div>
     </Provider>,
     document.body
 );
+
+//var $productsTableTotal = $("#productsTableTotal");
+//$(window).scroll(function() {
+//    if ($(window).scrollTop() > 220) {
+//        $productsTableTotal.css('position', 'fixed').css('top', '46px');
+//    } else {
+//        $productsTableTotal.css("position",'' ).css("top",'' )
+//    }
+//});
