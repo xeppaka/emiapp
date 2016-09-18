@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-jdbc:1.4.0.RELEASE'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.h2database:h2:1.4.192'
+
+    compile project(':ddd')
+}

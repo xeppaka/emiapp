@@ -32,7 +32,7 @@ render(
             <div className="mdl-cell mdl-cell--7-col">
                 <ProductsContainer />
             </div>
-            <div id="#productsTableTotal">
+            <div>
                 <ProductsTotalContainer />
             </div>
         </div>

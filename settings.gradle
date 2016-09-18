@@ -1,4 +1,6 @@
-rootProject.name = 'emi-app'
+rootProject.name = 'emi-order-app'
 
-include ':ui'
+include ':ddd'
+include ':order-app'
 include ':server'
+include ':ui'
