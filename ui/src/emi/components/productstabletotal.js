@@ -3,24 +3,34 @@ import React, { PropTypes } from 'react';
 class ProductsTableTotal extends React.Component {
     constructor(props) {
         super(props);
+        this.handleScroll = this.handleScroll.bind(this);
+        this.state = {scrollTop: 40};
+    }
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+
+    handleScroll() {
+        let scrollTop = event.srcElement.body.scrollTop;
+        this.setState({
+            scrollTop: scrollTop + 40
+        });
     }
 
     render() {
         return (
-                   <div className="demo-card-event mdl-card mdl-shadow--2dp">
-                     <div className="mdl-card__title mdl-card--expand">
-                       <h5>Total: {this.props.total.toFixed(2)}&#8364;</h5>
-                     </div>
-                     <div className="mdl-card__actions mdl-card--border">
-                       <a className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                         Reset
-                       </a>
-                       <div className="mdl-layout-spacer"></div>
-                       <a className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                         Submit
-                       </a>
-                     </div>
-                   </div>
+                    <div className="card" style={{marginTop: this.state.scrollTop}}>
+                        <div className="card-block">
+                            <h4 className="card-title">Total:</h4>
+                            <p className="card-text">Without VAT: {this.props.total.toFixed(2)}&#8364;</p>
+                            <a href="#" className="btn btn-primary">Reset</a>
+                        </div>
+                    </div>
                )
     }
 }

@@ -2,10 +2,10 @@ import React, { PropTypes } from 'react';
 import ProductItem from './productitem';
 
 const ProductsTable = ({ products, productQuantityChanged }) => (
-    <table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+    <table className="table table-striped">
         <thead>
             <tr>
-                <th className="mdl-data-table__cell--non-numeric">#</th>
+                <th>#</th>
                 <th>Product Name</th>
                 <th>Retail price<br />(without VAT, in &#8364;)</th>
                 <th>Quantity</th>

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
 const ProductItemQuantity = ({ idx, quantity, productQuantityChanged }) => (
-    <input className="mdl-textfield__input" type="number" value={quantity > 0 ? quantity : ""}
+    <input type="number" value={quantity > 0 ? quantity : ""}
             onChange={(event) => {
                 var v = Number(event.target.value);
 

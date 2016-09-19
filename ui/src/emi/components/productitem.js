@@ -10,7 +10,7 @@ const ProductItem = ({ idx, name, price, quantity, productQuantityChanged }) => 
     }
 
     return (<tr>
-        <td className="mdl-data-table__cell--non-numeric" scope="row">{idx + 1}</td>
+        <th scope="row">{idx + 1}</th>
         <td>{name}</td>
         <td>{price}</td>
         <td>

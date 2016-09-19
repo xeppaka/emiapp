@@ -1,7 +1,7 @@
 {
   "name": "reactjs-app",
   "version": "1.0.0",
-  "description": "EMi order app",
+  "description": "E.Mi order app",
   "main": "index.js",
   "dependencies": {
     "babel-core": "^6.5.2",

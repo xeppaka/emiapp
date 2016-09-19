@@ -12,7 +12,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'EMi',
+            title: 'E.Mi order app',
             template: './src/emi/index.html',
             inject: 'body'
         }),

@@ -7,11 +7,13 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 
-import '../../node_modules/material-design-lite/src/material-design-lite.scss'
-import '../../node_modules/material-design-lite/material'
+import '../../node_modules/bootstrap/dist/js/bootstrap.js';
+import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 import ProductsContainer from './containers/productscontainer';
 import ProductsTotalContainer from './containers/productstotalcontainer';
+import ProductsMenu from './components/menu/productsmenu';
+
 import emiApp from './reducers';
 import { loadProducts } from './actions';
 
@@ -28,12 +30,17 @@ store.dispatch(loadProducts());
 
 render(
     <Provider store={store}>
-        <div className="mdl-grid">
-            <div className="mdl-cell mdl-cell--7-col">
-                <ProductsContainer />
-            </div>
-            <div>
-                <ProductsTotalContainer />
+        <div className="container-fluid">
+            <div className="row">
+                <div className="col-sm-2">
+                    <ProductsMenu />
+                </div>
+                <div className="col-sm-6">
+                    <ProductsContainer />
+                </div>
+                <div className="col-sm-4">
+                    <ProductsTotalContainer />
+                </div>
             </div>
         </div>
     </Provider>,
