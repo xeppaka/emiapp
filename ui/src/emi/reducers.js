@@ -1,10 +1,11 @@
 import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
+import ProductsTree from './productstree/productstree';
 import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from './actions';
 
 const initialState = {
     products: {
-        productsList: [],
+        productsTree: new ProductsTree(),
         loadingInProgress: false
     }
 };
@@ -18,19 +19,29 @@ function products(state = initialState.products, action) {
                 loadingInProgress: true
             });
         case LOAD_PRODUCTS_FINISHED:
-            var newProductsList = action.productsList.map((product, idx) => Object.assign({}, product, { idx: idx, quantity: 0 }));
+            var productsTree = new ProductsTree();
+            var productsLength = action.productsList.length;
+
+            for (var i = 0; i < productsLength; i++) {
+                productsTree.addProduct(action.productsList[i].category, {
+                    name: action.productsList[i].name,
+                    price: action.productsList[i].price,
+                    quantity: 0
+                });
+            }
+
             return Object.assign({}, state, {
-                productsList: newProductsList,
+                productsTree: productsTree,
                 loadingInProgress: false
             });
         case SET_PRODUCT_QUANTITY:
-            var newState = Object.assign({}, state);
-            newState.productsList = state.productsList.slice();
-            var newProduct = Object.assign({}, newState.productsList[action.idx]);
-            newState.productsList[action.idx] = newProduct;
-            newProduct.quantity = action.quantity;
+//            var newState = Object.assign({}, state);
+//            newState.productsList = state.productsList.slice();
+//            var newProduct = Object.assign({}, newState.productsList[action.idx]);
+//            newState.productsList[action.idx] = newProduct;
+//            newProduct.quantity = action.quantity;
 
-            return newState;
+            return state;
         default:
             return state;
     }

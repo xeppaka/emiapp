@@ -66,6 +66,11 @@ class ProductsTree {
         return this.productsList;
     }
 
+    getProduct(idx) {
+        var productsList = this.getProducts();
+        return productsList[idx];
+    }
+
     prepareProductsList(category) {
         var currProducts = category.getProducts();
 
@@ -78,11 +83,30 @@ class ProductsTree {
 
         return currProducts;
     }
+
+    getProductsMenu(rootName) {
+        var menu = this.getProductsMenuRecursively(this.rootCategory);
+        menu.text = rootName;
+
+        return menu;
+    }
+
+    getProductsMenuRecursively(categoryNode) {
+        var menu = {text: categoryNode.getCategoryName()};
+
+        var childCategories = categoryNode.getChildCategories();
+        var childCategoriesLength = childCategories.length;
+
+        if (childCategoriesLength > 0) {
+            menu.items = [];
+
+            for (var i = 0; i < childCategoriesLength; i++) {
+                menu.items.push(this.getProductsMenuRecursively(childCategories[i]));
+            }
+        }
+
+        return menu;
+    }
 }
 
-var t = new ProductsTree();
-t.addProduct('1:1:1', {name: 'product 1:1:1'});
-t.addProduct('1:2:2', {name: 'product 1:2:2'});
-t.addProduct('1:1:2', {name: 'product 1:1:2'});
-
-console.log(t.getProducts());
+export default ProductsTree;

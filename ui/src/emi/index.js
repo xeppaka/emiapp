@@ -12,7 +12,7 @@ import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 import ProductsContainer from './containers/productscontainer';
 import ProductsTotalContainer from './containers/productstotalcontainer';
-import ProductsMenu from './components/menu/productsmenu';
+import ProductsMenuContainer from './containers/productsmenucontainer';
 
 import emiApp from './reducers';
 import { loadProducts } from './actions';
@@ -33,7 +33,7 @@ render(
         <div className="container-fluid">
             <div className="row">
                 <div className="col-sm-2">
-                    <ProductsMenu />
+                    <ProductsMenuContainer />
                 </div>
                 <div className="col-sm-6">
                     <ProductsContainer />
@@ -46,12 +46,3 @@ render(
     </Provider>,
     document.body
 );
-
-//var $productsTableTotal = $("#productsTableTotal");
-//$(window).scroll(function() {
-//    if ($(window).scrollTop() > 220) {
-//        $productsTableTotal.css('position', 'fixed').css('top', '46px');
-//    } else {
-//        $productsTableTotal.css("position",'' ).css("top",'' )
-//    }
-//});

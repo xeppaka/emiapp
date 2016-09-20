@@ -5,7 +5,7 @@ import { setProductQuantity } from '../actions';
 
 const mapStateToProps = (state) => {
     return {
-        products: state.products.productsList
+        products: state.products.productsTree.getProducts()
     }
 }
 
