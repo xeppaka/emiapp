@@ -5,7 +5,8 @@ const CompItem = ({depth, text, children}) => {
     var style = {"padding-left": depth * 15};
     return (
         <div className="list-group" style={style}>
-            <a id="test" href="#test" className="list-group-item list-group-item-action" style={style} data-toggle="collapse">{text}</a>
+            <a href="#test" className="list-group-item list-group-item-action" style={style} data-toggle="collapse">{text}</a>
+            <div id="test" className="list-group collapse">
             {
                 children.map(function(elem) {
                     if (elem.hasOwnProperty("children")) {
@@ -15,6 +16,7 @@ const CompItem = ({depth, text, children}) => {
                     }
                 })
             }
+            </div>
         </div>
     )
 };
