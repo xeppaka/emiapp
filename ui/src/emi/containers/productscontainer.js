@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ProductsTable from '../components/productstable';
-import { setProductQuantity } from '../actions';
+import { setProductQuantity } from '../actions/actions';
 
 const mapStateToProps = (state) => {
     return {
-        products: state.products.productsTree.getProducts()
+        products: state.products.list
     }
 }
 

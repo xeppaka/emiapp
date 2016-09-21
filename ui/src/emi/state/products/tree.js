@@ -1,8 +1,10 @@
+import MenuItem from '../menu/menu';
+
 class CategoryNode {
-    constructor(categoryName) {
-        this.categoryName = categoryName;
+    constructor(name) {
+        this.name = name;
         this.products = [];
-        this.categoryNameToChildMap = {};
+        this.nameToChildMap = {};
         this.childCategories = [];
     }
 
@@ -18,15 +20,15 @@ class CategoryNode {
         this.products.push(product);
     }
 
-    getCategoryName() {
-        return this.categoryName;
+    getName() {
+        return this.name;
     }
 
-    getChildCategory(categoryName) {
-        var child = this.categoryNameToChildMap[categoryName];
+    getChildCategory(name) {
+        var child = this.nameToChildMap[name];
         if (typeof child === 'undefined') {
-            child = new CategoryNode(categoryName);
-            this.categoryNameToChildMap[categoryName] = child;
+            child = new CategoryNode(name);
+            this.nameToChildMap[name] = child;
             this.childCategories.push(child);
         }
 
@@ -84,28 +86,25 @@ class ProductsTree {
         return currProducts;
     }
 
-    getProductsMenu(rootName) {
-        var menu = this.getProductsMenuRecursively(this.rootCategory);
-        menu.text = rootName;
+    getMenu(rootName) {
+        var menu = new MenuItem(rootName);
+        this.addCategoriesToMenu(menu, this.rootCategory);
 
         return menu;
     }
 
-    getProductsMenuRecursively(categoryNode) {
-        var menu = {text: categoryNode.getCategoryName()};
-
+    addCategoriesToMenu(menuItem, categoryNode) {
         var childCategories = categoryNode.getChildCategories();
         var childCategoriesLength = childCategories.length;
 
-        if (childCategoriesLength > 0) {
-            menu.items = [];
-
-            for (var i = 0; i < childCategoriesLength; i++) {
-                menu.items.push(this.getProductsMenuRecursively(childCategories[i]));
-            }
+        for (var i = 0; i < childCategoriesLength; i++) {
+            let newMenuItem = menuItem.addItem(childCategories[i].name);
+            this.addCategoriesToMenu(newMenuItem, childCategories[i]);
         }
+    }
 
-        return menu;
+    static emptyProducts() {
+        return [];
     }
 }
 

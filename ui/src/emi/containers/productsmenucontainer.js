@@ -4,7 +4,7 @@ import ProductsMenu from '../components/productsmenu/productsmenu';
 
 const mapStateToProps = (state) => {
     return {
-        menu: state.products.productsTree.getProductsMenu()
+        menu: state.menu
     }
 }
 

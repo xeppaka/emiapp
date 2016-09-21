@@ -1,16 +1,26 @@
 import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
-import ProductsTree from './productstree/productstree';
-import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from './actions';
+import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from '../actions/actions';
+import ProductsTree from './products/tree';
+import MenuItem from './menu/menu';
 
-const initialState = {
-    products: {
-        productsTree: new ProductsTree(),
-        loadingInProgress: false
+const initialMenuState = MenuItem.emptyMenuState('Categories Menu');
+
+function menu(state = initialMenuState, action) {
+    switch (action.type) {
+        case LOAD_PRODUCTS_FINISHED:
+            return action.products.getMenu('Categories Menu').getMenuState();
+        default:
+            return state;
     }
+}
+
+const initialProductsState = {
+    list: ProductsTree.emptyProducts(),
+    loadingInProgress: false
 };
 
-function products(state = initialState.products, action) {
+function products(state = initialProductsState, action) {
     switch (action.type) {
         case LOAD_PRODUCTS:
             return state;
@@ -19,19 +29,8 @@ function products(state = initialState.products, action) {
                 loadingInProgress: true
             });
         case LOAD_PRODUCTS_FINISHED:
-            var productsTree = new ProductsTree();
-            var productsLength = action.productsList.length;
-
-            for (var i = 0; i < productsLength; i++) {
-                productsTree.addProduct(action.productsList[i].category, {
-                    name: action.productsList[i].name,
-                    price: action.productsList[i].price,
-                    quantity: 0
-                });
-            }
-
             return Object.assign({}, state, {
-                productsTree: productsTree,
+                list: action.products.getProducts(),
                 loadingInProgress: false
             });
         case SET_PRODUCT_QUANTITY:
@@ -48,7 +47,8 @@ function products(state = initialState.products, action) {
 }
 
 const emiApp = combineReducers({
-    products
+    products,
+    menu
 });
 
 export default emiApp;

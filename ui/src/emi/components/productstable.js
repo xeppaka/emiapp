@@ -15,8 +15,8 @@ const ProductsTable = ({ products, productQuantityChanged }) => (
         <tbody>
             {products.map((product, idx) =>
                 <ProductItem
-                    key={product.idx}
-                    idx={product.idx}
+                    key={idx}
+                    idx={idx}
                     name={product.name}
                     price={product.price}
                     quantity={product.quantity}
