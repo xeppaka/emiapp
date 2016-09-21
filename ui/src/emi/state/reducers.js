@@ -5,6 +5,16 @@ import ProductsTree from './products/tree';
 import MenuItem from './menu/menu';
 
 const initialMenuState = MenuItem.emptyMenuState('Categories Menu');
+//const initialMenuState = {
+//    text: 'Menu1',
+//    expanded: false,
+//    items: [
+//    {text: 'Menu2', expanded: false, items: [{text: 'Menu2', expanded: false, items: []}]},
+//    {text: 'Menu3', expanded: false, items: []},
+//    {text: 'Menu4', expanded: false, items: []},
+//    {text: 'Menu5', expanded: false, items: []},
+//    ]
+//};
 
 function menu(state = initialMenuState, action) {
     switch (action.type) {
