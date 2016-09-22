@@ -2,9 +2,9 @@ class CategoryNode {
     constructor(id, name) {
         this.id = id;
         this.name = name;
-        this.products = [];
         this.nameToChildMap = {};
         this.childCategories = [];
+        this.products = [];
     }
 
     getProducts() {
@@ -79,6 +79,11 @@ class ProductsTree {
         currentCategoryNode.addProduct(product);
     }
 
+    getProduct(idx) {
+        var productsList = this.getProducts();
+        return productsList[idx];
+    }
+
     getProducts() {
         if (this.productsList === null) {
             this.productsList = this.prepareProductsList(this.rootCategory);
@@ -87,13 +92,11 @@ class ProductsTree {
         return this.productsList;
     }
 
-    getProduct(idx) {
-        var productsList = this.getProducts();
-        return productsList[idx];
-    }
-
     prepareProductsList(category) {
         let currProducts = category.getProducts();
+        if (currProducts.length > 0) {
+            currProducts[0] = Object.assign({}, currProducts[0], { anchor: category.id });
+        }
 
         let childCategories = category.getChildCategories();
         let childCategoriesLength = childCategories.length;
@@ -123,12 +126,3 @@ class ProductsTree {
 }
 
 export default ProductsTree;
-
-//let t = new ProductsTree();
-//t.addProduct('1:1:1', {p: '1:1:1'});
-//t.addProduct('1:1:2', {p: '1:1:2'});
-//t.addProduct('1:2:1', {p: '1:2:1'});
-//t.addProduct('1:2:2', {p: '1:2:2'});
-//
-//console.log(t);
-//console.log(t.getMenu('Menu1'));

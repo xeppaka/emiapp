@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import ProductItemQuantity from './productitemquantity';
 
-const ProductItem = ({ idx, name, price, quantity, productQuantityChanged }) => {
-    var calculatedPrice = price * quantity;
+const ProductItem = ({ idx, product, productQuantityChanged }) => {
+    var calculatedPrice = product.price * product.quantity;
     var calculatedPriceStr = "";
 
     if (calculatedPrice > 0) {
@@ -11,15 +11,22 @@ const ProductItem = ({ idx, name, price, quantity, productQuantityChanged }) => 
 
     return (<tr>
         <th scope="row">{idx + 1}</th>
-        <td>{name}</td>
-        <td>{price}</td>
+        <td>{product.name}</td>
+        <td>{product.price}</td>
         <td>
             <ProductItemQuantity
                 idx={idx}
-                quantity={quantity}
+                quantity={product.quantity}
                 productQuantityChanged={productQuantityChanged} />
         </td>
-        <td>{calculatedPriceStr}</td>
+        {(() => {
+                if (product.hasOwnProperty('anchor')) {
+                    return <td><a name={product.anchor}></a></td>
+                } else {
+                    return <td></td>
+                }
+            }
+        )()}
     </tr>)
 };
 

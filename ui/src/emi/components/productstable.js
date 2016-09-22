@@ -17,9 +17,7 @@ const ProductsTable = ({ products, productQuantityChanged }) => (
                 <ProductItem
                     key={idx}
                     idx={idx}
-                    name={product.name}
-                    price={product.price}
-                    quantity={product.quantity}
+                    product={product}
                     productQuantityChanged={productQuantityChanged}
                 />
             )}

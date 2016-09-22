@@ -16,19 +16,22 @@ class MenuItem extends React.Component {
         let items = this.props.menuItem.items;
         let expanded = this.props.menuItem.expanded;
         let menuNodeToggled = this.props.menuNodeToggled;
-        let style = {"paddingLeft": this.props.depth * 15};
+        // let style = {"paddingLeft": this.props.depth * 15};
 
         if (items.length === 0 || !expanded) {
-                return (<li><a href="#" style={style} onClick={() => this.menuItemClicked(id)}>{text}</a></li>)
+                return (<li><a href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a></li>)
         } else {
-                return (<ul style={style}>
-                            <li><a href="#" style={style} onClick={() => this.menuItemClicked(id)}>{text}</a></li>
-                            {
-                                    items.map(function(elem) {
-                                        return (<MenuItem depth={depth + 1} menuItem={elem} menuNodeToggled={menuNodeToggled} />)
-                                    })
-                            }
-                        </ul>)
+                return (<li>
+                            <a href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a>
+                            <ul>
+                                {
+                                        items.map(function(elem) {
+                                            return (<MenuItem depth={depth + 1} menuItem={elem} menuNodeToggled={menuNodeToggled} />)
+                                        })
+                                }
+                            </ul>
+                        </li>
+                        )
         }
     }
 };
