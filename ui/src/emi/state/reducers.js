@@ -2,14 +2,13 @@ import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
 import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from '../actions/actions';
 import ProductsTree from './products/tree';
-import MenuItem from './menu/menu';
 
-const initialMenuState = MenuItem.emptyMenuState('Categories Menu');
+const initialMenuState = ProductsTree.emptyMenu('Categories Menu');
 
 function menu(state = initialMenuState, action) {
     switch (action.type) {
         case LOAD_PRODUCTS_FINISHED:
-            return action.products.getMenu('Categories Menu').getMenuState();
+            return action.products.getMenu('Categories Menu');
         default:
             return state;
     }

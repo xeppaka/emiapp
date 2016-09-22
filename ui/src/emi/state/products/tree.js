@@ -1,7 +1,6 @@
-import MenuItem from '../menu/menu';
-
 class CategoryNode {
-    constructor(name) {
+    constructor(id, name) {
+        this.id = id;
         this.name = name;
         this.products = [];
         this.nameToChildMap = {};
@@ -24,10 +23,15 @@ class CategoryNode {
         return this.name;
     }
 
+    getChildCategories() {
+        return this.childCategories;
+    }
+
     getChildCategory(name) {
-        var child = this.nameToChildMap[name];
+        let child = this.nameToChildMap[name];
         if (typeof child === 'undefined') {
-            child = new CategoryNode(name);
+            let nextIdx = this.childCategories.length;
+            child = new CategoryNode(this.id + '.' + nextIdx, name);
             this.nameToChildMap[name] = child;
             this.childCategories.push(child);
         }
@@ -35,25 +39,39 @@ class CategoryNode {
         return child;
     }
 
-    getChildCategories() {
-        return this.childCategories;
+    getMenu() {
+        let menu =
+            {
+                id: this.id,
+                text: this.name,
+                items: []
+            };
+
+        let childCount = this.childCategories.length;
+        for (let i = 0; i < childCount; i++) {
+            let child = this.childCategories[i];
+            let childMenu = child.getMenu();
+            menu.items.push(childMenu);
+        }
+
+        return menu;
     }
 }
 
 class ProductsTree {
     constructor() {
-        this.rootCategory = new CategoryNode('root');
+        this.rootCategory = new CategoryNode('', 'root');
         this.productsList = null;
     }
 
     addProduct(categories, product) {
         this.productsList = null;
 
-        var categoriesArray = categories.split(':');
-        var categoriesLength = categoriesArray.length;
-        var currentCategoryNode = this.rootCategory;
+        let categoriesArray = categories.split(':');
+        let categoriesLength = categoriesArray.length;
+        let currentCategoryNode = this.rootCategory;
 
-        for (var i = 0; i < categoriesLength; i++) {
+        for (let i = 0; i < categoriesLength; i++) {
             currentCategoryNode = currentCategoryNode.getChildCategory(categoriesArray[i]);
         }
 
@@ -74,12 +92,12 @@ class ProductsTree {
     }
 
     prepareProductsList(category) {
-        var currProducts = category.getProducts();
+        let currProducts = category.getProducts();
 
-        var childCategories = category.getChildCategories();
-        var childCategoriesLength = childCategories.length;
+        let childCategories = category.getChildCategories();
+        let childCategoriesLength = childCategories.length;
 
-        for (var i = 0; i < childCategoriesLength; i++) {
+        for (let i = 0; i < childCategoriesLength; i++) {
             currProducts = currProducts.concat(this.prepareProductsList(childCategories[i]));
         }
 
@@ -87,25 +105,28 @@ class ProductsTree {
     }
 
     getMenu(rootName) {
-        var menu = new MenuItem(rootName);
-        this.addCategoriesToMenu(menu, this.rootCategory);
+        let menu = this.rootCategory.getMenu();
+        menu.text = rootName;
 
         return menu;
-    }
-
-    addCategoriesToMenu(menuItem, categoryNode) {
-        var childCategories = categoryNode.getChildCategories();
-        var childCategoriesLength = childCategories.length;
-
-        for (var i = 0; i < childCategoriesLength; i++) {
-            let newMenuItem = menuItem.addItem(childCategories[i].name);
-            this.addCategoriesToMenu(newMenuItem, childCategories[i]);
-        }
     }
 
     static emptyProducts() {
         return [];
     }
+
+    static emptyMenu() {
+        return new CategoryNode('', 'root').getMenu();
+    }
 }
 
 export default ProductsTree;
+
+//let t = new ProductsTree();
+//t.addProduct('1:1:1', {p: '1:1:1'});
+//t.addProduct('1:1:2', {p: '1:1:2'});
+//t.addProduct('1:2:1', {p: '1:2:1'});
+//t.addProduct('1:2:2', {p: '1:2:2'});
+//
+//console.log(t);
+//console.log(t.getMenu('Menu1'));
