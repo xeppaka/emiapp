@@ -1,19 +1,35 @@
 import React, { PropTypes } from 'react';
 
-const MenuItem = ({depth, text, items}) => {
-    var style = {"paddingLeft": depth * 15};
+class MenuItem extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
-    if (items.length === 0) {
-            return (<a href="#" style={style}>{text}</a>)
-    } else {
-            return (<ul style={style}>
-                        <li><a href="#" style={style}>{text}</a></li>
-                        {
-                            items.map(function(elem) {
-                                return (<MenuItem depth={depth + 1} text={elem.text} items={elem.items} />)
-                            })
-                        }
-                    </ul>)
+    menuItemClicked(id) {
+        this.props.menuNodeToggled(id);
+    }
+
+    render() {
+        let depth = this.props.depth;
+        let id = this.props.menuItem.id;
+        let text = this.props.menuItem.text;
+        let items = this.props.menuItem.items;
+        let expanded = this.props.menuItem.expanded;
+        let menuNodeToggled = this.props.menuNodeToggled;
+        let style = {"paddingLeft": this.props.depth * 15};
+
+        if (items.length === 0 || !expanded) {
+                return (<li><a href="#" style={style} onClick={() => this.menuItemClicked(id)}>{text}</a></li>)
+        } else {
+                return (<ul style={style}>
+                            <li><a href="#" style={style} onClick={() => this.menuItemClicked(id)}>{text}</a></li>
+                            {
+                                    items.map(function(elem) {
+                                        return (<MenuItem depth={depth + 1} menuItem={elem} menuNodeToggled={menuNodeToggled} />)
+                                    })
+                            }
+                        </ul>)
+        }
     }
 };
 

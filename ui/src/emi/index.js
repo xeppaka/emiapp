@@ -15,7 +15,7 @@ import ProductsTotalContainer from './containers/productstotalcontainer';
 import ProductsMenuContainer from './containers/productsmenucontainer';
 
 import emiApp from './state/reducers';
-import { loadProducts } from './actions/actions';
+import { loadProducts } from './actions/productsactions';
 
 const loggerMiddleware = createLogger();
 

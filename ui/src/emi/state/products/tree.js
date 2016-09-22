@@ -44,6 +44,7 @@ class CategoryNode {
             {
                 id: this.id,
                 text: this.name,
+                expanded: false,
                 items: []
             };
 
@@ -107,6 +108,7 @@ class ProductsTree {
     getMenu(rootName) {
         let menu = this.rootCategory.getMenu();
         menu.text = rootName;
+        menu.expanded = true;
 
         return menu;
     }
@@ -115,8 +117,8 @@ class ProductsTree {
         return [];
     }
 
-    static emptyMenu() {
-        return new CategoryNode('', 'root').getMenu();
+    static emptyMenu(rootName) {
+        return new CategoryNode('', rootName).getMenu();
     }
 }
 

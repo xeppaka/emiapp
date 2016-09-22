@@ -1,12 +1,35 @@
 import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
-import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from '../actions/actions';
+import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from '../actions/productsactions';
+import { MENU_NODE_TOGGLED } from '../actions/menuactions';
 import ProductsTree from './products/tree';
+
+function toggleMenuRecursive(node, ids, idx) {
+    if (idx >= ids.length) {
+        return Object.assign({}, node, { expanded: !node.expanded });
+    } else {
+        let currIdx = Number(ids[idx]);
+        let newNode = Object.assign({}, node, { items: [
+                                                    ...node.items.slice(0, currIdx),
+                                                    toggleMenuRecursive(node.items[currIdx], ids, idx + 1),
+                                                    ...node.items.slice(currIdx + 1)
+                                                    ]
+                                              });
+        return newNode;
+    }
+}
+
+function toggleMenu(menu, id) {
+    let ids = id.split('.');
+    return toggleMenuRecursive(menu, ids, 1);
+}
 
 const initialMenuState = ProductsTree.emptyMenu('Categories Menu');
 
 function menu(state = initialMenuState, action) {
     switch (action.type) {
+        case MENU_NODE_TOGGLED:
+            return toggleMenu(state, action.id);
         case LOAD_PRODUCTS_FINISHED:
             return action.products.getMenu('Categories Menu');
         default:

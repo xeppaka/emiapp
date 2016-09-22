@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import MenuItem from './menuitem';
 
-const ProductsMenu = ({menu}) => {
-    return <MenuItem depth={0} text={menu.text} items={menu.items} />
+const ProductsMenu = ({menu, menuNodeToggled}) => {
+    return <MenuItem depth={0} menuItem={menu} menuNodeToggled={menuNodeToggled} />
 };
 
 export default ProductsMenu;

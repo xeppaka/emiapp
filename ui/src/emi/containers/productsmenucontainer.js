@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ProductsMenu from '../components/productsmenu/productsmenu';
+import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
@@ -8,8 +9,17 @@ const mapStateToProps = (state) => {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        menuNodeToggled: (id) => {
+            dispatch(menuNodeToggled(id));
+        }
+    }
+}
+
 const ProductsMenuContainer = connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(ProductsMenu);
 
 export default ProductsMenuContainer;
