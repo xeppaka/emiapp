@@ -86,23 +86,42 @@ class ProductsTree {
 
     getProducts() {
         if (this.productsList === null) {
-            this.productsList = this.prepareProductsList(this.rootCategory);
+            this.productsList = this.prepareProductsList(this.rootCategory, [], []);
         }
 
         return this.productsList;
     }
 
-    prepareProductsList(category) {
-        let currProducts = category.getProducts();
+    prepareProductsList(category, categoryAnchors, categoryNames) {
+        let currProducts = category.getProducts().map(function(product) {
+            return Object.assign({}, product, { anchor: category.id });
+        });
+
         if (currProducts.length > 0) {
-            currProducts[0] = Object.assign({}, currProducts[0], { anchor: category.id });
+            let currentCategoryAnchors = categoryAnchors.slice(0);
+            currentCategoryAnchors.push(category.id);
+            let currentCategoryNames = categoryNames.slice(0);
+            currentCategoryNames.push(category.name);
+
+            currProducts[0] = Object.assign({}, currProducts[0], { categoryAnchors: currentCategoryAnchors, categoryNames: currentCategoryNames });
+
+            while (categoryAnchors.length > 0) {
+                categoryAnchors.pop();
+            }
+
+            while (categoryNames.length > 0) {
+                categoryNames.pop();
+            }
+        } else {
+            categoryAnchors.push(category.id);
+            // categoryNames.push(category.name);
         }
 
         let childCategories = category.getChildCategories();
         let childCategoriesLength = childCategories.length;
 
         for (let i = 0; i < childCategoriesLength; i++) {
-            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i]));
+            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i], categoryAnchors, categoryNames));
         }
 
         return currProducts;
