@@ -17,29 +17,37 @@ class ProductsTable extends React.Component {
     }
 
     handleScroll() {
-//        console.log('onScroll');
-//        console.log(this.refs.item0.isVisible());
-//        console.log(this.refs.item730.isVisible());
-        // for (let i = 0; i < this.refs.length)
+        let productsCount = this.props.products.length;
+        let firstVisible = null;
+        for (let i = 0; i < productsCount; i++) {
+            if (this.refs['product' + i].isVisible()) {
+                firstVisible = i;
+                break;
+            }
+        }
+
+        if (firstVisible != null) {
+            this.props.productCategoryChanged(this.props.products[firstVisible].anchor);
+        }
     }
 
     renderProducts() {
-        let productsTable = [];
+        let productsItems = [];
         let products = this.props.products;
         let productsLength = products.length;
 
         for (let i = 0; i < products.length; i++) {
             if (products[i].hasOwnProperty('categoryAnchors')) {
-                productsTable.push(<CategoryItem categoryAnchors={products[i].categoryAnchors}
+                productsItems.push(<CategoryItem categoryAnchors={products[i].categoryAnchors}
                                                  categoryNames={products[i].categoryNames} />);
             }
 
-            productsTable.push(<ProductItem
-                            ref={'item' + i} idx={i} product={products[i]}
+            productsItems.push(<ProductItem
+                            ref={'product' + i} idx={i} product={products[i]}
                             productQuantityChanged={this.props.productQuantityChanged} />)
         }
 
-        return productsTable;
+        return productsItems;
     }
 
     render() {
@@ -47,7 +55,7 @@ class ProductsTable extends React.Component {
                 <table className="table table-striped">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th scope='row'>#</th>
                             <th>Product Name</th>
                             <th>Retail price<br />(without VAT, in &#8364;)</th>
                             <th>Quantity</th>

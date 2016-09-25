@@ -5,7 +5,7 @@ import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
-        menu: state.menu
+        menu: state.menu.menu
     }
 }
 

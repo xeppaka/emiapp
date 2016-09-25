@@ -4,21 +4,21 @@ import ProductsTree from '../state/products/tree';
 export const LOAD_PRODUCTS = 'LOAD_PRODUCTS';
 export const LOAD_PRODUCTS_STARTED = 'LOAD_PRODUCTS_STARTED';
 export const LOAD_PRODUCTS_FINISHED = 'LOAD_PRODUCTS_FINISHED';
-export const SET_PRODUCT_QUANTITY = "SET_PRODUCT_QUANTITY";
+export const PRODUCT_QUANTITY_CHANGED = "PRODUCT_QUANTITY_CHANGED";
 
 export function loadProductsStarted() {
     return { type: LOAD_PRODUCTS_STARTED };
 }
 
-export function loadProductsFinished(isSuccess, products) {
-    return { type: LOAD_PRODUCTS_FINISHED, isSuccess: isSuccess, products: products };
+export function loadProductsFinished(isSuccess, productsTree) {
+    return { type: LOAD_PRODUCTS_FINISHED, isSuccess: isSuccess, productsTree: productsTree };
 }
 
 function createProductsTree(productsList) {
-    var productsTree = new ProductsTree();
-    var productsLength = productsList.length;
+    let productsTree = new ProductsTree();
+    let productsLength = productsList.length;
 
-    for (var i = 0; i < productsLength; i++) {
+    for (let i = 0; i < productsLength; i++) {
         productsTree.addProduct(productsList[i].category, {
             name: productsList[i].name,
             price: productsList[i].price,
@@ -39,6 +39,6 @@ export function loadProducts() {
     };
 }
 
-export function setProductQuantity(idx, quantity) {
-    return { type: SET_PRODUCT_QUANTITY, idx: idx, quantity: quantity };
+export function productQuantityChanged(idx, quantity) {
+    return { type: PRODUCT_QUANTITY_CHANGED, idx: idx, quantity: quantity };
 }

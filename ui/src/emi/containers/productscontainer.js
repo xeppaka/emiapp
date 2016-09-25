@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ProductsTable from '../components/productstable';
-import { setProductQuantity } from '../actions/productsactions';
+import { productQuantityChanged } from '../actions/productsactions';
+import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
@@ -13,6 +14,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         productQuantityChanged: (idx, quantity) => {
             dispatch(setProductQuantity(idx, quantity));
+        },
+        productCategoryChanged: (id) => {
+            dispatch(menuNodeToggled(id));
         }
     }
 }

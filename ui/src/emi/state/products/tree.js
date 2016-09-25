@@ -40,12 +40,14 @@ class CategoryNode {
     }
 
     getMenu() {
+        let hasProducts = this.products.length > 0;
         let menu =
             {
                 id: this.id,
                 text: this.name,
                 expanded: false,
-                items: []
+                items: [],
+                hasProducts: hasProducts
             };
 
         let childCount = this.childCategories.length;
@@ -62,7 +64,9 @@ class CategoryNode {
 class ProductsTree {
     constructor() {
         this.rootCategory = new CategoryNode('', 'root');
-        this.productsList = null;
+        this.allProductsList = null;
+        this.mainProductsList = null;
+        this.posProductsList = null;
     }
 
     addProduct(categories, product) {
@@ -84,17 +88,35 @@ class ProductsTree {
         return productsList[idx];
     }
 
-    getProducts() {
+    getAllProducts() {
         if (this.productsList === null) {
-            this.productsList = this.prepareProductsList(this.rootCategory, [], []);
+            this.productsList = this.prepareProductsList(this.rootCategory);
         }
 
         return this.productsList;
     }
 
-    prepareProductsList(category, categoryAnchors, categoryNames) {
-        let currProducts = category.getProducts().map(function(product) {
-            return Object.assign({}, product, { anchor: category.id });
+    getMainProducts() {
+        if (this.mainProductsList === null) {
+            let allProducts = getAllProducts();
+            this.mainProductsList = allProducts.filter((elem) => elem.type === 'MAIN');
+        }
+
+        return this.mainProductsList;
+    }
+
+    getPosProducts() {
+        if (this.posProductsList === null) {
+            let allProducts = getAllProducts();
+            this.posProductsList = allProducts.filter((elem) => elem.type === 'POS');
+        }
+
+        return this.posProductsList;
+    }
+
+    prepareProductsList(category, categoryAnchors = [], categoryNames = [], counter = 0) {
+        let currProducts = category.getProducts().map(function(product, idx) {
+            return Object.assign({}, product, { anchor: category.id, idx: counter + idx });
         });
 
         if (currProducts.length > 0) {
@@ -121,7 +143,7 @@ class ProductsTree {
         let childCategoriesLength = childCategories.length;
 
         for (let i = 0; i < childCategoriesLength; i++) {
-            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i], categoryAnchors, categoryNames));
+            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i], categoryAnchors, categoryNames, counter + currProducts.length));
         }
 
         return currProducts;

@@ -1,19 +1,35 @@
 import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
-import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, SET_PRODUCT_QUANTITY } from '../actions/productsactions';
+import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, PRODUCT_QUANTITY_CHANGED } from '../actions/productsactions';
 import { MENU_NODE_TOGGLED } from '../actions/menuactions';
 import ProductsTree from './products/tree';
 
-function expandMenuRecursive(node, ids, idx) {
-    if (idx >= ids.length) {
-        return Object.assign({}, node, { expanded: true });
+function toggleUntilHasProducts(node, expand) {
+    if (!node.hasProducts && node.items.length > 0) {
+        return Object.assign({}, node, {
+                                           expanded: expand,
+                                           items: [
+                                                      toggleUntilHasProducts(node.items[0], expand),
+                                                      ...node.items.slice(1)
+                                                  ]
+                                       });
     } else {
-        let currIdx = Number(ids[idx]);
+        return Object.assign({}, node, { expanded: expand, active: expand });
+    }
+}
+
+function toggleMenuRecursive(node, ids, depth, expand) {
+    if (depth >= ids.length) {
+        let newNode = Object.assign({}, node, { expanded: expand });
+        newNode = toggleUntilHasProducts(newNode, expand);
+        return newNode;
+    } else {
+        let currIdx = Number(ids[depth]);
         let newNode = Object.assign({}, node, {
-                                                    expanded: true,
+                                                    expanded: expand,
                                                     items: [
                                                         ...node.items.slice(0, currIdx),
-                                                        expandMenuRecursive(node.items[currIdx], ids, idx + 1),
+                                                        toggleMenuRecursive(node.items[currIdx], ids, depth + 1, expand),
                                                         ...node.items.slice(currIdx + 1)
                                                     ]
                                               });
@@ -23,17 +39,31 @@ function expandMenuRecursive(node, ids, idx) {
 
 function expandMenu(menu, id) {
     let ids = id.split('.');
-    return expandMenuRecursive(menu, ids, 1);
+    return toggleMenuRecursive(menu, ids, 1, true);
 }
 
-const initialMenuState = ProductsTree.emptyMenu('Categories Menu');
+function closeMenu(menu, id) {
+    let ids = id.split('.');
+    return toggleMenuRecursive(menu, ids, 1, false);
+}
+
+const initialMenuState = {
+    menu: ProductsTree.emptyMenu('Product Categories'),
+    expandedId: null
+}
 
 function menu(state = initialMenuState, action) {
     switch (action.type) {
         case MENU_NODE_TOGGLED:
-            return expandMenu(state, action.id);
+            if (state.expandedId !== action.id) {
+                let newMenu = closeMenu(state.menu, state.expandedId);
+                newMenu = expandMenu(newMenu, action.id);
+                return { menu: newMenu, expandedId: action.id }
+            } else {
+                return state;
+            }
         case LOAD_PRODUCTS_FINISHED:
-            return action.products.getMenu('Categories Menu');
+            return { menu: action.productsTree.getMenu('Product Categories'), expandedId: '.0' }
         default:
             return state;
     }
@@ -54,10 +84,10 @@ function products(state = initialProductsState, action) {
             });
         case LOAD_PRODUCTS_FINISHED:
             return Object.assign({}, state, {
-                list: action.products.getProducts(),
+                list: action.productsTree.getAllProducts(),
                 loadingInProgress: false
             });
-        case SET_PRODUCT_QUANTITY:
+        case PRODUCT_QUANTITY_CHANGED:
 //            var newState = Object.assign({}, state);
 //            newState.productsList = state.productsList.slice();
 //            var newProduct = Object.assign({}, newState.productsList[action.idx]);

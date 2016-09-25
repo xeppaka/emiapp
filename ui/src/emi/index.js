@@ -38,7 +38,7 @@ render(
                 <div className="col-sm-6">
                     <ProductsContainer />
                 </div>
-                <div className="col-sm-4">
+                <div className="col-sm-3">
                     <ProductsTotalContainer />
                 </div>
             </div>
