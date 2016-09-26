@@ -10,7 +10,7 @@ class CategoryItem extends React.Component {
             <th scope='row'>
                             {
                                 this.props.categoryAnchors.map((anchor) =>
-                                    <div id={anchor}></div> )
+                                    <div key={anchor} id={anchor}></div> )
                             }
             </th>
             <td colSpan={this.props.colspan}>{this.props.categoryNames.reduce((prevVal, curVal, idx) => {return idx === 0 ? curVal : prevVal + ' > ' + curVal}, '')}</td>

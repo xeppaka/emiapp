@@ -38,7 +38,7 @@ class PosProductsTable extends React.Component {
             }
 
             productsItems.push(<PosProductItem
-                            key={product.idx} ref={'product' + i} product={product}
+                            key={product.id} ref={'product' + i} product={product}
                             productQuantityChanged={this.props.productQuantityChanged} />)
         }
 

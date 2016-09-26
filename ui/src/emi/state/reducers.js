@@ -74,6 +74,7 @@ const initialProductsState = {
     mainProductsIds: [],
     posProductsIds: [],
     productsMap: {},
+    mainProducts: [],
     loadingInProgress: false
 };
 
@@ -93,8 +94,10 @@ function products(state = initialProductsState, action) {
                 let posProductsIds = [];
                 let productsMap = {};
 
+                let mainProducts = [];
                 for (let i = 0; i < productsListLength; i++) {
                     productsMap[i] = productsList[i];
+                    mainProducts.push(productsList[i]);
 
                     if (productsList[i].type === 'MAIN') {
                         mainProductsIds.push(i);
@@ -109,18 +112,22 @@ function products(state = initialProductsState, action) {
                     mainProductsIds: mainProductsIds,
                     posProductsIds: posProductsIds,
                     productsMap: productsMap,
+                    mainProducts: mainProducts,
                     loadingInProgress: false
                 });
             }
         case PRODUCT_QUANTITY_CHANGED: {
                 let product = state.productsMap[action.id];
-                let newProduct = Object.assign({}, product, { quantity: action.quantity });
+                // let newProduct = Object.assign({}, product, { quantity: action.quantity });
+//
+//                return Object.assign({}, state);
+                return state;
 
-                return update(state, {
-                                         productsMap: {
-                                            [action.id]: {$set: newProduct}
-                                         }
-                                     });
+//                return update(state, {
+//                                         productsMap: {
+//                                            [action.id]: {$set: product}
+//                                         }
+//                                     });
             }
         default:
             return state;

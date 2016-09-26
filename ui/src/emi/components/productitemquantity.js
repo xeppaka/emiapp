@@ -12,7 +12,7 @@ class ProductItemQuantity extends React.Component {
 
     renderQuantityItems(id, multiplicity) {
         let items = [];
-        items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, 0, event)}>None</a>);
+        items.push(<a key={id} className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, 0, event)}>None</a>);
 
         for (let i = 1; i < 20; i++) {
             items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, i * multiplicity, event)}>{i * multiplicity}</a>);
