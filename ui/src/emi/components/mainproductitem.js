@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ProductItemQuantity from './productitemquantity';
 
-class ProductItem extends React.Component {
+class MainProductItem extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -24,12 +24,12 @@ class ProductItem extends React.Component {
         }
 
         return (<tr>
-            <th scope="row">{product.idx + 1}</th>
+            <th scope="row">{product.id + 1}</th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>
                 <ProductItemQuantity
-                    idx={product.idx}
+                    id={product.id}
                     quantity={product.quantity}
                     multiplicity={product.multiplicity}
                     productQuantityChanged={productQuantityChanged} />
@@ -39,4 +39,4 @@ class ProductItem extends React.Component {
     }
 }
 
-export default ProductItem;
+export default MainProductItem;

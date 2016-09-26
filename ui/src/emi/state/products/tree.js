@@ -88,7 +88,7 @@ class ProductsTree {
         return productsList[idx];
     }
 
-    getAllProducts() {
+    getProducts() {
         if (this.productsList === null) {
             this.productsList = this.prepareProductsList(this.rootCategory);
         }
@@ -97,8 +97,8 @@ class ProductsTree {
     }
 
     prepareProductsList(category, categoryAnchors = [], categoryNames = [], counter = 0) {
-        let currProducts = category.getProducts().map(function(product, idx) {
-            return Object.assign({}, product, { anchor: category.id, idx: counter + idx });
+        let currProducts = category.getProducts().map(function(product, id) {
+            return Object.assign({}, product, { anchor: category.id, id: counter + id });
         });
 
         if (currProducts.length > 0) {
@@ -137,10 +137,6 @@ class ProductsTree {
         menu.expanded = true;
 
         return menu;
-    }
-
-    static emptyProducts() {
-        return [];
     }
 
     static emptyMenu(rootName) {

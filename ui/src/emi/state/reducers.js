@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import update from 'react-addons-update';
 import { combineReducers } from 'redux';
 import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, PRODUCT_QUANTITY_CHANGED } from '../actions/productsactions';
 import { MENU_NODE_TOGGLED } from '../actions/menuactions';
@@ -70,9 +71,9 @@ function menu(state = initialMenuState, action) {
 }
 
 const initialProductsState = {
-    allProductsList: ProductsTree.emptyProducts(),
-    mainProductsList: ProductsTree.emptyProducts(),
-    posProductsList: ProductsTree.emptyProducts(),
+    mainProductsIds: [],
+    posProductsIds: [],
+    productsMap: {},
     loadingInProgress: false
 };
 
@@ -85,48 +86,42 @@ function products(state = initialProductsState, action) {
                 loadingInProgress: true
             });
         case LOAD_PRODUCTS_FINISHED: {
-                let allProductsList = action.productsTree.getAllProducts();
-                let mainProductsList = allProductsList.filter((elem) => elem.type === 'MAIN');
-                let posProductsList = allProductsList.filter((elem) => elem.type === 'POS');
+                let productsList = action.productsTree.getProducts();
+                let productsListLength = productsList.length;
+
+                let mainProductsIds = [];
+                let posProductsIds = [];
+                let productsMap = {};
+
+                for (let i = 0; i < productsListLength; i++) {
+                    productsMap[i] = productsList[i];
+
+                    if (productsList[i].type === 'MAIN') {
+                        mainProductsIds.push(i);
+                    }
+
+                    if (productsList[i].type === 'POS') {
+                        posProductsIds.push(i);
+                    }
+                }
 
                 return Object.assign({}, state, {
-                    allProductsList: allProductsList,
-                    mainProductsList: mainProductsList,
-                    posProductsList: posProductsList,
+                    mainProductsIds: mainProductsIds,
+                    posProductsIds: posProductsIds,
+                    productsMap: productsMap,
                     loadingInProgress: false
                 });
             }
         case PRODUCT_QUANTITY_CHANGED: {
-//                let newProductState = Object.assign({}, state.allProductsList[action.idx], { quantity: action.quantity });
-                let newProductState = Object.assign({}, state.mainProductsList[action.idx], { quantity: action.quantity });
-//                let allProductsList = [
-//                                        ...state.allProductsList.slice(0, action.idx),
-//                                        newProductState,
-//                                        ...state.allProductsList.slice(action.idx + 1)
-//                                      ];
+                let product = state.productsMap[action.id];
+                let newProduct = Object.assign({}, product, { quantity: action.quantity });
 
-                let mainProductsList = [
-                                        ...state.mainProductsList.slice(0, action.idx),
-                                        newProductState,
-                                        ...state.mainProductsList.slice(action.idx + 1)
-                                      ];
-
-                let posProductsList = state.posProductsList;
-
-//                if (action.idx < mainProductsList.length) {
-//                    mainProductsList = [
-//                                            ...mainProductsList.slice(0, action.idx),
-//                                            newProductState,
-//                                            ...mainProductsList.slice(action.idx + 1),
-//                                       ];
-//                }
-
-                return {
-                                                    allProductsList: [],
-                                                    mainProductsList: mainProductsList,
-                                                    posProductsList: []
-                                                };
-                }
+                return update(state, {
+                                         productsMap: {
+                                            [action.id]: {$set: newProduct}
+                                         }
+                                     });
+            }
         default:
             return state;
     }

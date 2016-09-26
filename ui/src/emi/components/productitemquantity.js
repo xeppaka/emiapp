@@ -5,24 +5,24 @@ class ProductItemQuantity extends React.Component {
         super(props);
     }
 
-    onQuantitySelected(idx, amount, event) {
+    onQuantitySelected(id, amount, event) {
         event.preventDefault();
-        this.props.productQuantityChanged(idx, amount);
+        this.props.productQuantityChanged(id, amount);
     }
 
-    renderQuantityItems(idx, multiplicity) {
+    renderQuantityItems(id, multiplicity) {
         let items = [];
-        items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(idx, 0, event)}>None</a>);
+        items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, 0, event)}>None</a>);
 
         for (let i = 1; i < 20; i++) {
-            items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(idx, i * multiplicity, event)}>{i * multiplicity}</a>);
+            items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, i * multiplicity, event)}>{i * multiplicity}</a>);
         }
 
         return items;
     }
 
     render() {
-        let idx = this.props.idx;
+        let id = this.props.id;
         let quantity = this.props.quantity;
         let multiplicity = this.props.multiplicity;
 
@@ -35,7 +35,7 @@ class ProductItemQuantity extends React.Component {
                             </button>
                             <div className='dropdown-menu'>
                             {
-                                this.renderQuantityItems(idx, multiplicity)
+                                this.renderQuantityItems(id, multiplicity)
                             }
                             </div>
                         </div>
@@ -46,7 +46,7 @@ class ProductItemQuantity extends React.Component {
                                 onChange={(event) => {
                                         let v = Number(event.target.value);
                                         if (!isNaN(v)) {
-                                            this.props.productQuantityChanged(idx, v);
+                                            this.props.productQuantityChanged(id, v);
                                         }
                                     }
                                 } />

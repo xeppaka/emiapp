@@ -4,7 +4,7 @@ import ProductsTableTotal from '../components/productstabletotal';
 
 const mapStateToProps = (state) => {
     return {
-        total: state.products.mainProductsList.reduce( (prev, current) => { return prev + current.price * current.quantity }, 0 )
+        total: 0// state.products.mainProductsList.reduce( (prev, current) => { return prev + current.price * current.quantity }, 0 )
     }
 }
 

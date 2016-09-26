@@ -24,13 +24,13 @@ class PosProductItem extends React.Component {
         }
 
         return (<tr>
-            <th scope="row">{product.idx + 1}</th>
+            <th scope="row">{product.id + 1}</th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>{100}</td>
             <td>
                 <ProductItemQuantity
-                    idx={product.idx}
+                    id={product.id}
                     quantity={product.quantity}
                     multiplicity={product.multiplicity}
                     productQuantityChanged={productQuantityChanged} />
