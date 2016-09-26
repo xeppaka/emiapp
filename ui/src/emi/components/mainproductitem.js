@@ -14,7 +14,6 @@ class ProductItem extends React.Component {
     }
 
     render() {
-        let idx = this.props.idx;
         let product = this.props.product;
         let productQuantityChanged = this.props.productQuantityChanged;
         let calculatedPrice = product.price * product.quantity;
@@ -25,22 +24,19 @@ class ProductItem extends React.Component {
         }
 
         return (<tr>
-            <th scope="row">{idx + 1}</th>
+            <th scope="row">{product.idx + 1}</th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>
                 <ProductItemQuantity
-                    idx={idx}
+                    idx={product.idx}
                     quantity={product.quantity}
+                    multiplicity={product.multiplicity}
                     productQuantityChanged={productQuantityChanged} />
             </td>
             <td><div ref={'vis'}></div></td>
         </tr>)
     }
 }
-
-ProductItem.propTypes = {
-    name: PropTypes.string.isRequired
-};
 
 export default ProductItem;

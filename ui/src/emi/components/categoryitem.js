@@ -13,7 +13,7 @@ class CategoryItem extends React.Component {
                                     <div id={anchor}></div> )
                             }
             </th>
-            <td colSpan='4'>{this.props.categoryNames.reduce((prevVal, curVal, idx) => {return idx === 0 ? curVal : prevVal + ' > ' + curVal}, '')}</td>
+            <td colSpan={this.props.colspan}>{this.props.categoryNames.reduce((prevVal, curVal, idx) => {return idx === 0 ? curVal : prevVal + ' > ' + curVal}, '')}</td>
         </tr>)
     }
 }

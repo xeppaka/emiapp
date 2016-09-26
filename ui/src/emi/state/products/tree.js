@@ -96,24 +96,6 @@ class ProductsTree {
         return this.productsList;
     }
 
-    getMainProducts() {
-        if (this.mainProductsList === null) {
-            let allProducts = getAllProducts();
-            this.mainProductsList = allProducts.filter((elem) => elem.type === 'MAIN');
-        }
-
-        return this.mainProductsList;
-    }
-
-    getPosProducts() {
-        if (this.posProductsList === null) {
-            let allProducts = getAllProducts();
-            this.posProductsList = allProducts.filter((elem) => elem.type === 'POS');
-        }
-
-        return this.posProductsList;
-    }
-
     prepareProductsList(category, categoryAnchors = [], categoryNames = [], counter = 0) {
         let currProducts = category.getProducts().map(function(product, idx) {
             return Object.assign({}, product, { anchor: category.id, idx: counter + idx });

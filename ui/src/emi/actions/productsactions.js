@@ -20,9 +20,11 @@ function createProductsTree(productsList) {
 
     for (let i = 0; i < productsLength; i++) {
         productsTree.addProduct(productsList[i].category, {
+            type: productsList[i].type,
             name: productsList[i].name,
             price: productsList[i].price,
-            quantity: 0
+            quantity: 0,
+            multiplicity: productsList[i].multiplicity
         });
     }
 

@@ -27,10 +27,12 @@ class PosProductItem extends React.Component {
             <th scope="row">{product.idx + 1}</th>
             <td>{product.name}</td>
             <td>{product.price}</td>
+            <td>{100}</td>
             <td>
                 <ProductItemQuantity
-                    idx={idx}
+                    idx={product.idx}
                     quantity={product.quantity}
+                    multiplicity={product.multiplicity}
                     productQuantityChanged={productQuantityChanged} />
             </td>
             <td><div ref={'vis'}></div></td>
@@ -38,8 +40,4 @@ class PosProductItem extends React.Component {
     }
 }
 
-ProductItem.propTypes = {
-    name: PropTypes.string.isRequired
-};
-
-export default ProductItem;
+export default PosProductItem;

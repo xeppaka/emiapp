@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import ProductItem from './productitem';
-import CategoryItem from './categoryitem';
+import MainProductsTable from '../components/mainproductstable';
+import PosProductsTable from '../components/posproductstable';
 
 class ProductsTable extends React.Component {
     constructor(props) {
@@ -17,64 +17,34 @@ class ProductsTable extends React.Component {
     }
 
     handleScroll() {
-        let productsCount = this.props.products.length;
-        let firstVisible = null;
-        for (let i = 0; i < productsCount; i++) {
-            if (this.refs['product' + i].isVisible()) {
-                firstVisible = i;
-                break;
-            }
+        let anchor = this.refs['mainProductsContainer'].getVisibleAnchor();
+        if (anchor === null) {
+            anchor = this.refs['posProductsContainer'].getVisibleAnchor();
         }
 
-        if (firstVisible != null) {
-            this.props.productCategoryChanged(this.props.products[firstVisible].anchor);
+        if (anchor !== null) {
+            this.props.productCategoryChanged(anchor);
         }
-    }
-
-    renderProducts() {
-        let productsItems = [];
-        let products = this.props.products;
-        let productsLength = products.length;
-
-        for (let i = 0; i < products.length; i++) {
-            if (products[i].hasOwnProperty('categoryAnchors')) {
-                productsItems.push(<CategoryItem categoryAnchors={products[i].categoryAnchors}
-                                                 categoryNames={products[i].categoryNames} />);
-            }
-
-            productsItems.push(<ProductItem
-                            ref={'product' + i} idx={i} product={products[i]}
-                            productQuantityChanged={this.props.productQuantityChanged} />)
-        }
-
-        return productsItems;
     }
 
     render() {
         return (
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope='row'>#</th>
-                            <th>Product Name</th>
-                            <th>Retail price<br />(without VAT, in &#8364;)</th>
-                            <th>Quantity</th>
-                            <th>Retail price x Quantity<br />(without VAT in &#8364;)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { this.renderProducts() }
-                    </tbody>
-                </table>
+                    <div className="container">
+                        <div className="row">
+                            <MainProductsTable ref='mainProductsContainer'
+                                    products={this.props.mainProducts}
+                                    productCategoryChanged={this.props.productCategoryChanged}
+                                    productQuantityChanged={this.props.productQuantityChanged} />
+                        </div>
+                        <div className="row">
+                            <PosProductsTable ref='posProductsContainer'
+                                    products={this.props.posProducts}
+                                    productCategoryChanged={this.props.productCategoryChanged}
+                                    productQuantityChanged={this.props.productQuantityChanged} />
+                        </div>
+                    </div>
                )
     }
 }
-
-ProductsTable.propTypes = {
-    products: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired
-    }).isRequired).isRequired
-};
 
 export default ProductsTable;

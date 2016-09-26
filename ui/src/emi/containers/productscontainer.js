@@ -6,14 +6,15 @@ import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
-        products: state.products.list
+        mainProducts: state.products.mainProductsList,
+        posProducts: state.products.posProductsList
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         productQuantityChanged: (idx, quantity) => {
-            dispatch(setProductQuantity(idx, quantity));
+            dispatch(productQuantityChanged(idx, quantity));
         },
         productCategoryChanged: (id) => {
             dispatch(menuNodeToggled(id));

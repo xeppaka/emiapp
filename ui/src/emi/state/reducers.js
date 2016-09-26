@@ -63,14 +63,16 @@ function menu(state = initialMenuState, action) {
                 return state;
             }
         case LOAD_PRODUCTS_FINISHED:
-            return { menu: action.productsTree.getMenu('Product Categories'), expandedId: '.0' }
+            return { menu: action.productsTree.getMenu('Product Categories'), expandedId: '.0.0.0' }
         default:
             return state;
     }
 }
 
 const initialProductsState = {
-    list: ProductsTree.emptyProducts(),
+    allProductsList: ProductsTree.emptyProducts(),
+    mainProductsList: ProductsTree.emptyProducts(),
+    posProductsList: ProductsTree.emptyProducts(),
     loadingInProgress: false
 };
 
@@ -82,19 +84,49 @@ function products(state = initialProductsState, action) {
             return Object.assign({}, state, {
                 loadingInProgress: true
             });
-        case LOAD_PRODUCTS_FINISHED:
-            return Object.assign({}, state, {
-                list: action.productsTree.getAllProducts(),
-                loadingInProgress: false
-            });
-        case PRODUCT_QUANTITY_CHANGED:
-//            var newState = Object.assign({}, state);
-//            newState.productsList = state.productsList.slice();
-//            var newProduct = Object.assign({}, newState.productsList[action.idx]);
-//            newState.productsList[action.idx] = newProduct;
-//            newProduct.quantity = action.quantity;
+        case LOAD_PRODUCTS_FINISHED: {
+                let allProductsList = action.productsTree.getAllProducts();
+                let mainProductsList = allProductsList.filter((elem) => elem.type === 'MAIN');
+                let posProductsList = allProductsList.filter((elem) => elem.type === 'POS');
 
-            return state;
+                return Object.assign({}, state, {
+                    allProductsList: allProductsList,
+                    mainProductsList: mainProductsList,
+                    posProductsList: posProductsList,
+                    loadingInProgress: false
+                });
+            }
+        case PRODUCT_QUANTITY_CHANGED: {
+//                let newProductState = Object.assign({}, state.allProductsList[action.idx], { quantity: action.quantity });
+                let newProductState = Object.assign({}, state.mainProductsList[action.idx], { quantity: action.quantity });
+//                let allProductsList = [
+//                                        ...state.allProductsList.slice(0, action.idx),
+//                                        newProductState,
+//                                        ...state.allProductsList.slice(action.idx + 1)
+//                                      ];
+
+                let mainProductsList = [
+                                        ...state.mainProductsList.slice(0, action.idx),
+                                        newProductState,
+                                        ...state.mainProductsList.slice(action.idx + 1)
+                                      ];
+
+                let posProductsList = state.posProductsList;
+
+//                if (action.idx < mainProductsList.length) {
+//                    mainProductsList = [
+//                                            ...mainProductsList.slice(0, action.idx),
+//                                            newProductState,
+//                                            ...mainProductsList.slice(action.idx + 1),
+//                                       ];
+//                }
+
+                return {
+                                                    allProductsList: [],
+                                                    mainProductsList: mainProductsList,
+                                                    posProductsList: []
+                                                };
+                }
         default:
             return state;
     }
