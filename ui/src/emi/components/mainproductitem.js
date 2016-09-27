@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ProductItemQuantity from './productitemquantity';
+import MainProductItemQuantity from './mainproductitemquantity';
 
 class MainProductItem extends React.Component {
     constructor(props) {
@@ -16,25 +16,33 @@ class MainProductItem extends React.Component {
     render() {
         let product = this.props.product;
         let productQuantityChanged = this.props.productQuantityChanged;
-        let calculatedPrice = product.price * product.quantity;
+        let calculatedPrice = Number(product.price * product.quantity).toFixed(2);
+        let calculatedPriceWithDiscount = Number(product.price / 2 * product.quantity).toFixed(2);
         let calculatedPriceStr = "";
+        let calculatedPriceWithDiscountStr = "";
 
         if (calculatedPrice > 0) {
-            calculatedPriceStr = String(calculatedPrice.toFixed(2));
+            calculatedPriceStr = String(calculatedPrice);
+        }
+
+        if (calculatedPriceWithDiscount > 0) {
+            calculatedPriceWithDiscountStr = String(calculatedPriceWithDiscount);
         }
 
         return (<tr>
-            <th scope="row">{product.id + 1}</th>
+            <th scope="row">{product.id + 1}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
             <td>{product.price}</td>
+            <td>{Number(product.price / 2).toFixed(2)}</td>
             <td>
-                <ProductItemQuantity
+                <MainProductItemQuantity
                     id={product.id}
                     quantity={product.quantity}
                     multiplicity={product.multiplicity}
                     productQuantityChanged={productQuantityChanged} />
             </td>
-            <td><div ref={'vis'}></div></td>
+            <td>{calculatedPriceStr}</td>
+            <td>{calculatedPriceWithDiscountStr}</td>
         </tr>)
     }
 }

@@ -74,7 +74,11 @@ const initialProductsState = {
     mainProductsIds: [],
     posProductsIds: [],
     productsMap: {},
-    mainProducts: [],
+    mainProductsTotal: 0,
+    mainProductsWithDiscountTotal: 0,
+    posAmountToOrder: 0,
+    totalWithoutDiscount: 0,
+    totalWithDiscount: 0,
     loadingInProgress: false
 };
 
@@ -94,10 +98,9 @@ function products(state = initialProductsState, action) {
                 let posProductsIds = [];
                 let productsMap = {};
 
-                let mainProducts = [];
                 for (let i = 0; i < productsListLength; i++) {
-                    productsMap[i] = productsList[i];
-                    mainProducts.push(productsList[i]);
+                    let product = productsList[i];
+                    productsMap[i] = product;
 
                     if (productsList[i].type === 'MAIN') {
                         mainProductsIds.push(i);
@@ -105,6 +108,7 @@ function products(state = initialProductsState, action) {
 
                     if (productsList[i].type === 'POS') {
                         posProductsIds.push(i);
+                        product.maxAllowedQuantity = 0;
                     }
                 }
 
@@ -112,22 +116,49 @@ function products(state = initialProductsState, action) {
                     mainProductsIds: mainProductsIds,
                     posProductsIds: posProductsIds,
                     productsMap: productsMap,
-                    mainProducts: mainProducts,
                     loadingInProgress: false
                 });
             }
         case PRODUCT_QUANTITY_CHANGED: {
                 let product = state.productsMap[action.id];
-                // let newProduct = Object.assign({}, product, { quantity: action.quantity });
-//
-//                return Object.assign({}, state);
-                return state;
+                let newProduct = Object.assign({}, product, { quantity: action.quantity });
+                let newMainProductsTotal = state.mainProductsTotal;
+                let newMainProductsWithDiscountTotal = state.mainProductsWithDiscountTotal;
 
-//                return update(state, {
-//                                         productsMap: {
-//                                            [action.id]: {$set: product}
-//                                         }
-//                                     });
+                if (product.type === 'MAIN') {
+                    newMainProductsTotal += newProduct.price * newProduct.quantity - product.price * product.quantity;
+                    newMainProductsWithDiscountTotal += newProduct.price / 2 * newProduct.quantity - product.price / 2 * product.quantity;
+                }
+
+                let posProductsLength = state.posProductsIds.length;
+                let posAmountOrdered = 0;
+                for (let i = 0; i < posProductsLength; i++) {
+                    let currPosProduct = state.productsMap[state.posProductsIds[i]];
+                    posAmountOrdered += currPosProduct.price * currPosProduct.quantity;
+                }
+
+                let newTotalWithoutDiscount = newMainProductsTotal + posAmountOrdered;
+                let posAmountToOrder = newMainProductsWithDiscountTotal * 0.06 - posAmountOrdered;
+
+                let newState = update(state, {
+                                         productsMap: {
+                                            [action.id]: {$set: newProduct}
+                                         },
+                                         mainProductsTotal: {$set: newMainProductsTotal},
+                                         mainProductsWithDiscountTotal: {$set: newMainProductsWithDiscountTotal},
+                                         posAmountToOrder: {$set: posAmountToOrder},
+                                         totalWithoutDiscount: {$set: newTotalWithoutDiscount},
+                                         totalWithDiscount: {$set: newMainProductsWithDiscountTotal}
+                                     });
+
+
+                for (let i = 0; i < posProductsLength; i++) {
+                    let currPosProduct = newState.productsMap[newState.posProductsIds[i]];
+                    currPosProduct.maxAllowedQuantity = posAmountToOrder > 0 ?
+                                                        Math.floor(posAmountToOrder / currPosProduct.price) : 0;
+                }
+
+                return newState;
             }
         default:
             return state;

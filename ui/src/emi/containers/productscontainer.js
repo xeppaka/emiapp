@@ -6,8 +6,8 @@ import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
-        mainProducts: state.products.mainProducts, //Ids.map((id) => state.products.productsMap[id]),
-        posProducts: [] //state.products.posProductsIds.map((id) => state.products.productsMap[id])
+        mainProducts: state.products.mainProductsIds.map((id) => state.products.productsMap[id]),
+        posProducts: state.products.posProductsIds.map((id) => state.products.productsMap[id])
     }
 }
 

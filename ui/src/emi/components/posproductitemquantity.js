@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-class ProductItemQuantity extends React.Component {
+class PosProductItemQuantity extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -25,6 +25,7 @@ class ProductItemQuantity extends React.Component {
         let id = this.props.id;
         let quantity = this.props.quantity;
         let multiplicity = this.props.multiplicity;
+        let maxAllowedQuantity = this.props.maxAllowedQuantity;
 
         if (multiplicity > 1) {
             return (
@@ -42,10 +43,10 @@ class ProductItemQuantity extends React.Component {
                    )
         } else {
             return (
-                        <input type='number' value={quantity > 0 ? quantity : ''}
+                        <input type='number' min='0' value={quantity > 0 ? quantity : ''}
                                 onChange={(event) => {
                                         let v = Number(event.target.value);
-                                        if (!isNaN(v)) {
+                                        if (!isNaN(v) && v <= (maxAllowedQuantity + quantity) && v >= 0) {
                                             this.props.productQuantityChanged(id, v);
                                         }
                                     }
@@ -55,4 +56,4 @@ class ProductItemQuantity extends React.Component {
     }
 }
 
-export default ProductItemQuantity;
+export default PosProductItemQuantity;

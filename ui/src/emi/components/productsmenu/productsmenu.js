@@ -5,27 +5,27 @@ class ProductsMenu extends React.Component {
     constructor(props) {
         super(props);
         this.handleScroll = this.handleScroll.bind(this);
-        this.state = {scrollTop: 40};
+        this.state = {scrollTop: 20};
     }
 
     componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll);
+        // window.addEventListener('scroll', this.handleScroll);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
+        // window.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll() {
-        let scrollTop = event.srcElement.body.scrollTop;
-        this.setState({
-            scrollTop: scrollTop + 40
-        });
+//        let scrollTop = event.srcElement.body.scrollTop;
+//        this.setState({
+//            scrollTop: scrollTop + 20
+//        });
     }
 
     render() {
         return (
-            <div style={{marginTop: this.state.scrollTop}}>
+            <div style={{marginTop: this.state.scrollTop, position: 'fixed'}}>
                 <ul className='nav nav-pills nav-stacked'><MenuItem depth={0} menuItem={this.props.menu} menuNodeToggled={this.props.menuNodeToggled} /></ul>
             </div>
             )

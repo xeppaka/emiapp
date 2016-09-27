@@ -34,7 +34,7 @@ class PosProductsTable extends React.Component {
 
             if (product.hasOwnProperty('categoryAnchors')) {
                 productsItems.push(<CategoryItem key={product.anchor} categoryAnchors={product.categoryAnchors}
-                                                 categoryNames={product.categoryNames} colspan={'5'} />);
+                                                 categoryNames={product.categoryNames} colspan={'7'} />);
             }
 
             productsItems.push(<PosProductItem
@@ -53,9 +53,11 @@ class PosProductsTable extends React.Component {
                             <th scope='row'>#</th>
                             <th>Product Name</th>
                             <th>Retail price<br />(without VAT, in &#8364;)</th>
+                            <th>Discount price<br />(-100%, without VAT, in &#8364;)</th>
                             <th>Max allowed quantity</th>
                             <th>Quantity</th>
-                            <th>Retail price x Quantity<br />(without VAT in &#8364;)</th>
+                            <th>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
+                            <th>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
                         </tr>
                     </thead>
                     <tbody>

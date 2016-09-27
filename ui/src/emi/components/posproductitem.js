@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ProductItemQuantity from './productitemquantity';
+import PosProductItemQuantity from './posproductitemquantity';
 
 class PosProductItem extends React.Component {
     constructor(props) {
@@ -16,26 +16,29 @@ class PosProductItem extends React.Component {
     render() {
         let product = this.props.product;
         let productQuantityChanged = this.props.productQuantityChanged;
-        let calculatedPrice = product.price * product.quantity;
+        let calculatedPrice = Number(product.price * product.quantity).toFixed(2);
         let calculatedPriceStr = "";
 
         if (calculatedPrice > 0) {
-            calculatedPriceStr = String(calculatedPrice.toFixed(2));
+            calculatedPriceStr = String(calculatedPrice);
         }
 
         return (<tr>
-            <th scope="row">{product.id + 1}</th>
+            <th scope="row">{product.id + 1}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
             <td>{product.price}</td>
-            <td>{100}</td>
+            <td>{0}</td>
+            <td>{product.maxAllowedQuantity}</td>
             <td>
-                <ProductItemQuantity
+                <PosProductItemQuantity
                     id={product.id}
                     quantity={product.quantity}
                     multiplicity={product.multiplicity}
+                    maxAllowedQuantity={product.maxAllowedQuantity}
                     productQuantityChanged={productQuantityChanged} />
             </td>
-            <td><div ref={'vis'}></div></td>
+            <td>{calculatedPriceStr}</td>
+            <td>{0}</td>
         </tr>)
     }
 }

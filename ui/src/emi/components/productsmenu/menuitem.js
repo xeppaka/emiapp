@@ -25,10 +25,10 @@ class MenuItem extends React.Component {
         } else {
                 return (<li className='nav-item'>
                             <a style={style} className={linkClassName} href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a>
-                            <ul className='nav nav-pills nav-stacked'>
+                            <ul className={'nav nav-pills nav-stacked'}>
                                 {
                                         items.map(function(elem) {
-                                            return (<MenuItem depth={depth + 1} menuItem={elem} menuNodeToggled={menuNodeToggled} />)
+                                            return (<MenuItem key={elem.id} depth={depth + 1} menuItem={elem} menuNodeToggled={menuNodeToggled} />)
                                         })
                                 }
                             </ul>
