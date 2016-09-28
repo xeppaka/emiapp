@@ -5,27 +5,27 @@ class PosProductItemQuantity extends React.Component {
         super(props);
     }
 
-    onQuantitySelected(id, amount, event) {
-        event.preventDefault();
-        this.props.productQuantityChanged(id, amount);
+    onQuantitySelected(type, id, amount) {
+        this.props.productQuantityChanged(type, id, amount);
     }
 
-    renderQuantityItems(id, multiplicity) {
+    renderQuantityItems(type, id, multiplicity) {
         let items = [];
-        items.push(<a key={id} className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, 0, event)}>None</a>);
+        items.push(<a key={id} className='dropdown-item' href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, 0) }}>None</a>);
 
         for (let i = 1; i < 20; i++) {
-            items.push(<a className='dropdown-item' href='#' onClick={(event) => this.onQuantitySelected(id, i * multiplicity, event)}>{i * multiplicity}</a>);
+            items.push(<a className='dropdown-item' href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, i * multiplicity)}}>{i * multiplicity}</a>);
         }
 
         return items;
     }
 
     render() {
-        let id = this.props.id;
-        let quantity = this.props.quantity;
-        let multiplicity = this.props.multiplicity;
-        let maxAllowedQuantity = this.props.maxAllowedQuantity;
+        let id = this.props.product.id;
+        let type = this.props.product.type;
+        let quantity = this.props.product.quantity;
+        let multiplicity = this.props.product.multiplicity;
+        let maxAllowedQuantity = this.props.product.maxAllowedQuantity;
 
         if (multiplicity > 1) {
             return (
@@ -36,7 +36,7 @@ class PosProductItemQuantity extends React.Component {
                             </button>
                             <div className='dropdown-menu'>
                             {
-                                this.renderQuantityItems(id, multiplicity)
+                                this.renderQuantityItems(type, id, multiplicity)
                             }
                             </div>
                         </div>
@@ -47,7 +47,7 @@ class PosProductItemQuantity extends React.Component {
                                 onChange={(event) => {
                                         let v = Number(event.target.value);
                                         if (!isNaN(v) && v <= (maxAllowedQuantity + quantity) && v >= 0) {
-                                            this.props.productQuantityChanged(id, v);
+                                            this.props.productQuantityChanged(type, id, v);
                                         }
                                     }
                                 } />

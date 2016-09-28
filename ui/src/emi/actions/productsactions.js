@@ -41,6 +41,6 @@ export function loadProducts() {
     };
 }
 
-export function productQuantityChanged(id, quantity) {
-    return { type: PRODUCT_QUANTITY_CHANGED, id: id, quantity: quantity };
+export function productQuantityChanged(productType, id, quantity) {
+    return { type: PRODUCT_QUANTITY_CHANGED, productType: productType, id: id, quantity: quantity };
 }

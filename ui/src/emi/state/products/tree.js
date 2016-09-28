@@ -96,9 +96,9 @@ class ProductsTree {
         return this.productsList;
     }
 
-    prepareProductsList(category, categoryAnchors = [], categoryNames = [], counter = 0) {
-        let currProducts = category.getProducts().map(function(product, id) {
-            return Object.assign({}, product, { anchor: category.id, id: counter + id });
+    prepareProductsList(category, categoryAnchors = [], categoryNames = []) {
+        let currProducts = category.getProducts().map(function(product) {
+            return Object.assign({}, product, { anchor: category.id });
         });
 
         if (currProducts.length > 0) {
@@ -125,7 +125,7 @@ class ProductsTree {
         let childCategoriesLength = childCategories.length;
 
         for (let i = 0; i < childCategoriesLength; i++) {
-            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i], categoryAnchors, categoryNames, counter + currProducts.length));
+            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i], categoryAnchors, categoryNames));
         }
 
         return currProducts;

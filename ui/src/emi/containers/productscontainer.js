@@ -6,15 +6,15 @@ import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
-        mainProducts: state.products.mainProductsIds.map((id) => state.products.productsMap[id]),
-        posProducts: state.products.posProductsIds.map((id) => state.products.productsMap[id])
+        mainProducts: state.products.mainProductsList,
+        posProducts: state.products.posProductsList
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        productQuantityChanged: (id, quantity) => {
-            dispatch(productQuantityChanged(id, quantity));
+        productQuantityChanged: (productType, id, quantity) => {
+            dispatch(productQuantityChanged(productType, id, quantity));
         },
         productCategoryChanged: (id) => {
             dispatch(menuNodeToggled(id));

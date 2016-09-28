@@ -30,15 +30,13 @@ class MainProductItem extends React.Component {
         }
 
         return (<tr>
-            <th scope="row">{product.id + 1}<div ref={'vis'}></div></th>
+            <th scope="row">{product.idx + 1}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>{Number(product.price / 2).toFixed(2)}</td>
             <td>
                 <MainProductItemQuantity
-                    id={product.id}
-                    quantity={product.quantity}
-                    multiplicity={product.multiplicity}
+                    product={product}
                     productQuantityChanged={productQuantityChanged} />
             </td>
             <td>{calculatedPriceStr}</td>

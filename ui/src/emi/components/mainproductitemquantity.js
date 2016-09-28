@@ -5,32 +5,40 @@ class MainProductItemQuantity extends React.Component {
         super(props);
     }
 
-    onQuantitySelected(id, amount) {
-        this.props.productQuantityChanged(id, amount);
+    onQuantitySelected(type, id, amount) {
+        this.props.productQuantityChanged(type, id, amount);
     }
 
-    renderQuantityItems(id, multiplicity) {
+    renderQuantityItems(type, id, multiplicity) {
         let items = [];
-        items.push(<option value={0}>None</option>);
+        items.push(<a key={id} className='dropdown-item' href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, 0) }}>None</a>);
 
         for (let i = 1; i < 20; i++) {
-            let val = i * multiplicity;
-            items.push(<option value={val}>{val}</option>);
+            items.push(<a className='dropdown-item' href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, i * multiplicity)}}>{i * multiplicity}</a>);
         }
 
         return items;
     }
 
     render() {
-        let id = this.props.id;
-        let quantity = this.props.quantity;
-        let multiplicity = this.props.multiplicity;
+        let id = this.props.product.id;
+        let type = this.props.product.type;
+        let quantity = this.props.product.quantity;
+        let multiplicity = this.props.product.multiplicity;
 
         if (multiplicity > 1) {
             return (
-                    <select value={quantity} onChange={(event) => this.onQuantitySelected(id, event.target.value)}>
-                       { this.renderQuantityItems(id, multiplicity) }
-                    </select>
+                        <div className='btn-group'>
+                            <button type="button" className="btn btn-secondary dropdown-toggle"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {quantity > 0 ? quantity : 'None'}
+                            </button>
+                            <div className='dropdown-menu'>
+                            {
+                                this.renderQuantityItems(type, id, multiplicity)
+                            }
+                            </div>
+                        </div>
                    )
         } else {
             return (
@@ -38,7 +46,7 @@ class MainProductItemQuantity extends React.Component {
                                 onChange={(event) => {
                                         let v = Number(event.target.value);
                                         if (!isNaN(v) && v >= 0) {
-                                            this.props.productQuantityChanged(id, v);
+                                            this.props.productQuantityChanged(type, id, v);
                                         }
                                     }
                                 } />
