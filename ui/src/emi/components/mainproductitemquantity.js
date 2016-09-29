@@ -30,7 +30,7 @@ class MainProductItemQuantity extends React.Component {
             return (
                         <div className='btn-group'>
                             <button type="button" className="btn btn-secondary dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{width: '90px'}}>
                                 {quantity > 0 ? quantity : 'None'}
                             </button>
                             <div className='dropdown-menu'>
@@ -49,7 +49,7 @@ class MainProductItemQuantity extends React.Component {
                                             this.props.productQuantityChanged(type, id, v);
                                         }
                                     }
-                                } />
+                                } style={{width: '90px'}} />
                    )
         }
     }

@@ -18,6 +18,8 @@ import ProductsMenuContainer from './containers/productsmenucontainer';
 import emiApp from './state/reducers';
 import { loadProducts } from './actions/productsactions';
 
+import './index.scss';
+
 const loggerMiddleware = createLogger();
 
 let store = createStore(emiApp,
@@ -33,7 +35,7 @@ render(
     <Provider store={store}>
         <div className="container-fluid">
             <div className="row">
-                <div className="col-sm-3">
+                <div className="col-sm-3 nopadding">
                     <ProductsMenuContainer />
                 </div>
                 <div className="col-sm-6">
