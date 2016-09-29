@@ -8,23 +8,23 @@ class ProductsTableTotal extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll);
+        // window.addEventListener('scroll', this.handleScroll);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
+        // window.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll() {
-        let scrollTop = event.srcElement.body.scrollTop;
-        this.setState({
-            scrollTop: scrollTop + 20
-        });
+//        let scrollTop = event.srcElement.body.scrollTop;
+//        this.setState({
+//            scrollTop: scrollTop + 20
+//        });
     }
 
     render() {
         return (
-                    <div className="card" style={{marginTop: this.state.scrollTop}}>
+                    <div className="card" style={{marginTop: this.state.scrollTop, position: 'fixed'}}>
                         <div className="card-block">
                             <h6>POS amount to order: {this.props.posAmountToOrder.toFixed(2)}&#8364;</h6>
                             <h6>Total without discount: {this.props.totalWithoutDiscount.toFixed(2)}&#8364;</h6>

@@ -10,23 +10,23 @@ class ProductsMenu extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll);
+        // window.addEventListener('scroll', this.handleScroll);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
+        // window.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll() {
-        let scrollTop = event.srcElement.body.scrollTop;
-        this.setState({
-            scrollTop: scrollTop + 20
-        });
+//        let scrollTop = event.srcElement.body.scrollTop;
+//        this.setState({
+//            scrollTop: scrollTop + 20
+//        });
     }
 
     render() {
         return (
-            <div style={{marginTop: this.state.scrollTop}}>
+            <div style={{marginTop: this.state.scrollTop, position: 'fixed'}}>
                 <ul><MenuItem depth={0} menuItem={this.props.menu} menuNodeToggled={this.props.menuNodeToggled} /></ul>
             </div>
             )

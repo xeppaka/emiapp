@@ -5,7 +5,8 @@ ul {
 }
 
 ul li { padding-left: 14px }
-ul li a:visited { color: #FF69B4 }
-ul li a:hover { border-left: 3px solid #D7438C; color: #D7438C }
-ul li a { color: #FF69B4; padding-left: 6px }
+ul li a:visited { color: #444 }
+ul li a:hover { color: #D7438C; text-decoration: none; margin-left: -2px }
+ul li a { color: #444; padding-left: 6px }
 ul li a.active { border-left: 3px solid #D7438C; color: #D7438C; font-weight: bold }
+ul li a.expanded { color: #D7438C; font-weight: bold }

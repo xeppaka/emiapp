@@ -16,13 +16,13 @@ class MenuItem extends React.Component {
         let items = this.props.menuItem.items;
         let expanded = this.props.menuItem.expanded;
         let menuNodeToggled = this.props.menuNodeToggled;
-        let active = this.props.menuItem.active ? 'active' : '';
+        let active = this.props.menuItem.active ? ' active' : '';
 
         if (items.length === 0 || !expanded) {
                 return (<li><a className={active} href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a></li>)
         } else {
                 return (<li>
-                            <a className={active} href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a>
+                            <a className={'expanded' + active} href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a>
                             <ul>
                                 {
                                         items.map(function(elem) {
