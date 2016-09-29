@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -21,8 +22,8 @@ const loggerMiddleware = createLogger();
 
 let store = createStore(emiApp,
     applyMiddleware(
-        thunkMiddleware,
-        loggerMiddleware
+        thunkMiddleware
+        // loggerMiddleware
     )
 );
 

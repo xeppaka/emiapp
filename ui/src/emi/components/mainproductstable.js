@@ -47,7 +47,7 @@ class MainProductsTable extends React.Component {
 
     render() {
         return (
-                <table className="table table-striped">
+                <table className="table table-striped table-sm">
                     <thead>
                         <tr>
                             <th scope='row'>#</th>

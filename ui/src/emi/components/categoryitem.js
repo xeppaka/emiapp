@@ -6,7 +6,7 @@ class CategoryItem extends React.Component {
     }
 
     render() {
-        return (<tr className='table-info'>
+        return (<tr style={{backgroundColor: '#ff9fce'}}>
             <th scope='row'>
                             {
                                 this.props.categoryAnchors.map((anchor) =>

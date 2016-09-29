@@ -5,7 +5,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry:  './src/emi/index.js',
+    entry:  ['babel-polyfill', './src/emi/index.js'],
     output: {
         path:     'build/tmp/emi-app-ui',
         filename: 'app.js'

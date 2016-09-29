@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import MenuItem from './menuitem';
+import './productsmenu.scss';
 
 class ProductsMenu extends React.Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class ProductsMenu extends React.Component {
     render() {
         return (
             <div style={{marginTop: this.state.scrollTop, position: 'fixed'}}>
-                <ul className='nav nav-pills nav-stacked'><MenuItem depth={0} menuItem={this.props.menu} menuNodeToggled={this.props.menuNodeToggled} /></ul>
+                <ul><MenuItem depth={0} menuItem={this.props.menu} menuNodeToggled={this.props.menuNodeToggled} /></ul>
             </div>
             )
     }

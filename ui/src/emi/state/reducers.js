@@ -64,7 +64,8 @@ function menu(state = initialMenuState, action) {
                 return state;
             }
         case LOAD_PRODUCTS_FINISHED:
-            return { menu: action.productsTree.getMenu('Product Categories'), expandedId: '.0.0.0' }
+            let menu = expandMenu(action.productsTree.getMenu('Product Categories'), '.0');
+            return { menu: menu, expandedId: '.0' }
         default:
             return state;
     }

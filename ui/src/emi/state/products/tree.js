@@ -134,7 +134,6 @@ class ProductsTree {
     getMenu(rootName) {
         let menu = this.rootCategory.getMenu();
         menu.text = rootName;
-        menu.expanded = true;
 
         return menu;
     }
