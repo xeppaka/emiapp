@@ -136,21 +136,30 @@ function products(state = initialProductsState, action) {
 
                 let newProduct = Object.assign({}, product, { quantity: action.quantity });
 
-                let mainProductsTotal = state.mainProductsTotal;
-                let mainProductsDiscountTotal = state.mainProductsDiscountTotal;
-                let posProductsTotal = state.posProductsTotal;
-
-                if (product.type === 'MAIN') {
+                if (newProduct.type === 'MAIN') {
                     mainProductsList = [...mainProductsList.slice(0, action.id),
                                         newProduct,
                                         ...mainProductsList.slice(action.id + 1)];
-
-                    mainProductsTotal += newProduct.price * newProduct.quantity - product.price * product.quantity;
-                    mainProductsDiscountTotal += newProduct.price / 2 * newProduct.quantity - product.price / 2 * product.quantity;
                 }
 
-                if (product.type === 'POS') {
-                    posProductsTotal += newProduct.price * newProduct.quantity - product.price * product.quantity;
+                let mainProductsTotal = 0;
+                let mainProductsDiscountTotal = 0;
+                let mainProducsListLength = mainProductsList.length;
+                for (let i = 0; i < mainProducsListLength; i++) {
+                    let curMainProduct = mainProductsList[i];
+                    mainProductsTotal += curMainProduct.price * curMainProduct.quantity;
+                    mainProductsDiscountTotal += curMainProduct.price / 2 * curMainProduct.quantity;
+                }
+
+                let posProductsTotal = 0;
+                let posProductsListLength = posProductsList.length;
+                for (let i = 0; i < posProductsListLength; i++) {
+                    let curPosProduct = posProductsList[i];
+                    posProductsTotal += curPosProduct.price * curPosProduct.quantity;
+                }
+
+                if (newProduct.type === 'POS') {
+                    posProductsTotal += (newProduct.quantity - product.quantity) * newProduct.price;
                 }
 
                 let totalWithoutDiscount = mainProductsTotal + posProductsTotal;
