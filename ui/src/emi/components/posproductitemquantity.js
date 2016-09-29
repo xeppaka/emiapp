@@ -11,10 +11,10 @@ class PosProductItemQuantity extends React.Component {
 
     renderQuantityItems(type, id, multiplicity) {
         let items = [];
-        items.push(<a key={id} className='dropdown-item' href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, 0) }}>None</a>);
+        items.push(<a key={id} className='dropdown-item' style={{fontSize: '90%'}} href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, 0) }}>None</a>);
 
         for (let i = 1; i < 20; i++) {
-            items.push(<a className='dropdown-item' href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, i * multiplicity)}}>{i * multiplicity}</a>);
+            items.push(<a className='dropdown-item' style={{fontSize: '90%'}} href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, i * multiplicity)}}>{i * multiplicity}</a>);
         }
 
         return items;
@@ -31,7 +31,7 @@ class PosProductItemQuantity extends React.Component {
             return (
                         <div className='btn-group'>
                             <button type="button" className="btn btn-secondary dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{width: '90px'}}>
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{fontSize: '90%', width: '90px'}}>
                                 {quantity > 0 ? quantity : 'None'}
                             </button>
                             <div className='dropdown-menu'>
