@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProductsTable from '../components/productstable';
+import ProductsTable from '../components/productstable/productstable';
 import { productQuantityChanged } from '../actions/productsactions';
 import { menuNodeToggled } from '../actions/menuactions';
 

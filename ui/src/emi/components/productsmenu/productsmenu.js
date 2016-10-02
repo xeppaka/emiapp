@@ -26,7 +26,7 @@ class ProductsMenu extends React.Component {
 
     render() {
         return (
-            <div style={{marginTop: this.state.scrollTop, position: 'fixed'}}>
+            <div id='productsMenu' className='col-sm-3' style={{marginTop: this.state.scrollTop, position: 'fixed'}}>
                 <ul><MenuItem depth={0} menuItem={this.props.menu} menuNodeToggled={this.props.menuNodeToggled} /></ul>
             </div>
             )

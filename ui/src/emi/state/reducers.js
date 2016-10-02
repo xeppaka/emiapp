@@ -1,7 +1,9 @@
 import fetch from 'isomorphic-fetch';
 import update from 'react-addons-update';
 import { combineReducers } from 'redux';
-import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, PRODUCT_QUANTITY_CHANGED } from '../actions/productsactions';
+import { LOAD_PRODUCTS, LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED, PRODUCT_QUANTITY_CHANGED, PRODUCTS_RESET } from '../actions/productsactions';
+import { PREPARE_PRODUCTS_ORDER } from '../actions/orderactions';
+import { SHOW_PRODUCTS_ORDER_MODAL, SHOW_MESSAGE_BOX_MODAL, HIDE_MODAL } from '../actions/modalactions';
 import { MENU_NODE_TOGGLED } from '../actions/menuactions';
 import ProductsTree from './products/tree';
 
@@ -80,7 +82,12 @@ const initialProductsState = {
     posAmountToOrder: 0,
     totalWithoutDiscount: 0,
     totalWithDiscount: 0,
-    loadingInProgress: false
+    loadingInProgress: false,
+    order: {
+        selectedProductsList: [],
+        totalWithoutDiscount: 0,
+        totalWithDiscount: 0
+    }
 };
 
 function products(state = initialProductsState, action) {
@@ -186,6 +193,67 @@ function products(state = initialProductsState, action) {
                                          totalWithDiscount: {$set: mainProductsDiscountTotal}
                                      });
             }
+        case PRODUCTS_RESET: {
+                let mainProductsList = state.mainProductsList.map((p) => update(p, {quantity: {$set: 0}}));
+                let posProductsList = state.posProductsList.map((p) => update(p, {quantity: {$set: 0}}));
+
+                return update(state, {
+                                         mainProductsList: {$set: mainProductsList},
+                                         posProductsList: {$set: posProductsList},
+                                         mainProductsTotal: {$set: 0},
+                                         mainProductsDiscountTotal: {$set: 0},
+                                         posProductsTotal: {$set: 0},
+                                         posAmountToOrder: {$set: 0},
+                                         totalWithoutDiscount: {$set: 0},
+                                         totalWithDiscount: {$set: 0}
+                                     });
+            }
+        case PREPARE_PRODUCTS_ORDER: {
+            let idx = 0;
+            let quantityPositive = (prevVal, curVal) => {
+                                                          if (curVal.quantity > 0) {
+                                                              prevVal.push(Object.assign({}, curVal, { id: idx, idx: idx++ }));
+                                                          }
+
+                                                          return prevVal;
+                                                        };
+            let selectedProductsList = state.mainProductsList.reduce(quantityPositive, []);
+            selectedProductsList = state.posProductsList.reduce(quantityPositive, selectedProductsList);
+
+            return update(state, {
+                                    order: {
+                                        selectedProductsList: {$set: selectedProductsList}
+                                    }
+                                 });
+        }
+        default:
+            return state;
+    }
+}
+
+const initialModalsState = {
+    visibleModals: []
+};
+
+function modals(state = initialModalsState, action) {
+    switch (action.type) {
+        case SHOW_PRODUCTS_ORDER_MODAL: {
+            let id = state.visibleModals.length;
+            return update(state, {
+                                      visibleModals: {$push: [{id: id, type: 'PRODUCTS_ORDER_MODAL', order: action.order}]}
+                                 });
+        }
+        case SHOW_MESSAGE_BOX_MODAL: {
+            let id = state.visibleModals.length;
+            return update(state, {
+                                      visibleModals: {$push: [{id: id, type: 'MESSAGE_BOX_MODAL', text: action.text}]}
+                                 });
+        }
+        case HIDE_MODAL: {
+            return update(state, {
+                                      visibleModals: {$splice: [[action.id, 1]]}
+                                 });
+        }
         default:
             return state;
     }
@@ -193,7 +261,8 @@ function products(state = initialProductsState, action) {
 
 const emiApp = combineReducers({
     products,
-    menu
+    menu,
+    modals
 });
 
 export default emiApp;

@@ -18,8 +18,8 @@ class MainProductItem extends React.Component {
         let productQuantityChanged = this.props.productQuantityChanged;
         let calculatedPrice = (product.price * product.quantity).toFixed(2);
         let calculatedPriceWithDiscount = (product.price / 2 * product.quantity).toFixed(2);
-        let calculatedPriceStr = "";
-        let calculatedPriceWithDiscountStr = "";
+        let calculatedPriceStr = '';
+        let calculatedPriceWithDiscountStr = '';
 
         if (calculatedPrice > 0) {
             calculatedPriceStr = calculatedPrice.toString();
@@ -40,7 +40,7 @@ class MainProductItem extends React.Component {
                     productQuantityChanged={productQuantityChanged} />
             </td>
             <td>{calculatedPriceStr}</td>
-            <td>{calculatedPriceWithDiscountStr}</td>
+            <td style={{fontWeight: 'bold'}}>{calculatedPriceWithDiscountStr}</td>
         </tr>)
     }
 }

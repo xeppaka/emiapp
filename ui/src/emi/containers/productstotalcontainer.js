@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ProductsTableTotal from '../components/productstabletotal';
+import { productsReset } from '../actions/productsactions';
+import { createProductsOrder } from '../actions/orderactions';
+import ProductsTableTotal from '../components/productstable/productstabletotal';
 
 const mapStateToProps = (state) => {
     return {
@@ -10,8 +12,16 @@ const mapStateToProps = (state) => {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        productsReset: () => dispatch(productsReset()),
+        createProductsOrder: () => dispatch(createProductsOrder())
+    }
+}
+
 const ProductsTotalContainer = connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(ProductsTableTotal);
 
 export default ProductsTotalContainer;

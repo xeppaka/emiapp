@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import MainProductsTable from '../components/mainproductstable';
-import PosProductsTable from '../components/posproductstable';
+import MainProductsTable from './mainproductstable';
+import PosProductsTable from './posproductstable';
 
 class ProductsTable extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ class ProductsTable extends React.Component {
 
     render() {
         return (
-                    <div className="container">
+                    <div className="container-fluid">
                         <div className="row">
                             <MainProductsTable ref='mainProductsContainer'
                                     products={this.props.mainProducts}

@@ -14,6 +14,7 @@ import '../../node_modules/bootstrap/scss/bootstrap.scss';
 import ProductsContainer from './containers/productscontainer';
 import ProductsTotalContainer from './containers/productstotalcontainer';
 import ProductsMenuContainer from './containers/productsmenucontainer';
+import ModalsContainer from './containers/modalscontainer';
 
 import emiApp from './state/reducers';
 import { loadProducts } from './actions/productsactions';
@@ -24,8 +25,8 @@ const loggerMiddleware = createLogger();
 
 let store = createStore(emiApp,
     applyMiddleware(
-        thunkMiddleware
-        // loggerMiddleware
+        thunkMiddleware,
+        loggerMiddleware
     )
 );
 
@@ -34,18 +35,17 @@ store.dispatch(loadProducts());
 render(
     <Provider store={store}>
         <div className="container-fluid">
+            <ProductsTotalContainer />
             <div className="row">
-                <div className="col-sm-2 nopadding">
+                <div className="col-sm-3 nopadding">
                     <ProductsMenuContainer />
                 </div>
-                <div className="col-sm-7">
+                <div className="col-sm-9">
                     <ProductsContainer />
                 </div>
-                <div className="col-sm-3">
-                    <ProductsTotalContainer />
-                </div>
             </div>
+            <ModalsContainer />
         </div>
     </Provider>,
-    document.body
+    document.getElementById('applicationContainer')
 );

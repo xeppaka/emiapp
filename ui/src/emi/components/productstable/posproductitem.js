@@ -17,14 +17,16 @@ class PosProductItem extends React.Component {
         let product = this.props.product;
         let productQuantityChanged = this.props.productQuantityChanged;
         let calculatedPrice = Number(product.price * product.quantity).toFixed(2);
-        let calculatedPriceStr = "";
+        let calculatedPriceStr = '';
+        let calculatedPriceDiscountStr = '';
 
         if (calculatedPrice > 0) {
             calculatedPriceStr = String(calculatedPrice);
+            calculatedPriceDiscountStr = '0';
         }
 
         return (<tr>
-            <th scope="row">{product.idx + 1}<div ref={'vis'}></div></th>
+            <th scope='row'>{product.idx + 1}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>{0}</td>
@@ -35,7 +37,7 @@ class PosProductItem extends React.Component {
                     productQuantityChanged={productQuantityChanged} />
             </td>
             <td>{calculatedPriceStr}</td>
-            <td>{0}</td>
+            <td>{calculatedPriceDiscountStr}</td>
         </tr>)
     }
 }

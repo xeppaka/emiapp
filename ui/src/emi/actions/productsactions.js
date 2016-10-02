@@ -4,7 +4,8 @@ import ProductsTree from '../state/products/tree';
 export const LOAD_PRODUCTS = 'LOAD_PRODUCTS';
 export const LOAD_PRODUCTS_STARTED = 'LOAD_PRODUCTS_STARTED';
 export const LOAD_PRODUCTS_FINISHED = 'LOAD_PRODUCTS_FINISHED';
-export const PRODUCT_QUANTITY_CHANGED = "PRODUCT_QUANTITY_CHANGED";
+export const PRODUCT_QUANTITY_CHANGED = 'PRODUCT_QUANTITY_CHANGED';
+export const PRODUCTS_RESET = 'PRODUCTS_RESET';
 
 export function loadProductsStarted() {
     return { type: LOAD_PRODUCTS_STARTED };
@@ -23,7 +24,7 @@ function createProductsTree(productsList) {
             type: productsList[i].type,
             name: productsList[i].name,
             price: productsList[i].price,
-            quantity: 0,
+            quantity: 10,
             multiplicity: productsList[i].multiplicity
         });
     }
@@ -43,4 +44,8 @@ export function loadProducts() {
 
 export function productQuantityChanged(productType, id, quantity) {
     return { type: PRODUCT_QUANTITY_CHANGED, productType: productType, id: id, quantity: quantity };
+}
+
+export function productsReset() {
+    return { type: PRODUCTS_RESET };
 }
