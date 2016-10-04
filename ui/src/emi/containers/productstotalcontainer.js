@@ -8,7 +8,8 @@ const mapStateToProps = (state) => {
     return {
         posAmountToOrder: state.products.posAmountToOrder,
         totalWithoutDiscount: state.products.totalWithoutDiscount,
-        totalWithDiscount: state.products.totalWithDiscount
+        totalWithDiscount: state.products.totalWithDiscount,
+        canCreateOrder: state.products.mainProductsTotal > 0
     }
 }
 

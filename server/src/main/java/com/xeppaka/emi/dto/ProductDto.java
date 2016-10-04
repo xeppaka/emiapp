@@ -1,16 +1,26 @@
 package com.xeppaka.emi.dto;
 
 import com.xeppaka.emi.entities.Product;
+import com.xeppaka.emi.entities.ProductType;
 
 /**
  * Created by Pavel K. on 10/3/16.
  */
 public class ProductDto {
+    private String type;
     private String name;
     private double price;
     private int quantity;
 
     private ProductDto() {}
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -37,6 +47,6 @@ public class ProductDto {
     }
 
     public Product toProduct() {
-        return new Product(name, price, quantity);
+        return new Product(ProductType.valueOf(type), name, price, quantity);
     }
 }

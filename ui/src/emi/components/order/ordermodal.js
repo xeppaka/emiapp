@@ -23,7 +23,7 @@ class OrderModal extends React.Component {
     }
 
     render() {
-        let style = {display: 'block'};
+        let style = {display: 'block', zIndex: this.props.zIndex + 1};
         let modalHeight = $(window).height() * 0.55;
         let modalWidth = $(window).width() * 0.8;
         let divFeedbackClass = this.props.order.emailValid ? 'has-success' : 'has-danger';
@@ -76,12 +76,12 @@ class OrderModal extends React.Component {
                           <div className='modal-footer'>
                             <button type='button' className='btn btn-secondary btn-sm' onClick={(event) => this.onCancel(event)}>Cancel</button>
                             <span>&nbsp;&nbsp;</span>
-                            <button type='button' className={`btn btn-primary`} disabled={!this.props.order.submittable} onClick={(event) => this.onSubmit(event)}>Submit</button>
+                            <button type='button' className={`btn btn-primary`} disabled={!this.props.submittable} onClick={(event) => this.onSubmit(event)}>{this.props.order.submitting ? 'Submitting...' : 'Submit'}</button>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className='modal-backdrop fade in'></div>
+                    <div className='modal-backdrop fade in' style={{zIndex: this.props.zIndex}}></div>
                  </div>
                )
     }

@@ -13,7 +13,7 @@ class MessageBoxModal extends React.Component {
     }
 
     render() {
-        let style = {display: 'block'};
+        let style = {display: 'block', zIndex: this.props.zIndex + 1};
 
         return (
                  <div>
@@ -35,7 +35,7 @@ class MessageBoxModal extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className='modal-backdrop fade in'></div>
+                    <div className='modal-backdrop fade in' style={{zIndex: this.props.zIndex}}></div>
                  </div>
                )
     }

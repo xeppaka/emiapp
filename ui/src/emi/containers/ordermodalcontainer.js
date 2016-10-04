@@ -6,7 +6,8 @@ import OrderModal from '../components/order/ordermodal';
 
 const mapStateToProps = (state) => {
     return {
-        order: state.order
+        order: state.order,
+        submittable: state.order.emailValid && !state.order.submitting
     }
 }
 

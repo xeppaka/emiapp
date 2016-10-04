@@ -11,10 +11,11 @@ import java.util.Collection;
  * Created by nnm on 10/4/16.
  */
 public class Order {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
     private final String email;
     private final Country country;
     private final Collection<Product> products;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     public Order(String email, Country country, Collection<Product> products) {
         Validate.notEmpty(email);
@@ -44,7 +45,7 @@ public class Order {
 
     public String toHtml() {
         final String country = MessageFormat.format("<div>Order country: {0}</div>", getCountryString());
-        final String date = MessageFormat.format("<div>Order date: {0}</div>", LocalDateTime.now().format(formatter));
+        final String date = MessageFormat.format("<div>Order date: {0}</div>", LocalDateTime.now().format(FORMATTER));
         final String space = "<div><br /></div>";
 
         final StringBuilder tableRows = new StringBuilder();
@@ -64,10 +65,15 @@ public class Order {
                              "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price x Quantity (with discount, without VAT in &#8364;)</th>" +
                              "</tr>" +
                              "</thead>" +
+                             "<tfoot>" +
+                             "<tr>" +
+                             "<td colspan=\"7\" style=\"text-align: right; border-bottom: 1px solid black; border-left: 1px solid black;\">Total without discount: {1,number,#.##}&#8364;&nbsp;&nbsp;&nbsp;Total with discount: {2,number,#.##}&#8364;</td>" +
+                             "</tr>" +
+                             "</tfoot>" +
                              "<tbody>" +
                              "{0}" +
                              "</tbody>" +
-                             "</table>", tableRows.toString());
+                             "</table>", tableRows.toString(), getTotal(), getTotalWithDiscount());
 
         return country + date + space + table;
     }
@@ -85,6 +91,28 @@ public class Order {
                 idx, product.getName(), product.getPrice(), product.getPrice() / 2, product.getQuantity(),
                 product.getPrice() * product.getQuantity(),
                 product.getPrice() / 2 * product.getQuantity());
+    }
+
+    public double getTotal() {
+        double total = 0;
+
+        for (Product p : products) {
+            total += p.getPrice() * p.getQuantity();
+        }
+
+        return total;
+    }
+
+    public double getTotalWithDiscount() {
+        double total = 0;
+
+        for (Product p : products) {
+            if (p.getType() == ProductType.MAIN) {
+                total += p.getPrice() / 2 * p.getQuantity();
+            }
+        }
+
+        return total;
     }
 
     @Override

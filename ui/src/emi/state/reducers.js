@@ -165,7 +165,6 @@ function products(state = initialProductsState, action) {
                     posProductsTotal += (newProduct.quantity - product.quantity) * newProduct.price;
                 }
 
-                let totalWithoutDiscount = mainProductsTotal + posProductsTotal;
                 let posAmountToOrder = mainProductsDiscountTotal * 0.06 - posProductsTotal;
 
                 if (posAmountToOrder < 0) {
@@ -190,6 +189,8 @@ function products(state = initialProductsState, action) {
                     newProduct.maxAllowedQuantity = posAmountToOrder > 0 ? Math.floor(posAmountToOrder / newProduct.price) : 0;
                     posProductsList[action.id] = newProduct;
                 }
+
+                let totalWithoutDiscount = mainProductsTotal + posProductsTotal;
 
                 return update(state, {
                                          mainProductsList: {$set: mainProductsList},
@@ -266,7 +267,6 @@ const initialOrderState = {
     products: [],
     totalWithoutDiscount: 0,
     totalWithDiscount: 0,
-    submittable: false,
     submitting: false
 };
 
@@ -309,19 +309,22 @@ function order(state = initialOrderState, action) {
             return update(state, {
                                     email: {$set: email},
                                     emailValid: {$set: emailValid},
-                                    submittable: {$set: emailValid && !state.submitting}
                                  });
         }
         case ORDER_COUNTRY_CHANGED: {
             return update(state, {
-                                    country: {$set: action.country}
+                                    country: {$set: action.country},
                                  });
         }
         case SUBMIT_ORDER_STARTED: {
-            return state;
+            return update(state, {
+                                    submitting: {$set: true}
+                                 });
         }
         case SUBMIT_ORDER_FINISHED: {
-            return state;
+            return update(state, {
+                                    submitting: {$set: false}
+                                 });
         }
         default:
             return state;

@@ -7,20 +7,27 @@ import org.apache.commons.lang3.Validate;
  * Created by Pavel K. on 9/17/16.
  */
 public class Product extends Entity {
+    private ProductType type;
     private String name;
     private double price;
     private int quantity;
 
-    public Product(String name, double price, int quantity) {
+    public Product(ProductType type, String name, double price, int quantity) {
+        Validate.notNull(type);
         Validate.notEmpty(name);
         Validate.notNull(name);
         Validate.notNull(price);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
         Validate.inclusiveBetween(1, Integer.MAX_VALUE, quantity);
 
+        this.type = type;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+    }
+
+    public ProductType getType() {
+        return type;
     }
 
     public String getName() {
@@ -64,6 +71,7 @@ public class Product extends Entity {
     public String toString() {
         return "Product{" +
                 "id='" + getId() + '\'' +
+                "type='" + type + '\'' +
                 "name='" + name + '\'' +
                 ", price=" + price + '\'' +
                 ", quantity=" + quantity +

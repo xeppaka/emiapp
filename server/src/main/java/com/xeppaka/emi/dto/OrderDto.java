@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class OrderDto {
     private String email;
-    private Country country;
+    private String country;
     private Collection<ProductDto> products;
 
     private OrderDto() {}
@@ -24,11 +24,11 @@ public class OrderDto {
         this.email = email;
     }
 
-    public Country getCountry() {
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
@@ -41,6 +41,6 @@ public class OrderDto {
     }
 
     public Order toOrder() {
-        return new Order(email, country, products.stream().map(ProductDto::toProduct).collect(Collectors.toList()));
+        return new Order(email, Country.valueOf(country), products.stream().map(ProductDto::toProduct).collect(Collectors.toList()));
     }
 }
