@@ -168,9 +168,23 @@ function products(state = initialProductsState, action) {
                 let totalWithoutDiscount = mainProductsTotal + posProductsTotal;
                 let posAmountToOrder = mainProductsDiscountTotal * 0.06 - posProductsTotal;
 
-                posProductsList = posProductsList.map((pp, idx) => {
-                    return Object.assign({}, pp, { maxAllowedQuantity: posAmountToOrder > 0 ? Math.floor(posAmountToOrder / pp.price) : 0 });
-                });
+                if (posAmountToOrder < 0) {
+                    posAmountToOrder = mainProductsDiscountTotal * 0.06;
+                    posProductsTotal = 0;
+
+                    posProductsList = posProductsList.map((pp, idx) => {
+                        return Object.assign({}, pp, {
+                                                        maxAllowedQuantity: 0,
+                                                        quantity: 0
+                                                     });
+                    });
+                } else {
+                    posProductsList = posProductsList.map((pp, idx) => {
+                        return Object.assign({}, pp, {
+                                                        maxAllowedQuantity: Math.floor(posAmountToOrder / pp.price)
+                                                     });
+                    });
+                }
 
                 if (product.type === 'POS') {
                     newProduct.maxAllowedQuantity = posAmountToOrder > 0 ? Math.floor(posAmountToOrder / newProduct.price) : 0;
@@ -249,7 +263,7 @@ const initialOrderState = {
     email: '',
     emailValid: false,
     country: 'CZ',
-    selectedProductsList: [],
+    products: [],
     totalWithoutDiscount: 0,
     totalWithDiscount: 0,
     submittable: false,
@@ -271,7 +285,7 @@ function order(state = initialOrderState, action) {
                                                               if (curVal.type === 'MAIN') {
                                                                 prevVal.totalWithDiscount += curVal.price / 2 * curVal.quantity;
                                                               }
-                                                              prevVal.selectedProductsList.push(Object.assign({}, curVal, { id: idx, idx: idx++ }));
+                                                              prevVal.products.push(Object.assign({}, curVal, { id: idx, idx: idx++ }));
                                                           }
 
                                                           return prevVal;
@@ -279,11 +293,11 @@ function order(state = initialOrderState, action) {
             let mainProductsList = action.mainProductsList;
             let posProductsList = action.posProductsList;
 
-            let orderContainer = mainProductsList.reduce(quantityPositive, { totalWithoutDiscount: 0, totalWithDiscount: 0, selectedProductsList: [] });
+            let orderContainer = mainProductsList.reduce(quantityPositive, { totalWithoutDiscount: 0, totalWithDiscount: 0, products: [] });
             orderContainer = posProductsList.reduce(quantityPositive, orderContainer);
 
             return update(state, {
-                                    selectedProductsList: {$set: orderContainer.selectedProductsList},
+                                    products: {$set: orderContainer.products},
                                     totalWithoutDiscount: {$set: orderContainer.totalWithoutDiscount},
                                     totalWithDiscount: {$set: orderContainer.totalWithDiscount}
                                  });

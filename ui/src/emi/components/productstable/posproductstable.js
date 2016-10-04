@@ -47,17 +47,17 @@ class PosProductsTable extends React.Component {
 
     render() {
         return (
-                <table className="table table-striped">
+                <table className="table table-striped table-sm">
                     <thead>
                         <tr>
-                            <th scope='row'>#</th>
-                            <th>Product Name</th>
-                            <th>Retail price<br />(without VAT, in &#8364;)</th>
-                            <th>Discount price<br />(-100%, without VAT, in &#8364;)</th>
-                            <th>Max allowed quantity</th>
-                            <th>Quantity</th>
-                            <th>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
-                            <th>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
+                            <th scope='row' style={{width:'2%'}}>#</th>
+                            <th style={{width:'32%'}}>Product Name</th>
+                            <th style={{width:'11%'}}>Retail price<br />(without VAT, in &#8364;)</th>
+                            <th style={{width:'11%'}}>Discount price<br />(-100%, without VAT, in &#8364;)</th>
+                            <th style={{width:'11%'}}>Max allowed quantity</th>
+                            <th style={{width:'11%'}}>Quantity</th>
+                            <th style={{width:'11%'}}>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
+                            <th style={{width:'11%'}}>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
                         </tr>
                     </thead>
                     <tbody>

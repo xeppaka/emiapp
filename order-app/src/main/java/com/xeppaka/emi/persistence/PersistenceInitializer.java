@@ -1,4 +1,4 @@
-package com.xeppaka.emi.products.persistence;
+package com.xeppaka.emi.persistence;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

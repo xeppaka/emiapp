@@ -1,4 +1,4 @@
-package com.xeppaka.emi.products.entities;
+package com.xeppaka.emi.entities;
 
 import com.xeppaka.ddd.domain.Entity;
 import org.apache.commons.lang3.Validate;
@@ -9,15 +9,18 @@ import org.apache.commons.lang3.Validate;
 public class Product extends Entity {
     private String name;
     private double price;
+    private int quantity;
 
-    public Product(String name, double price) {
+    public Product(String name, double price, int quantity) {
         Validate.notEmpty(name);
         Validate.notNull(name);
         Validate.notNull(price);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
+        Validate.inclusiveBetween(1, Integer.MAX_VALUE, quantity);
 
         this.name = name;
         this.price = price;
+        this.quantity = quantity;
     }
 
     public String getName() {
@@ -26,6 +29,10 @@ public class Product extends Entity {
 
     public double getPrice() {
         return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     @Override
@@ -37,6 +44,7 @@ public class Product extends Entity {
         Product product = (Product) o;
 
         if (Double.compare(product.price, price) != 0) return false;
+        if (quantity != product.quantity) return false;
         return name.equals(product.name);
 
     }
@@ -48,6 +56,7 @@ public class Product extends Entity {
         result = 31 * result + name.hashCode();
         temp = Double.doubleToLongBits(price);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + quantity;
         return result;
     }
 
@@ -56,7 +65,8 @@ public class Product extends Entity {
         return "Product{" +
                 "id='" + getId() + '\'' +
                 "name='" + name + '\'' +
-                ", price=" + price +
+                ", price=" + price + '\'' +
+                ", quantity=" + quantity +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.xeppaka.emi.products.imp;
+package com.xeppaka.emi.imp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

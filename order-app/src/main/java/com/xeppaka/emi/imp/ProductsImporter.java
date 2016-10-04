@@ -1,9 +1,9 @@
-package com.xeppaka.emi.products.imp;
+package com.xeppaka.emi.imp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xeppaka.emi.products.entities.Product;
-import com.xeppaka.emi.products.imp.JsonProducts;
-import com.xeppaka.emi.products.persistence.ProductsJdbcRepository;
+import com.xeppaka.emi.entities.Product;
+import com.xeppaka.emi.imp.JsonProducts;
+import com.xeppaka.emi.persistence.ProductsJdbcRepository;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ public class ProductsImporter {
         JsonProducts jsonProducts = objectMapper.readValue(jsonFile.toFile(), JsonProducts.class);
 
         return jsonProducts.getProductsList().stream()
-                .map(jsonProduct -> new Product(jsonProduct.getName(), jsonProduct.getPrice()))
+                .map(jsonProduct -> new Product(jsonProduct.getName(), jsonProduct.getPrice(), 0))
                 .collect(Collectors.toList());
     }
 }

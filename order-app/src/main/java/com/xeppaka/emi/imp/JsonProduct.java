@@ -1,4 +1,4 @@
-package com.xeppaka.emi.products.imp;
+package com.xeppaka.emi.imp;
 
 /**
  * Created by nnm on 9/19/16.

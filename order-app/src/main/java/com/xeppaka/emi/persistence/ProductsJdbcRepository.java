@@ -1,7 +1,7 @@
-package com.xeppaka.emi.products.persistence;
+package com.xeppaka.emi.persistence;
 
 import com.xeppaka.ddd.persistence.CrudRepository;
-import com.xeppaka.emi.products.entities.Product;
+import com.xeppaka.emi.entities.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

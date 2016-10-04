@@ -9,12 +9,12 @@ class MainProductItemQuantity extends React.Component {
         this.props.productQuantityChanged(type, id, amount);
     }
 
-    renderQuantityItems(type, id, multiplicity) {
+    renderQuantityOptions(type, id, multiplicity) {
         let items = [];
-        items.push(<a key={id} className='dropdown-item' style={{fontSize: '90%'}} href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, 0) }}>None</a>);
+        items.push(<option value={0}>None</option>);
 
         for (let i = 1; i < 20; i++) {
-            items.push(<a className='dropdown-item' style={{fontSize: '90%'}} href='#' onClick={(event) => { event.preventDefault(); this.onQuantitySelected(type, id, i * multiplicity)}}>{i * multiplicity}</a>);
+            items.push(<option value={i * multiplicity}>{i * multiplicity}</option>);
         }
 
         return items;
@@ -28,28 +28,23 @@ class MainProductItemQuantity extends React.Component {
 
         if (multiplicity > 1) {
             return (
-                        <div className='btn-group'>
-                            <button type="button" className="btn btn-secondary dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{fontSize: '90%', width: '90px'}}>
-                                {quantity > 0 ? quantity : 'None'}
-                            </button>
-                            <div className='dropdown-menu'>
+                        <select className='form-control form-control-sm' value={quantity}
+                                onChange={(event) => this.onQuantitySelected(type, id, event.target.value)} style={{width: '65%'}}>
                             {
-                                this.renderQuantityItems(type, id, multiplicity)
+                                this.renderQuantityOptions(type, id, multiplicity)
                             }
-                            </div>
-                        </div>
+                        </select>
                    )
         } else {
             return (
-                        <input type='number' min='0' value={quantity > 0 ? quantity : ''}
+                        <input type='number' className='form-control form-control-sm' min='0' value={quantity > 0 ? quantity : ''}
                                 onChange={(event) => {
                                         let v = Number(event.target.value);
                                         if (!isNaN(v) && v >= 0) {
                                             this.props.productQuantityChanged(type, id, v);
                                         }
                                     }
-                                } style={{width: '90px'}} />
+                                } style={{width: '65%'}}/>
                    )
         }
     }

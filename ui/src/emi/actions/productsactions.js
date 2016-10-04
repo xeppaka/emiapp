@@ -24,7 +24,7 @@ function createProductsTree(productsList) {
             type: productsList[i].type,
             name: productsList[i].name,
             price: productsList[i].price,
-            quantity: 10,
+            quantity: 0,
             multiplicity: productsList[i].multiplicity
         });
     }

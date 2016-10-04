@@ -11,6 +11,11 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.h2database:h2:1.4.192'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.2'
+    compileOnly 'javax.mail:javax.mail-api:1.5.6'
+    runtime 'javax.mail:mail:1.4.7'
 
     compile project(':ddd')
+
+    testCompile     'junit:junit:4.12'
+    testCompile     'org.mockito:mockito-core:1.10.19'
 }

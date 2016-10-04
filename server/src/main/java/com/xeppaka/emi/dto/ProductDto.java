@@ -1,12 +1,16 @@
 package com.xeppaka.emi.dto;
 
+import com.xeppaka.emi.entities.Product;
+
 /**
  * Created by Pavel K. on 10/3/16.
  */
-public class Product {
+public class ProductDto {
     private String name;
     private double price;
     private int quantity;
+
+    private ProductDto() {}
 
     public String getName() {
         return name;
@@ -30,5 +34,9 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public Product toProduct() {
+        return new Product(name, price, quantity);
     }
 }
