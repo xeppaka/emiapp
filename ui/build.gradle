@@ -7,12 +7,16 @@ task installDependencies(type: Exec) {
     inputs.files file('package.json')
 }
 
-task compileUi(type: Exec) {
-    commandLine './node_modules/.bin/webpack'
+task compileUiProduction(type: Exec) {
+    commandLine './node_modules/.bin/webpack', '--config', 'webpack.config.production.js'
+}
+
+task compileUiDevelopment(type: Exec) {
+    commandLine './node_modules/.bin/webpack', '--config', 'webpack.config.development.js'
 }
 
 task runDevServer(type: Exec) {
-    commandLine 'npm', 'run', 'dev-server'
+    commandLine './node_modules/.bin/webpack-dev-server', '--content-base', 'build/tmp/emi-app-ui', '--config', 'webpack.config.development.js'
 }
 
 processResources {
@@ -22,4 +26,4 @@ processResources {
     }
 }
 
-processResources.dependsOn compileUi
+processResources.dependsOn compileUiProduction

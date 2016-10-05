@@ -21,6 +21,7 @@
     "react-addons-update": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
+    "react-router": "^2.8.1",
     "redux": "^3.6.0",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
@@ -35,8 +36,7 @@
     "webpack-dev-server": "^1.16.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-server": "webpack-dev-server --content-base build/tmp/emi-app-ui"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pavel Kachalouski",
   "license": "MIT"

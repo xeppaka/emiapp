@@ -16,7 +16,7 @@ import java.sql.SQLException;
  */
 @Component
 public class PersistenceInitializer {
-    private static final String CREATE_SQL = "CREATE TABLE PRODUCTS (ID UUID NOT NULL, NAME VARCHAR, PRICE DOUBLE)";
+    private static final String CREATE_SQL = "CREATE TABLE PRODUCTS (ID UUID NOT NULL, NAME VARCHAR, PRICE DOUBLE, FEATURES VARCHAR, NOTE VARCHAR, VISIBLE BOOLEAN)";
 
     @Autowired
     private DataSource dataSource;
