@@ -5,33 +5,43 @@ class MenuItem extends React.Component {
         super(props);
     }
 
-    menuItemClicked(id) {
-        this.props.menuNodeToggled(id);
+    menuItemClicked(nodeId) {
+        this.props.onMenuNodeSelected(nodeId);
     }
 
     render() {
-        let depth = this.props.depth;
-        let id = this.props.menuItem.id;
+        let nodeId = this.props.menuItem.id;
         let text = this.props.menuItem.text;
         let items = this.props.menuItem.items;
-        let expanded = this.props.menuItem.expanded;
-        let menuNodeToggled = this.props.menuNodeToggled;
-        let active = this.props.menuItem.active ? ' active' : '';
+        let selectedNodeId = this.props.selectedNodeId;
+        let depth = this.props.depth;
+        let expanded = this.props.expanded;
 
-        if (items.length === 0 || !expanded) {
-                return (<li><a className={active} href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a></li>)
+        if (expanded) {
+            return (
+                    <li>
+                        <a className='expanded' href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a>
+                        <ul>
+                            {
+                                items.map((elem, idx) => {
+                                        let expanded = false;
+                                        let active = false;
+                                        if ((depth + 1) < selectedNodeId.length) {
+                                            expanded = Number(selectedNodeId[depth + 1]) === idx && elem.items.length > 0;
+                                        } else {
+                                            expanded = idx === 0 && !elem.hasValue && elem.items.length > 0;
+                                        }
+
+                                        return <MenuItem key={elem.id} expanded={expanded} active={active}
+                                                         depth={depth + 1} menuItem={elem} selectedNodeId={selectedNodeId} onMenuNodeSelected={this.props.onMenuNodeSelected} />
+                                    }
+                                )
+                            }
+                        </ul>
+                    </li>
+                   )
         } else {
-                return (<li>
-                            <a className={'expanded' + active} href={'#' + id} onClick={() => this.menuItemClicked(id)}>{text}</a>
-                            <ul>
-                                {
-                                        items.map(function(elem) {
-                                            return (<MenuItem key={elem.id} depth={depth + 1} menuItem={elem} menuNodeToggled={menuNodeToggled} />)
-                                        })
-                                }
-                            </ul>
-                        </li>
-                        )
+            return (<li><a className={this.props.active ? 'active' : ''} href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a></li>)
         }
     }
 };

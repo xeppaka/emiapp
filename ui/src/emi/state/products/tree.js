@@ -40,14 +40,13 @@ class CategoryNode {
     }
 
     getMenu() {
-        let hasProducts = this.products.length > 0;
+        let hasValue = this.products.length > 0;
         let menu =
             {
                 id: this.id,
                 text: this.name,
-                expanded: false,
                 items: [],
-                hasProducts: hasProducts
+                hasValue: hasValue
             };
 
         let childCount = this.childCategories.length;

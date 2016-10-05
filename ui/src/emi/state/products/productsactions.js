@@ -1,9 +1,10 @@
 import fetch from 'isomorphic-fetch';
-import ProductsTree from '../state/products/tree';
+import ProductsTree from './tree';
+import { setMenu } from '../menu/menuactions';
 
-export const LOAD_PRODUCTS = 'LOAD_PRODUCTS';
 export const LOAD_PRODUCTS_STARTED = 'LOAD_PRODUCTS_STARTED';
-export const LOAD_PRODUCTS_FINISHED = 'LOAD_PRODUCTS_FINISHED';
+export const LOAD_PRODUCTS_FINISHED_SUCCESS = 'LOAD_PRODUCTS_FINISHED_SUCCESS';
+export const LOAD_PRODUCTS_FINISHED_FAIL = 'LOAD_PRODUCTS_FINISHED_FAIL';
 export const PRODUCT_QUANTITY_CHANGED = 'PRODUCT_QUANTITY_CHANGED';
 export const PRODUCTS_RESET = 'PRODUCTS_RESET';
 
@@ -11,8 +12,12 @@ export function loadProductsStarted() {
     return { type: LOAD_PRODUCTS_STARTED };
 }
 
-export function loadProductsFinished(isSuccess, productsTree) {
-    return { type: LOAD_PRODUCTS_FINISHED, isSuccess: isSuccess, productsTree: productsTree };
+export function loadProductsFinishedSuccess(productsList) {
+    return { type: LOAD_PRODUCTS_FINISHED_SUCCESS, productsList: productsList };
+}
+
+export function loadProductsFinishedFail() {
+    return { type: LOAD_PRODUCTS_FINISHED_FAIL };
 }
 
 function createProductsTree(productsList) {
@@ -24,7 +29,6 @@ function createProductsTree(productsList) {
             type: productsList[i].type,
             name: productsList[i].name,
             price: productsList[i].price,
-            quantity: 0,
             multiplicity: productsList[i].multiplicity
         });
     }
@@ -38,7 +42,11 @@ export function loadProducts() {
 
         return fetch('products.json')
             .then(response => response.json())
-            .then(json => dispatch(loadProductsFinished(true, createProductsTree(json.productsList))));
+            .then(json => {
+                             let productsTree = createProductsTree(json.productsList);
+                             dispatch(loadProductsFinishedSuccess(productsTree.getProducts()));
+                             dispatch(setMenu(productsTree.getMenu('Product Categories')));
+                          });
     };
 }
 

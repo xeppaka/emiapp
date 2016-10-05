@@ -1,19 +1,17 @@
-import React from 'react';
 import { connect } from 'react-redux';
+import { selectMenuNode } from '../state/menu/menuactions';
 import ProductsMenu from '../components/productsmenu/productsmenu';
-import { menuNodeToggled } from '../actions/menuactions';
 
 const mapStateToProps = (state) => {
     return {
-        menu: state.menu.menu
+        menu: state.menu.menu,
+        selectedNodeId: state.menu.selectedNodeId.split('.')
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        menuNodeToggled: (id) => {
-            dispatch(menuNodeToggled(id));
-        }
+        onMenuNodeSelected: (nodeId) => dispatch(selectMenuNode(nodeId))
     }
 }
 

@@ -6,6 +6,7 @@ package com.xeppaka.emi.imp;
 public class JsonProduct {
     private String name;
     private double price;
+    private int multiplicity;
 
     private JsonProduct() {}
 
