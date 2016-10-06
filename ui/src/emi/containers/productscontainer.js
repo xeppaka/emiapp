@@ -1,23 +1,33 @@
-import React from 'react';
+import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
-import ProductsTable from '../components/productstable/productstable';
-import { productQuantityChanged } from '../actions/productsactions';
-import { menuNodeToggled } from '../actions/menuactions';
+import ProductsTables from '../components/productstable/productstables';
+// import { productQuantityChanged } from '../actions/productsactions';
+import { selectMenuNode } from '../state/menu/menuactions';
+
+const mainProductsSelector = createSelector(
+        [
+            (state) => state.products.products.mainProductsIds,
+            (state) => state.products.products.productsById
+        ],
+        (mainProductIds, productsById) => {
+            return mainProductIds.map((id) => productsById[id]);
+        }
+);
 
 const mapStateToProps = (state) => {
     return {
-        mainProducts: state.products.mainProductsList,
-        posProducts: state.products.posProductsList
+        mainProducts: mainProductsSelector(state),
+        posProducts: []
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         productQuantityChanged: (productType, id, quantity) => {
-            dispatch(productQuantityChanged(productType, id, quantity));
+            // dispatch(productQuantityChanged(productType, id, quantity));
         },
-        productCategoryChanged: (id) => {
-            dispatch(menuNodeToggled(id));
+        setProductCategory: (id) => {
+            dispatch(selectMenuNode(id));
         }
     }
 }
@@ -25,6 +35,6 @@ const mapDispatchToProps = (dispatch) => {
 const ProductsContainer = connect(
     mapStateToProps,
     mapDispatchToProps
-)(ProductsTable);
+)(ProductsTables);
 
 export default ProductsContainer;

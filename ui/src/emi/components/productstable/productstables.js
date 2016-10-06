@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import MainProductsTable from './mainproductstable';
 import PosProductsTable from './posproductstable';
 
-class ProductsTable extends React.Component {
+class ProductsTables extends React.Component {
     constructor(props) {
         super(props);
         this.handleScroll = this.handleScroll.bind(this);
@@ -23,8 +23,21 @@ class ProductsTable extends React.Component {
         }
 
         if (anchor !== null) {
-            this.props.productCategoryChanged(anchor);
+            this.props.setProductCategory(anchor);
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.props.mainProducts === nextProps.mainProducts && this.props.posProducts === nextProps.posProducts)
+            return false;
+
+        if (this.props.mainProducts.length != nextProps.mainProducts.length)
+            return true;
+
+        if (this.props.posProducts.length != nextProps.posProducts.length)
+            return true;
+
+        return false;
     }
 
     render() {
@@ -33,13 +46,11 @@ class ProductsTable extends React.Component {
                         <div className="row">
                             <MainProductsTable ref='mainProductsContainer'
                                     products={this.props.mainProducts}
-                                    productCategoryChanged={this.props.productCategoryChanged}
                                     productQuantityChanged={this.props.productQuantityChanged} />
                         </div>
                         <div className="row">
                             <PosProductsTable ref='posProductsContainer'
                                     products={this.props.posProducts}
-                                    productCategoryChanged={this.props.productCategoryChanged}
                                     productQuantityChanged={this.props.productQuantityChanged} />
                         </div>
                     </div>
@@ -47,4 +58,4 @@ class ProductsTable extends React.Component {
     }
 }
 
-export default ProductsTable;
+export default ProductsTables;

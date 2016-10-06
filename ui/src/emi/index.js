@@ -11,7 +11,7 @@ import createLogger from 'redux-logger';
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-// import ProductsContainer from './containers/productscontainer';
+import ProductsContainer from './containers/productscontainer';
 import ProductsMenuContainer from './containers/productsmenucontainer';
 
 import emiApp from './state/emiapp';
@@ -36,6 +36,9 @@ render(
             <div className="row">
                 <div className="col-sm-3 nopadding">
                     <ProductsMenuContainer />
+                </div>
+                <div className="col-sm-9">
+                    <ProductsContainer />
                 </div>
             </div>
         </div>

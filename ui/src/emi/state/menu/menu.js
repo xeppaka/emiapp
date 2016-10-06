@@ -11,10 +11,13 @@ const initialMenuState = {
 
 function menu(state = initialMenuState, action) {
     switch (action.type) {
-        case SELECT_MENU_NODE:
+        case SELECT_MENU_NODE: {
             return update(state, {
                 selectedNodeId: {$set: action.selectedNodeId}
             });
+
+            return state;
+        }
         case SET_MENU:
             return update(state, {
                 menu: {$set: action.menu},

@@ -1,10 +1,10 @@
 import update from 'react-addons-update';
-import { LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED } from './productsactions';
+import { LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED_SUCCESS } from './productsactions';
 
 const initialProductsState = {
     products: {
-        mainProductIds: [],
-        posProductIds: [],
+        mainProductsIds: [],
+        posProductsIds: [],
         productsById: {},
         productsSelectedById: {}
     },
@@ -25,7 +25,7 @@ function products(state = initialProductsState, action) {
             return update(state, {
                 loadingInProgress: {$set: true}
             });
-        case LOAD_PRODUCTS_FINISHED: {
+        case LOAD_PRODUCTS_FINISHED_SUCCESS: {
                 let productsList = action.productsList;
                 let productsListLength = productsList.length;
 
@@ -36,14 +36,14 @@ function products(state = initialProductsState, action) {
                 for (let i = 0; i < productsListLength; i++) {
                     let product = productsList[i];
                     product.id = i;
-                    productsById.id = product;
+                    productsById[i] = product;
 
                     if (product.type === 'MAIN') {
-                        mainProductsIds.push(product);
+                        mainProductsIds.push(i);
                     }
 
                     if (product.type === 'POS') {
-                        posProductsIds.push(product);
+                        posProductsIds.push(i);
                     }
                 }
 
@@ -61,3 +61,5 @@ function products(state = initialProductsState, action) {
             return state;
     }
 }
+
+export default products;

@@ -16,23 +16,41 @@ class MenuItem extends React.Component {
         let selectedNodeId = this.props.selectedNodeId;
         let depth = this.props.depth;
         let expanded = this.props.expanded;
+        let active = this.props.active;
+        let activateLastWithValue = this.props.activateLastWithValue;
 
         if (expanded) {
             return (
                     <li>
-                        <a className='expanded' href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a>
+                        <a className={'expanded' + (active ? ' active' : '')} href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a>
                         <ul>
                             {
                                 items.map((elem, idx) => {
-                                        let expanded = false;
-                                        let active = false;
+                                        let nextExpanded = false;
+                                        let nextActive = false;
+                                        let nextActivateLastWithValue = activateLastWithValue;
                                         if ((depth + 1) < selectedNodeId.length) {
-                                            expanded = Number(selectedNodeId[depth + 1]) === idx && elem.items.length > 0;
+                                            nextExpanded = Number(selectedNodeId[depth + 1]) === idx && elem.items.length > 0;
                                         } else {
-                                            expanded = idx === 0 && !elem.hasValue && elem.items.length > 0;
+                                            nextExpanded = idx === 0 && !elem.hasValue && elem.items.length > 0;
                                         }
 
-                                        return <MenuItem key={elem.id} expanded={expanded} active={active}
+                                        if (!active) {
+                                            if ((depth + 2 === selectedNodeId.length) && Number(selectedNodeId[depth + 1]) === idx) {
+                                                if (elem.hasValue) {
+                                                    nextActive = true;
+                                                } else {
+                                                    nextActivateLastWithValue = true;
+                                                }
+                                            }
+
+                                            if (activateLastWithValue && idx === 0 && elem.hasValue) {
+                                                nextActive = true;
+                                                nextActivateLastWithValue = false;
+                                            }
+                                        }
+
+                                        return <MenuItem key={elem.id} expanded={nextExpanded} active={nextActive} activateLastWithValue={nextActivateLastWithValue}
                                                          depth={depth + 1} menuItem={elem} selectedNodeId={selectedNodeId} onMenuNodeSelected={this.props.onMenuNodeSelected} />
                                     }
                                 )
@@ -41,7 +59,7 @@ class MenuItem extends React.Component {
                     </li>
                    )
         } else {
-            return (<li><a className={this.props.active ? 'active' : ''} href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a></li>)
+            return (<li><a className={active ? 'active' : ''} href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a></li>)
         }
     }
 };
