@@ -33,12 +33,12 @@ class ProductsTables extends React.Component {
                         <div className="row">
                             <MainProductsTable ref='mainProductsContainer'
                                     products={this.props.mainProducts}
-                                    productQuantityChanged={this.props.productQuantityChanged} />
+                                    setProductQuantity={this.props.setProductQuantity} />
                         </div>
                         <div className="row">
                             <PosProductsTable ref='posProductsContainer'
                                     products={this.props.posProducts}
-                                    productQuantityChanged={this.props.productQuantityChanged} />
+                                    setProductQuantity={this.props.setProductQuantity} />
                         </div>
                     </div>
                )

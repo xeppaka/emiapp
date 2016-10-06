@@ -3,23 +3,6 @@ import React, { PropTypes } from 'react';
 class ProductsTableTotal extends React.Component {
     constructor(props) {
         super(props);
-        this.handleScroll = this.handleScroll.bind(this);
-        this.state = {scrollTop: 20};
-    }
-
-    componentDidMount() {
-        // window.addEventListener('scroll', this.handleScroll);
-    }
-
-    componentWillUnmount() {
-        // window.removeEventListener('scroll', this.handleScroll);
-    }
-
-    handleScroll() {
-//        let scrollTop = event.srcElement.body.scrollTop;
-//        this.setState({
-//            scrollTop: scrollTop + 20
-//        });
     }
 
     onProductsReset(event) {

@@ -11,8 +11,9 @@ import createLogger from 'redux-logger';
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-import ProductsContainer from './containers/productscontainer';
 import ProductsMenuContainer from './containers/productsmenucontainer';
+import ProductsContainer from './containers/productscontainer';
+import ProductsTotalContainer from './containers/productstotalcontainer';
 
 import emiApp from './state/emiapp';
 import { loadProducts } from './state/products/productsactions';
@@ -33,6 +34,7 @@ store.dispatch(loadProducts());
 render(
     <Provider store={store}>
         <div className="container-fluid">
+            <ProductsTotalContainer />
             <div className="row">
                 <div className="col-sm-3 nopadding">
                     <ProductsMenuContainer />
