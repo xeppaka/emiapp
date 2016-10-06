@@ -7,6 +7,22 @@ class PosProductsTable extends React.Component {
         super(props);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.props.products === nextProps.products)
+            return false;
+
+        if (this.props.products.length != nextProps.products.length)
+            return true;
+
+        let l = this.props.products.length;
+        for (let i = 0; i < l; i++) {
+            if (this.props.products[i] != nextProps.products[i])
+                return true;
+        }
+
+        return false;
+    }
+
     getVisibleAnchor() {
         let productsCount = this.props.products.length;
         let firstVisible = null;

@@ -6,6 +6,13 @@ class PosProductItem extends React.Component {
         super(props);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.props.product === nextProps.product)
+            return false;
+
+        return true;
+    }
+
     isVisible() {
         let elemTop = this.refs.vis.getBoundingClientRect().top;
         let elemBottom = this.refs.vis.getBoundingClientRect().bottom;
@@ -26,7 +33,7 @@ class PosProductItem extends React.Component {
         }
 
         return (<tr>
-            <th scope='row'>{product.idx + 1}<div ref={'vis'}></div></th>
+            <th scope='row'>{product.id + 1}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>{0}</td>

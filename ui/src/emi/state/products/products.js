@@ -26,37 +26,40 @@ function products(state = initialProductsState, action) {
                 loadingInProgress: {$set: true}
             });
         case LOAD_PRODUCTS_FINISHED_SUCCESS: {
-                let productsList = action.productsList;
-                let productsListLength = productsList.length;
+            let productsList = action.productsList;
+            let productsListLength = productsList.length;
 
-                let mainProductsIds = [];
-                let posProductsIds = [];
-                let productsById = {};
+            let mainProductsIds = [];
+            let posProductsIds = [];
+            let productsById = {};
 
-                for (let i = 0; i < productsListLength; i++) {
-                    let product = productsList[i];
-                    product.id = i;
-                    productsById[i] = product;
+            for (let i = 0; i < productsListLength; i++) {
+                let product = productsList[i];
+                product.id = i;
+                productsById[i] = product;
 
-                    if (product.type === 'MAIN') {
-                        mainProductsIds.push(i);
-                    }
-
-                    if (product.type === 'POS') {
-                        posProductsIds.push(i);
-                    }
+                if (product.type === 'MAIN') {
+                    mainProductsIds.push(i);
                 }
 
-                return update(state, {
-                    products: {
-                        mainProductsIds: {$set: mainProductsIds},
-                        posProductsIds: {$set: posProductsIds},
-                        productsById: {$set: productsById},
-                        productsSelectedById: {$set: {}}
-                    },
-                    loadingInProgress: {$set: false}
-                });
+                if (product.type === 'POS') {
+                    posProductsIds.push(i);
+                }
             }
+
+            return update(state, {
+                products: {
+                    mainProductsIds: {$set: mainProductsIds},
+                    posProductsIds: {$set: posProductsIds},
+                    productsById: {$set: productsById},
+                    productsSelectedById: {$set: {}}
+                },
+                loadingInProgress: {$set: false}
+            });
+        }
+        case SET_PRODUCT_QUANTITY: {
+
+        }
         default:
             return state;
     }

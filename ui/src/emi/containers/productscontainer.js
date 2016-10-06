@@ -14,10 +14,20 @@ const mainProductsSelector = createSelector(
         }
 );
 
+const posProductsSelector = createSelector(
+        [
+            (state) => state.products.products.posProductsIds,
+            (state) => state.products.products.productsById
+        ],
+        (posProductIds, productsById) => {
+            return posProductIds.map((id) => productsById[id]);
+        }
+);
+
 const mapStateToProps = (state) => {
     return {
         mainProducts: mainProductsSelector(state),
-        posProducts: []
+        posProducts: posProductsSelector(state)
     }
 }
 

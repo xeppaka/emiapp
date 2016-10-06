@@ -5,7 +5,7 @@ import { setMenu } from '../menu/menuactions';
 export const LOAD_PRODUCTS_STARTED = 'LOAD_PRODUCTS_STARTED';
 export const LOAD_PRODUCTS_FINISHED_SUCCESS = 'LOAD_PRODUCTS_FINISHED_SUCCESS';
 export const LOAD_PRODUCTS_FINISHED_FAIL = 'LOAD_PRODUCTS_FINISHED_FAIL';
-export const PRODUCT_QUANTITY_CHANGED = 'PRODUCT_QUANTITY_CHANGED';
+export const SET_PRODUCT_QUANTITY = 'SET_PRODUCT_QUANTITY';
 export const PRODUCTS_RESET = 'PRODUCTS_RESET';
 
 export function loadProductsStarted() {
@@ -18,6 +18,10 @@ export function loadProductsFinishedSuccess(productsList) {
 
 export function loadProductsFinishedFail() {
     return { type: LOAD_PRODUCTS_FINISHED_FAIL };
+}
+
+export function setProductQuantity(id, value) {
+    return { type: SET_PRODUCT_QUANTITY, id: id, value: value };
 }
 
 function createProductsTree(productsList) {
@@ -48,10 +52,6 @@ export function loadProducts() {
                              dispatch(setMenu(productsTree.getMenu('Product Categories')));
                           });
     };
-}
-
-export function productQuantityChanged(productType, id, quantity) {
-    return { type: PRODUCT_QUANTITY_CHANGED, productType: productType, id: id, quantity: quantity };
 }
 
 export function productsReset() {

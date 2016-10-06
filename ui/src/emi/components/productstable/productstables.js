@@ -27,19 +27,6 @@ class ProductsTables extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (this.props.mainProducts === nextProps.mainProducts && this.props.posProducts === nextProps.posProducts)
-            return false;
-
-        if (this.props.mainProducts.length != nextProps.mainProducts.length)
-            return true;
-
-        if (this.props.posProducts.length != nextProps.posProducts.length)
-            return true;
-
-        return false;
-    }
-
     render() {
         return (
                     <div className="container-fluid">
