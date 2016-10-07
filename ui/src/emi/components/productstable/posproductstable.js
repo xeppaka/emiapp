@@ -55,7 +55,7 @@ class PosProductsTable extends React.Component {
 
             productsItems.push(<PosProductItem
                             key={product.id} ref={'product' + i} product={product}
-                            productQuantityChanged={this.props.productQuantityChanged} />)
+                            setProductQuantity={this.props.setProductQuantity} />)
         }
 
         return productsItems;
@@ -70,7 +70,7 @@ class PosProductsTable extends React.Component {
                             <th style={{width:'32%'}}>Product Name</th>
                             <th style={{width:'11%'}}>Retail price<br />(without VAT, in &#8364;)</th>
                             <th style={{width:'11%'}}>Discount price<br />(-100%, without VAT, in &#8364;)</th>
-                            <th style={{width:'11%'}}>Max allowed quantity</th>
+                            <th style={{width:'11%'}}>Pieces left to order</th>
                             <th style={{width:'11%'}}>Quantity</th>
                             <th style={{width:'11%'}}>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
                             <th style={{width:'11%'}}>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>

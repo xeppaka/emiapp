@@ -1,25 +1,20 @@
-import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
+import { posAmountToOrderSelector, totalWithoutDiscountSelector, totalWithDiscountSelector } from '../state/selectors/selectors';
 import { productsReset } from '../state/products/productsactions';
 // import { createProductsOrder } from '../actions/orderactions';
 import ProductsTableTotal from '../components/productstable/productstabletotal';
 
-const totalWithoutDiscountSelector = createSelector(
-        [
-            (state) => state.products.mainProductsIds,
-            (state) => state.products.productsById
-        ],
-        (mainProductsIds, productsById) => {
-            return mainProductsIds.reduce((prev, id) => { return prev + (productsById[id].price * productsById[id].quantity); }, 0);
-        }
-);
-
 const mapStateToProps = (state) => {
+    let posAmountToOrder = posAmountToOrderSelector(state);
+    let totalWithoutDiscount = totalWithoutDiscountSelector(state);
+    let totalWithDiscount = totalWithDiscountSelector(state);
+
     return {
-        posAmountToOrder: 0,
-        totalWithoutDiscount: totalWithoutDiscountSelector(state),
-        totalWithDiscount: 0,
-        canCreateOrder: false
+        posAmountToOrder: posAmountToOrder,
+        totalWithoutDiscount: totalWithoutDiscount,
+        totalWithDiscount: totalWithDiscount,
+        canCreateOrder: posAmountToOrder >= 0 && totalWithDiscount > 0,
+        posExceeded: posAmountToOrder < 0
     }
 }
 

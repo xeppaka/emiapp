@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import { LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED_SUCCESS, SET_PRODUCT_QUANTITY } from './productsactions';
+import { LOAD_PRODUCTS_STARTED, LOAD_PRODUCTS_FINISHED_SUCCESS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET } from './productsactions';
 
 const initialProductsState = {
     mainProductsIds: [],
@@ -34,7 +34,6 @@ function products(state = initialProductsState, action) {
 
                 if (product.type === 'POS') {
                     posProductsIds.push(i);
-                    product.maxAllowedQuantity = 0;
                 }
             }
 
@@ -46,66 +45,6 @@ function products(state = initialProductsState, action) {
             });
         }
         case SET_PRODUCT_QUANTITY: {
-//                let product = state.products.productsById[action.id];
-
-//                let mainProductsList = state.mainProductsList;
-//                let posProductsList = state.posProductsList;
-//
-//                let newProduct = Object.assign({}, product, { quantity: action.quantity });
-//
-//                if (newProduct.type === 'MAIN') {
-//                    mainProductsList = [...mainProductsList.slice(0, action.id),
-//                                        newProduct,
-//                                        ...mainProductsList.slice(action.id + 1)];
-//                }
-//
-//                let mainProductsTotal = 0;
-//                let mainProductsDiscountTotal = 0;
-//                let mainProducsListLength = mainProductsList.length;
-//                for (let i = 0; i < mainProducsListLength; i++) {
-//                    let curMainProduct = mainProductsList[i];
-//                    mainProductsTotal += curMainProduct.price * curMainProduct.quantity;
-//                    mainProductsDiscountTotal += curMainProduct.price / 2 * curMainProduct.quantity;
-//                }
-//
-//                let posProductsTotal = 0;
-//                let posProductsListLength = posProductsList.length;
-//                for (let i = 0; i < posProductsListLength; i++) {
-//                    let curPosProduct = posProductsList[i];
-//                    posProductsTotal += curPosProduct.price * curPosProduct.quantity;
-//                }
-//
-//                if (newProduct.type === 'POS') {
-//                    posProductsTotal += (newProduct.quantity - product.quantity) * newProduct.price;
-//                }
-//
-//                let posAmountToOrder = mainProductsDiscountTotal * 0.06 - posProductsTotal;
-//
-//                if (posAmountToOrder < 0) {
-//                    posAmountToOrder = mainProductsDiscountTotal * 0.06;
-//                    posProductsTotal = 0;
-//
-//                    posProductsList = posProductsList.map((pp, idx) => {
-//                        return Object.assign({}, pp, {
-//                                                        maxAllowedQuantity: 0,
-//                                                        quantity: 0
-//                                                     });
-//                    });
-//                } else {
-//                    posProductsList = posProductsList.map((pp, idx) => {
-//                        return Object.assign({}, pp, {
-//                                                        maxAllowedQuantity: Math.floor(posAmountToOrder / pp.price)
-//                                                     });
-//                    });
-//                }
-//
-//                if (product.type === 'POS') {
-//                    newProduct.maxAllowedQuantity = posAmountToOrder > 0 ? Math.floor(posAmountToOrder / newProduct.price) : 0;
-//                    posProductsList[action.id] = newProduct;
-//                }
-//
-//                let totalWithoutDiscount = mainProductsTotal + posProductsTotal;
-
                 return update(state, {
                     productsById: {
                         [action.id]: {
@@ -113,6 +52,37 @@ function products(state = initialProductsState, action) {
                         }
                     }
                 });
+        }
+        case PRODUCTS_RESET: {
+            let productsById = state.productsById;
+            let newProductsById = {};
+            let mainProductsIds = state.mainProductsIds;
+            let mainProductsIdsLength = state.mainProductsIds.length;
+
+            for (let i = 0; i < mainProductsIdsLength; i++) {
+                let id = mainProductsIds[i];
+                let product = productsById[id];
+
+                newProductsById[product.id] = update(product, {
+                    quantity: {$set: 0}
+                });
+            }
+
+            let posProductsIds = state.posProductsIds;
+            let posProductsIdsLength = posProductsIds.length;
+
+            for (let i = 0; i < posProductsIdsLength; i++) {
+                let id = posProductsIds[i];
+                let product = productsById[id];
+
+                newProductsById[product.id] = update(product, {
+                    quantity: {$set: 0}
+                });
+            }
+
+            return update(state, {
+                productsById: {$set: newProductsById}
+            });
         }
         default:
             return state;

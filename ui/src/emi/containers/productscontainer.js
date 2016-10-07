@@ -1,28 +1,8 @@
-import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import ProductsTables from '../components/productstable/productstables';
 import { setProductQuantity } from '../state/products/productsactions';
 import { selectMenuNode } from '../state/menu/menuactions';
-
-const mainProductsSelector = createSelector(
-        [
-            (state) => state.products.mainProductsIds,
-            (state) => state.products.productsById
-        ],
-        (mainProductIds, productsById) => {
-            return mainProductIds.map((id) => productsById[id]);
-        }
-);
-
-const posProductsSelector = createSelector(
-        [
-            (state) => state.products.posProductsIds,
-            (state) => state.products.productsById
-        ],
-        (posProductIds, productsById) => {
-            return posProductIds.map((id) => productsById[id]);
-        }
-);
+import { mainProductsSelector, posProductsSelector } from '../state/selectors/selectors';
 
 const mapStateToProps = (state) => {
     return {

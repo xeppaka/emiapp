@@ -22,7 +22,7 @@ class PosProductItem extends React.Component {
 
     render() {
         let product = this.props.product;
-        let productQuantityChanged = this.props.productQuantityChanged;
+        let setProductQuantity = this.props.setProductQuantity;
         let calculatedPrice = Number(product.price * product.quantity).toFixed(2);
         let calculatedPriceStr = '';
         let calculatedPriceDiscountStr = '';
@@ -37,11 +37,11 @@ class PosProductItem extends React.Component {
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>{0}</td>
-            <td>{product.maxAllowedQuantity}</td>
+            <td>{product.piecesLeftToOrder}</td>
             <td>
                 <PosProductItemQuantity
                     product={product}
-                    productQuantityChanged={productQuantityChanged} />
+                    setProductQuantity={setProductQuantity} />
             </td>
             <td>{calculatedPriceStr}</td>
             <td>{calculatedPriceDiscountStr}</td>

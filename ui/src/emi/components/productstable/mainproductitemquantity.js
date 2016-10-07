@@ -5,7 +5,7 @@ class MainProductItemQuantity extends React.Component {
         super(props);
     }
 
-    renderQuantityOptions(type, id, multiplicity) {
+    renderQuantityOptions(id, multiplicity) {
         let items = [];
         items.push(<option value={0}>None</option>);
 
@@ -18,7 +18,6 @@ class MainProductItemQuantity extends React.Component {
 
     render() {
         let id = this.props.product.id;
-        let type = this.props.product.type;
         let quantity = this.props.product.quantity;
         let multiplicity = this.props.product.multiplicity;
 
@@ -27,7 +26,7 @@ class MainProductItemQuantity extends React.Component {
                         <select className='form-control form-control-sm' value={quantity}
                                 onChange={(event) => this.props.setProductQuantity(id, event.target.value)} style={{width: '65%'}}>
                             {
-                                this.renderQuantityOptions(type, id, multiplicity)
+                                this.renderQuantityOptions(id, multiplicity)
                             }
                         </select>
                    )
