@@ -71,3 +71,16 @@ export const posProductsSelector = createSelector(
             });
         }
 );
+
+export const orderSelector = createSelector(
+    [
+        (state) => state.order.email,
+        (state) => state.order.country
+    ],
+    (email, country) => {
+        return {
+            email: email,
+            country: country
+        };
+    }
+);

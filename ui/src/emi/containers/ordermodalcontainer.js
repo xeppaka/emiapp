@@ -1,20 +1,19 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import { hideModal } from '../actions/modalactions';
-import { orderEmailChanged, orderCountryChanged, submitOrder } from '../actions/orderactions';
+import { setOrderEmail, setOrderCountry, submitOrder } from '../state/order/orderactions';
 import OrderModal from '../components/order/ordermodal';
+import { orderSelector } from '../state/selectors/selectors';
 
 const mapStateToProps = (state) => {
     return {
-        order: state.order,
-        submittable: state.order.emailValid && !state.order.submitting
+        order: orderSelector
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onEmailChanged: (email) => dispatch(orderEmailChanged(email)),
-        onCountryChanged: (country) => dispatch(orderCountryChanged(country)),
+        onEmailChanged: (email) => dispatch(setOrderEmail(email)),
+        onCountryChanged: (country) => dispatch(setOrderCountry(country)),
     }
 }
 

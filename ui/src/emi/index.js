@@ -14,6 +14,7 @@ import '../../node_modules/bootstrap/scss/bootstrap.scss';
 import ProductsMenuContainer from './containers/productsmenucontainer';
 import ProductsContainer from './containers/productscontainer';
 import ProductsTotalContainer from './containers/productstotalcontainer';
+import ModalsContainer from './containers/modalscontainer';
 
 import emiApp from './state/emiapp';
 import { loadProducts } from './state/products/productsactions';
@@ -43,6 +44,7 @@ render(
                     <ProductsContainer />
                 </div>
             </div>
+            <ModalsContainer />
         </div>
     </Provider>,
     document.getElementById('applicationContainer')

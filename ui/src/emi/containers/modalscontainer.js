@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import { hideModal } from '../actions/modalactions';
 import { submitOrder } from '../actions/orderactions';
