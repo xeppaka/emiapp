@@ -33,7 +33,7 @@ class PosProductItem extends React.Component {
         }
 
         return (<tr>
-            <th scope='row'>{product.id + 1}<div ref={'vis'}></div></th>
+            <th scope='row'>{this.props.idx}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
             <td>{product.price}</td>
             <td>{0}</td>

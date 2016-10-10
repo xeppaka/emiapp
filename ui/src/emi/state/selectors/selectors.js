@@ -58,6 +58,16 @@ export const posProductsSelector = createSelector(
         [
             (state) => state.products.posProductsIds,
             (state) => state.products.productsById,
+        ],
+        (posProductIds, productsById) => {
+            return posProductIds.map((id) => productsById[id]);
+        }
+);
+
+export const posProductsWithLeftAmountSelector = createSelector(
+        [
+            (state) => state.products.posProductsIds,
+            (state) => state.products.productsById,
             posAmountToOrderSelector
         ],
         (posProductIds, productsById, posAmount) => {
@@ -72,15 +82,29 @@ export const posProductsSelector = createSelector(
         }
 );
 
+export const orderProductsSelector = createSelector(
+    [
+        mainProductsSelector,
+        posProductsSelector
+    ],
+    (mainProducts, posProducts) => mainProducts.filter(p => p.quantity > 0).concat(posProducts.filter(p => p.quantity > 0))
+);
+
 export const orderSelector = createSelector(
     [
         (state) => state.order.email,
-        (state) => state.order.country
+        (state) => state.order.country,
+        orderProductsSelector,
+        totalWithoutDiscountSelector,
+        totalWithDiscountSelector
     ],
-    (email, country) => {
+    (email, country, orderProducts, totalWithoutDiscount, totalWithDiscount) => {
         return {
             email: email,
-            country: country
+            country: country,
+            products: orderProducts,
+            totalWithoutDiscount: totalWithoutDiscount,
+            totalWithDiscount: totalWithDiscount
         };
     }
 );

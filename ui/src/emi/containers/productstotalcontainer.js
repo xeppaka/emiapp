@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { posAmountToOrderSelector, totalWithoutDiscountSelector, totalWithDiscountSelector } from '../state/selectors/selectors';
 import { productsReset } from '../state/products/productsactions';
-// import { createProductsOrder } from '../actions/orderactions';
+import { showProductsOrderModal } from '../state/modals/modalsactions';
 import ProductsTableTotal from '../components/productstable/productstabletotal';
 
 const mapStateToProps = (state) => {
@@ -20,8 +20,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        productsReset: () => dispatch(productsReset())
-        // createProductsOrder: () => dispatch(createProductsOrder())
+        productsReset: () => dispatch(productsReset()),
+        createProductsOrder: () => dispatch(showProductsOrderModal())
     }
 }
 

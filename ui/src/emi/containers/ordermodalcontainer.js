@@ -6,7 +6,7 @@ import { orderSelector } from '../state/selectors/selectors';
 
 const mapStateToProps = (state) => {
     return {
-        order: orderSelector
+        order: orderSelector(state)
     }
 }
 

@@ -26,7 +26,7 @@ class MainProductItem extends React.Component {
         let calculatedPriceWithDiscount = Number((product.price / 2 * product.quantity).toFixed(2));
 
         return (<tr>
-            <th scope="row">{product.id + 1}<div ref={'vis'}></div></th>
+            <th scope="row">{this.props.idx}<div ref={'vis'}></div></th>
             <td style={{width: '300px'}}>{product.name}</td>
             <td>{Number((product.price).toFixed(2))}</td>
             <td>{Number((product.price / 2).toFixed(2))}</td>
