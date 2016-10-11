@@ -1,16 +1,15 @@
 package com.xeppaka.emi.persistence;
 
-import com.xeppaka.ddd.persistence.CrudRepository;
+import com.xeppaka.ddd.persistence.Repository;
 import com.xeppaka.emi.entities.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by Pavel K. on 9/17/16.
  */
-@Repository
-public class ProductsJdbcRepository implements CrudRepository<String, Product> {
+@org.springframework.stereotype.Repository
+public class ProductsJdbcRepository implements Repository<String, Product> {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
