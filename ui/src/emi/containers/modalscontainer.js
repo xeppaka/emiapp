@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import { hideModal } from '../actions/modalactions';
-import { submitOrder } from '../actions/orderactions';
+import { hideModal } from '../state/modals/modalsactions';
+import { submitOrder } from '../state/order/orderactions';
 import Modals from '../components/modals/modals';
 
 const mapStateToProps = (state) => {

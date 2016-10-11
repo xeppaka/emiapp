@@ -51,7 +51,7 @@ public class Order {
         final StringBuilder tableRows = new StringBuilder();
         int idx = 0;
         for (Product p : products) {
-            tableRows.append(productToHtml(idx++, p));
+            tableRows.append(productToHtml(++idx, p));
         }
 
         final String table = MessageFormat.format("<table style=\"width:100%; border-spacing: 0px; border-top: 1px solid black; border-right: 1px solid black;\"><thead>" +

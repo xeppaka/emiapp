@@ -76,7 +76,7 @@ class OrderModal extends React.Component {
                           <div className='modal-footer'>
                             <button type='button' className='btn btn-secondary btn-sm' onClick={(event) => this.onCancel(event)}>Cancel</button>
                             <span>&nbsp;&nbsp;</span>
-                            <button type='button' className={`btn btn-primary`} disabled={!this.props.submittable} onClick={(event) => this.onSubmit(event)}>{this.props.order.submitting ? 'Submitting...' : 'Submit'}</button>
+                            <button type='button' className={`btn btn-primary`} disabled={!this.props.order.canSubmit} onClick={(event) => this.onSubmit(event)}>{this.props.order.submitting ? 'Submitting...' : 'Submit'}</button>
                           </div>
                         </div>
                       </div>

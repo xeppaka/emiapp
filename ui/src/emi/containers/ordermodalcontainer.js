@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { hideModal } from '../actions/modalactions';
+import { hideModal } from '../state/modals/modalsactions';
 import { setOrderEmail, setOrderCountry, submitOrder } from '../state/order/orderactions';
 import OrderModal from '../components/order/ordermodal';
 import { orderSelector } from '../state/selectors/selectors';

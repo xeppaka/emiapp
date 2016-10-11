@@ -90,21 +90,31 @@ export const orderProductsSelector = createSelector(
     (mainProducts, posProducts) => mainProducts.filter(p => p.quantity > 0).concat(posProducts.filter(p => p.quantity > 0))
 );
 
+const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+function isEmailValid(email) {
+    return re.test(email);
+}
+
 export const orderSelector = createSelector(
     [
-        (state) => state.order.email,
-        (state) => state.order.country,
+        (state) => state.order,
         orderProductsSelector,
         totalWithoutDiscountSelector,
         totalWithDiscountSelector
     ],
-    (email, country, orderProducts, totalWithoutDiscount, totalWithDiscount) => {
+    (order, orderProducts, totalWithoutDiscount, totalWithDiscount) => {
+        let emailValid = isEmailValid(order.email);
+        let submitting = order.submitting;
+
         return {
-            email: email,
-            country: country,
+            email: order.email,
+            emailValid: emailValid,
+            country: order.country,
             products: orderProducts,
             totalWithoutDiscount: totalWithoutDiscount,
-            totalWithDiscount: totalWithDiscount
+            totalWithDiscount: totalWithDiscount,
+            submitting: submitting,
+            canSubmit: emailValid && !submitting
         };
     }
 );
