@@ -1,8 +1,8 @@
 package com.xeppaka.emi.imp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xeppaka.emi.entities.order.Product;
-import com.xeppaka.emi.entities.ProductFeature;
+import com.xeppaka.emi.domain.order.Product;
+import com.xeppaka.emi.domain.ProductFeature;
 import com.xeppaka.emi.persistence.ProductsJdbcRepository;
 
 import java.io.IOException;

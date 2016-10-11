@@ -1,7 +1,7 @@
-package com.xeppaka.emi.entities.order;
+package com.xeppaka.emi.domain.order;
 
-import com.xeppaka.emi.entities.Country;
-import com.xeppaka.emi.entities.ProductFeature;
+import com.xeppaka.emi.domain.Country;
+import com.xeppaka.emi.domain.ProductFeature;
 import org.apache.commons.lang3.Validate;
 
 import java.text.MessageFormat;

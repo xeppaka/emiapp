@@ -1,7 +1,7 @@
 package com.xeppaka.emi.dto;
 
-import com.xeppaka.emi.entities.order.Product;
-import com.xeppaka.emi.entities.ProductFeature;
+import com.xeppaka.emi.domain.order.Product;
+import com.xeppaka.emi.domain.ProductFeature;
 
 /**
  * Created by Pavel K. on 10/3/16.

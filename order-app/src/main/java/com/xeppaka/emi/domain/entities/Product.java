@@ -1,6 +1,8 @@
-package com.xeppaka.emi.entities;
+package com.xeppaka.emi.domain.entities;
 
 import com.xeppaka.ddd.domain.Entity;
+import com.xeppaka.emi.domain.ProductFeature;
+import com.xeppaka.emi.domain.entities.Category;
 import org.apache.commons.lang3.Validate;
 
 import java.util.EnumSet;

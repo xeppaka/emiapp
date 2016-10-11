@@ -1,7 +1,7 @@
 package com.xeppaka.emi.persistence;
 
 import com.xeppaka.ddd.persistence.Repository;
-import com.xeppaka.emi.entities.Product;
+import com.xeppaka.emi.domain.entities.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 

@@ -1,6 +1,6 @@
 package com.xeppaka.emi.service;
 
-import com.xeppaka.emi.entities.order.Order;
+import com.xeppaka.emi.domain.order.Order;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;

@@ -1,7 +1,7 @@
-package com.xeppaka.emi.entities;
+package com.xeppaka.emi.domain;
 
-import com.xeppaka.emi.entities.order.Order;
-import com.xeppaka.emi.entities.order.Product;
+import com.xeppaka.emi.domain.order.Order;
+import com.xeppaka.emi.domain.order.Product;
 import org.junit.Test;
 
 import java.util.ArrayList;

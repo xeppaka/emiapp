@@ -1,4 +1,4 @@
-package com.xeppaka.emi.entities;
+package com.xeppaka.emi.domain;
 
 /**
  * Created by nnm on 10/4/16.

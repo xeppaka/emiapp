@@ -1,4 +1,4 @@
-package com.xeppaka.emi.entities;
+package com.xeppaka.emi.domain.entities;
 
 import com.xeppaka.ddd.domain.Entity;
 import org.apache.commons.lang3.Validate;

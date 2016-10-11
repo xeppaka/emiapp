@@ -1,6 +1,7 @@
-package com.xeppaka.emi.entities;
+package com.xeppaka.emi.domain.entities;
 
 import com.xeppaka.ddd.domain.Entity;
+import com.xeppaka.emi.domain.Country;
 import org.apache.commons.lang3.Validate;
 
 import java.util.UUID;
