@@ -16,7 +16,7 @@ public class ProductsJdbcRepository implements CrudRepository<String, Product> {
 
     @Override
     public <T extends Product> T save(T product) {
-        jdbcTemplate.update("INSERT INTO products (id, name, price) VALUES (?, ?, ?)", product.getId(), product.getName(), product.getPrice());
+        jdbcTemplate.update("INSERT INTO PRODUCTS (ID, NAME, PRICE, NOTE, ) VALUES (?, ?, ?)", product.getId(), product.getName(), product.getPrice());
         return product;
     }
 

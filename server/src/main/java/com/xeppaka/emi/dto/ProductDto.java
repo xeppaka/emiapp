@@ -1,7 +1,7 @@
 package com.xeppaka.emi.dto;
 
-import com.xeppaka.emi.entities.Product;
-import com.xeppaka.emi.entities.ProductType;
+import com.xeppaka.emi.entities.order.Product;
+import com.xeppaka.emi.entities.ProductFeature;
 
 /**
  * Created by Pavel K. on 10/3/16.
@@ -47,6 +47,6 @@ public class ProductDto {
     }
 
     public Product toProduct() {
-        return new Product(ProductType.valueOf(type), name, price, quantity);
+        return new Product(ProductFeature.valueOf(type), name, price, quantity);
     }
 }

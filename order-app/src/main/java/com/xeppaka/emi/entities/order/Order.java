@@ -1,5 +1,7 @@
-package com.xeppaka.emi.entities;
+package com.xeppaka.emi.entities.order;
 
+import com.xeppaka.emi.entities.Country;
+import com.xeppaka.emi.entities.ProductFeature;
 import org.apache.commons.lang3.Validate;
 
 import java.text.MessageFormat;
@@ -107,7 +109,7 @@ public class Order {
         double total = 0;
 
         for (Product p : products) {
-            if (p.getType() == ProductType.MAIN) {
+            if (p.getType() == ProductFeature.MAIN) {
                 total += p.getPrice() / 2 * p.getQuantity();
             }
         }

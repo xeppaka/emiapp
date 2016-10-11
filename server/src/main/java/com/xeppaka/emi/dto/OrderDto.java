@@ -1,7 +1,7 @@
 package com.xeppaka.emi.dto;
 
 import com.xeppaka.emi.entities.Country;
-import com.xeppaka.emi.entities.Order;
+import com.xeppaka.emi.entities.order.Order;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

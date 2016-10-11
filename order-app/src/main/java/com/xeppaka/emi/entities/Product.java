@@ -3,31 +3,32 @@ package com.xeppaka.emi.entities;
 import com.xeppaka.ddd.domain.Entity;
 import org.apache.commons.lang3.Validate;
 
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.UUID;
+
 /**
- * Created by Pavel K. on 9/17/16.
+ *
  */
 public class Product extends Entity {
-    private ProductType type;
     private String name;
     private double price;
-    private int quantity;
+    private String note;
+    private Category category;
+    private Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
 
-    public Product(ProductType type, String name, double price, int quantity) {
-        Validate.notNull(type);
-        Validate.notEmpty(name);
+    public Product(UUID id, String name, double price, String note, Category category, Set<ProductFeature> productFeatures) {
+        super(id);
+
         Validate.notNull(name);
-        Validate.notNull(price);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
-        Validate.inclusiveBetween(1, Integer.MAX_VALUE, quantity);
+        Validate.notNull(productFeatures);
 
-        this.type = type;
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
-    }
-
-    public ProductType getType() {
-        return type;
+        this.note = note;
+        this.category = category;
+        this.productFeatures.addAll(productFeatures);
     }
 
     public String getName() {
@@ -38,43 +39,21 @@ public class Product extends Entity {
         return price;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public String getNote() {
+        return note;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        Product product = (Product) o;
-
-        if (Double.compare(product.price, price) != 0) return false;
-        if (quantity != product.quantity) return false;
-        return name.equals(product.name);
-
+    public Category getCategory() {
+        return category;
     }
 
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        long temp;
-        result = 31 * result + name.hashCode();
-        temp = Double.doubleToLongBits(price);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + quantity;
-        return result;
+    public Set<ProductFeature> getFeatures() {
+        return productFeatures;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id='" + getId() + '\'' +
-                "type='" + type + '\'' +
-                "name='" + name + '\'' +
-                ", price=" + price + '\'' +
-                ", quantity=" + quantity +
-                '}';
+    public void addFeature(ProductFeature feature) {
+        Validate.notNull(feature);
+
+        productFeatures.add(feature);
     }
 }
