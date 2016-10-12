@@ -1,9 +1,8 @@
 package com.xeppaka.emi.imp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xeppaka.emi.domain.order.Product;
 import com.xeppaka.emi.domain.ProductFeature;
-import com.xeppaka.emi.persistence.ProductsJdbcRepository;
+import com.xeppaka.emi.domain.order.Product;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,16 +13,10 @@ import java.util.stream.Collectors;
  *
  */
 public class ProductsImporter {
-    private ProductsJdbcRepository productsJdbcRepository;
-
-    public ProductsImporter(ProductsJdbcRepository productsJdbcRepository) {
-        this.productsJdbcRepository = productsJdbcRepository;
-    }
-
     public void importProducts(Path jsonFile) throws IOException {
         final List<Product> products = readProducts(jsonFile);
         for (Product p : products) {
-            productsJdbcRepository.save(p);
+            // productsJdbcRepository.save(p);
         }
     }
 

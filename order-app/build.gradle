@@ -11,6 +11,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.h2database:h2:1.4.192'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.2'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.3'
     compileOnly 'javax.mail:javax.mail-api:1.5.6'
     runtime 'javax.mail:mail:1.4.7'
 

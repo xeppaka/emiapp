@@ -1,28 +1,8 @@
 package com.xeppaka.ddd.events;
 
-import org.apache.commons.lang3.Validate;
-
-import java.time.LocalDateTime;
-
 /**
- *
+ * Created by nnm on 10/12/16.
  */
-public abstract class Event<T> {
-    private LocalDateTime creationDate;
-    private T eventType;
-
-    public Event(T eventType) {
-        Validate.notNull(eventType);
-
-        this.eventType = eventType;
-        this.creationDate = LocalDateTime.now();
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public T getType() {
-        return eventType;
-    }
+public interface Event<T> {
+    T getType();
 }
