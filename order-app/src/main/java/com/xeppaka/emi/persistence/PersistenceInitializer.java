@@ -7,7 +7,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -30,7 +29,7 @@ public class PersistenceInitializer {
     private static final Logger log = LoggerFactory.getLogger(PersistenceInitializer.class);
 
     private static final String CREATE_TABLE_SCHEMA_VERSION_SQL = "CREATE TABLE SCHEMA_VERSION (ID UUID NOT NULL DEFAULT RANDOM_UUID(), CURRENT_VERSION INT NOT NULL)";
-    private static final String CREATE_TABLE_SCHEMA_HISTORY_SQL = "CREATE TABLE SCHEMA_HISTORY (ID UUID1 NOT NULL DEFAULT RANDOM_UUID(), FROM_VERSION INT NOT NULL, TO_VERSION INT NOT NULL, DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), ERROR BOOLEAN NOT NULL, ERROR_MESSAGES VARCHAR)";
+    private static final String CREATE_TABLE_SCHEMA_HISTORY_SQL = "CREATE TABLE SCHEMA_HISTORY (ID UUID NOT NULL DEFAULT RANDOM_UUID(), FROM_VERSION INT NOT NULL, TO_VERSION INT NOT NULL, DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), ERROR BOOLEAN NOT NULL, ERROR_MESSAGES VARCHAR)";
 
     private static final int SCHEMA_VERSION = 1;
 
@@ -45,7 +44,7 @@ public class PersistenceInitializer {
     public void maintainDb() throws SQLException, IOException {
         log.trace("Running database maintenance if needed. Schema version in the code: {}.", SCHEMA_VERSION);
         createMaintenanceTablesIfRequired();
-        runDbSchemaUpdate();
+        runDbSchemaUpgrade();
     }
 
     private void createMaintenanceTablesIfRequired() throws SQLException {
@@ -56,20 +55,12 @@ public class PersistenceInitializer {
                 if (!resultSet.next()) {
                     log.info("Table SCHEMA_VERSION is not found. Creating maintenance tables...");
 
-                    final DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-                    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-                    final TransactionStatus tStatus = transactionManager.getTransaction(def);
-
                     try {
                         createTableSchemaVersion();
                         createTableSchemaHistory();
-
-                        transactionManager.commit(tStatus);
-
                         log.info("Create maintenance tables finished successfully.");
                     } catch (DataAccessException e) {
                         log.error("Error occurred while creating maintenance tables.", e);
-                        transactionManager.rollback(tStatus);
                         throw e;
                     }
                 } else {
@@ -90,7 +81,7 @@ public class PersistenceInitializer {
         jdbcTemplate.execute(CREATE_TABLE_SCHEMA_HISTORY_SQL);
     }
 
-    private void runDbSchemaUpdate() throws IOException {
+    private void runDbSchemaUpgrade() throws IOException {
         log.trace("Running database schema upgrade.");
         final int nextDbSchemaVersion = queryCurrentSchemaVersion() + 1;
 
