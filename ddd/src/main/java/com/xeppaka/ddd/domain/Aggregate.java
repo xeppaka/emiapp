@@ -7,7 +7,7 @@ import java.util.Collection;
 /**
  *
  */
-public interface Aggregate {
+public interface Aggregate<ID> extends Entity<ID> {
     <E extends Event> void apply(E event);
     Collection<Event> getAndClearEvents();
 }

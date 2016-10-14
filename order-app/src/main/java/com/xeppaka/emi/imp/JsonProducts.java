@@ -1,7 +1,5 @@
 package com.xeppaka.emi.imp;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 /**

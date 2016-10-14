@@ -8,21 +8,20 @@ import java.util.UUID;
  *
  */
 public class ProductNameChanged extends EmiEvent {
-    private UUID id;
-    private String newName;
+    private final UUID productId;
+    private final String newName;
 
-    public ProductNameChanged(UUID id, String newName) {
-        super(EmiEventType.PRODUCT_NAME_CHANGED);
-
-        Validate.notNull(id);
+    public ProductNameChanged(UUID aggregateId, UUID productId, String newName) {
+        super(aggregateId, EmiEventType.PRODUCT_NAME_CHANGED);
+        Validate.notNull(productId);
         Validate.notNull(newName);
 
-        this.id = id;
+        this.productId = productId;
         this.newName = newName;
     }
 
-    public UUID getId() {
-        return id;
+    public UUID getProductId() {
+        return productId;
     }
 
     public String getNewName() {

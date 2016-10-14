@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -34,7 +35,11 @@ public class EmiWarehouseRepository implements Repository<UUID, EmiWarehouse> {
 
     @Override
     public EmiWarehouse find(UUID id) {
-        final List<String> eventDatas = jdbcTemplate.queryForList("SELECT EVENT_DATA FROM EVENTS ORDER BY SEQUENCE ASC", String.class);
+        if (!EmiWarehouse.AGGREGATE_ID.equals(id)) {
+            return null;
+        }
+
+        final List<String> eventDatas = jdbcTemplate.queryForList("SELECT EVENT_DATA FROM EVENTS WHERE AGGREGATE_ID=? ORDER BY SEQUENCE ASC", new Object[]{id}, new int[]{Types.VARCHAR}, String.class);
         final EmiWarehouse emiWarehouse = new EmiWarehouse();
 
         for (String eventData : eventDatas) {
@@ -50,13 +55,13 @@ public class EmiWarehouseRepository implements Repository<UUID, EmiWarehouse> {
     }
 
     @Override
-    public void save(EmiWarehouse warehouse) throws RepositoryException {
-        final Collection<Event> events = warehouse.getAndClearEvents();
+    public void save(EmiWarehouse emiWarehouse) throws RepositoryException {
+        final Collection<Event> events = emiWarehouse.getAndClearEvents();
 
         try {
             for (Event event : events) {
                 final String eventStr = objectMapper.writeValueAsString(event);
-                jdbcTemplate.update("INSERT INTO EVENTS(ID, EVENT_DATA) VALUES (RANDOM_UUID(), ?)", eventStr);
+                jdbcTemplate.update("INSERT INTO EVENTS(AGGREGATE_ID, EVENT_DATA) VALUES (?, ?)", emiWarehouse.getId(), eventStr);
             }
         } catch (JsonProcessingException e) {
             log.error("Error while saving repository events.", e);

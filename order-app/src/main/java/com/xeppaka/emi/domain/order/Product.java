@@ -1,13 +1,13 @@
 package com.xeppaka.emi.domain.order;
 
-import com.xeppaka.ddd.domain.Entity;
+import com.xeppaka.ddd.domain.BaseEntity;
 import com.xeppaka.emi.domain.ProductFeature;
 import org.apache.commons.lang3.Validate;
 
 /**
  * Created by Pavel K. on 9/17/16.
  */
-public class Product extends Entity {
+public class Product extends BaseEntity {
     private ProductFeature type;
     private String name;
     private double price;

@@ -1,8 +1,7 @@
 package com.xeppaka.emi.domain.entities;
 
-import com.xeppaka.ddd.domain.Entity;
+import com.xeppaka.ddd.domain.BaseEntity;
 import com.xeppaka.emi.domain.ProductFeature;
-import com.xeppaka.emi.domain.entities.Category;
 import org.apache.commons.lang3.Validate;
 
 import java.util.EnumSet;
@@ -12,24 +11,26 @@ import java.util.UUID;
 /**
  *
  */
-public class Product extends Entity {
+public class Product extends BaseEntity {
     private String name;
     private double price;
     private String note;
-    private Category category;
+    private UUID categoryId;
     private Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
 
-    public Product(UUID id, String name, double price, String note, Category category, Set<ProductFeature> productFeatures) {
+    public Product(UUID id, String name, double price, String note, UUID categoryId, Set<ProductFeature> productFeatures) {
         super(id);
 
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
+        Validate.notNull(note);
+        Validate.notNull(categoryId);
         Validate.notNull(productFeatures);
 
         this.name = name;
         this.price = price;
         this.note = note;
-        this.category = category;
+        this.categoryId = categoryId;
         this.productFeatures.addAll(productFeatures);
     }
 
@@ -45,9 +46,6 @@ public class Product extends Entity {
         return note;
     }
 
-    public Category getCategory() {
-        return category;
-    }
 
     public Set<ProductFeature> getFeatures() {
         return productFeatures;
@@ -57,5 +55,16 @@ public class Product extends Entity {
         Validate.notNull(feature);
 
         productFeatures.add(feature);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", note='" + note + '\'' +
+                ", categoryId=" + categoryId +
+                ", productFeatures=" + productFeatures +
+                '}';
     }
 }
