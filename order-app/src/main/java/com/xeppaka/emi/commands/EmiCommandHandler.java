@@ -24,12 +24,13 @@ public class EmiCommandHandler {
         Validate.notNull(command);
 
         final EmiWarehouse emiWarehouse = emiWarehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
-//        emiWarehouse.createProduct(command.getProductId(),
-//                command.getName(),
-//                command.getPrice(),
-//                command.getNote(),
-//                command.getCategory(),
-//                command.getFeatures());
+        emiWarehouse.createProduct(command.getProductId(),
+                command.getName(),
+                command.getPrice(),
+                command.getNote(),
+                command.getCategoryId(),
+                command.getFeatures(),
+                command.isVisible());
 
         try {
             emiWarehouseRepository.save(emiWarehouse);
