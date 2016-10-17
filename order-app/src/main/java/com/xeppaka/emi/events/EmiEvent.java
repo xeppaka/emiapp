@@ -11,12 +11,13 @@ import java.util.UUID;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ProductCreated.class),
-        @JsonSubTypes.Type(value = ProductRemoved.class),
-        @JsonSubTypes.Type(value = ProductNameChanged.class, name = "BASE_INSTALL")
+        @JsonSubTypes.Type(value = ProductCreated.class, name = "PRODUCT_CREATED"),
+        @JsonSubTypes.Type(value = ProductRemoved.class, name = "PRODUCT_REMOVED"),
+        @JsonSubTypes.Type(value = CategoryCreated.class, name = "CATEGORY_CREATED"),
+        @JsonSubTypes.Type(value = ProductNameChanged.class, name = "PRODUCT_NAME_CHANGED")
 })
 public abstract class EmiEvent extends BaseEvent<EmiEventType> {
-    public EmiEvent(UUID aggregateId, EmiEventType eventType) {
-        super(aggregateId, eventType);
+    public EmiEvent(EmiEventType eventType) {
+        super(eventType);
     }
 }

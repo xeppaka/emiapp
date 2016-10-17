@@ -11,8 +11,15 @@ public class ProductNameChanged extends EmiEvent {
     private final UUID productId;
     private final String newName;
 
-    public ProductNameChanged(UUID aggregateId, UUID productId, String newName) {
-        super(aggregateId, EmiEventType.PRODUCT_NAME_CHANGED);
+    private ProductNameChanged() {
+        super(EmiEventType.PRODUCT_NAME_CHANGED);
+
+        productId = null;
+        newName = null;
+    }
+
+    public ProductNameChanged(UUID productId, String newName) {
+        super(EmiEventType.PRODUCT_NAME_CHANGED);
         Validate.notNull(productId);
         Validate.notNull(newName);
 

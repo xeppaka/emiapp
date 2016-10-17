@@ -8,12 +8,19 @@ import java.util.UUID;
  *
  */
 public class CategoryCreated extends EmiEvent {
-    private UUID categoryId;
-    private String name;
-    private UUID parentCategoryId;
+    private final UUID categoryId;
+    private final String name;
+    private final UUID parentCategoryId;
 
-    public CategoryCreated(UUID aggregateId, UUID categoryId, String name, UUID parentCategoryId) {
-        super(aggregateId, EmiEventType.CATEGORY_CREATED);
+    private CategoryCreated() {
+        super(EmiEventType.CATEGORY_CREATED);
+        categoryId = null;
+        name = null;
+        parentCategoryId = null;
+    }
+
+    public CategoryCreated(UUID categoryId, String name, UUID parentCategoryId) {
+        super(EmiEventType.CATEGORY_CREATED);
         Validate.notNull(name);
         Validate.notNull(categoryId);
 

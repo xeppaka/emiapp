@@ -10,8 +10,13 @@ import java.util.UUID;
 public class CategoryRemoved extends EmiEvent {
     private final UUID categoryId;
 
-    public CategoryRemoved(UUID aggregateId, UUID categoryId) {
-        super(aggregateId, EmiEventType.CATEGORY_REMOVED);
+    private CategoryRemoved() {
+        super(EmiEventType.CATEGORY_REMOVED);
+        categoryId = null;
+    }
+
+    public CategoryRemoved(UUID categoryId) {
+        super(EmiEventType.CATEGORY_REMOVED);
         Validate.notNull(categoryId);
 
         this.categoryId = categoryId;

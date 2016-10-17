@@ -19,14 +19,24 @@ public class ProductCreated extends EmiEvent {
     private final UUID categoryId;
     private final Set<ProductFeature> features;
 
-    public ProductCreated(UUID aggregateId,
-                          UUID productId,
+    private ProductCreated() {
+        super(EmiEventType.PRODUCT_CREATED);
+
+        productId = null;
+        name = null;
+        price = 0;
+        note = null;
+        categoryId = null;
+        features = null;
+    }
+
+    public ProductCreated(UUID productId,
                           String name,
                           double price,
                           String note,
                           UUID categoryId,
                           Collection<ProductFeature> features) {
-        super(aggregateId, EmiEventType.PRODUCT_CREATED);
+        super(EmiEventType.PRODUCT_CREATED);
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);

@@ -10,8 +10,13 @@ import java.util.UUID;
 public class ProductRemoved extends EmiEvent {
     private final UUID productId;
 
-    public ProductRemoved(UUID aggregateId, UUID productId) {
-        super(aggregateId, EmiEventType.PRODUCT_REMOVED);
+    private ProductRemoved() {
+        super(EmiEventType.PRODUCT_REMOVED);
+        productId = null;
+    }
+
+    public ProductRemoved(UUID productId) {
+        super(EmiEventType.PRODUCT_REMOVED);
 
         Validate.notNull(productId);
         this.productId = productId;

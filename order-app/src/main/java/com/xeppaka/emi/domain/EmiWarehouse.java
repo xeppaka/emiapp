@@ -69,18 +69,22 @@ public class EmiWarehouse extends BaseAggregate {
         Validate.notNull(categoryId);
         Validate.notNull(features);
 
-        addEvent(new ProductCreated(getId(), productId, name, price, note, categoryId, features));
+        addEvent(new ProductCreated(productId, name, price, note, categoryId, features));
     }
 
     public void createCategory(UUID categoryId, String name) {
-        createCategory(categoryId, name, null);
+        Validate.notNull(categoryId);
+        Validate.notNull(name);
+
+        addEvent(new CategoryCreated(categoryId, name, null));
     }
 
     public void createCategory(UUID categoryId, String name, UUID parentCategoryId) {
         Validate.notNull(categoryId);
         Validate.notNull(name);
+        Validate.notNull(parentCategoryId);
 
-        addEvent(new CategoryCreated(getId(), categoryId, name, parentCategoryId));
+        addEvent(new CategoryCreated(categoryId, name, parentCategoryId));
     }
 
     @Override

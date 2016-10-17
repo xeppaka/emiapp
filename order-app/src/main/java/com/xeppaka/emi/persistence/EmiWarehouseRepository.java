@@ -47,7 +47,7 @@ public class EmiWarehouseRepository implements Repository<UUID, EmiWarehouse> {
                 final EmiEvent event = objectMapper.readValue(eventData, EmiEvent.class);
                 emiWarehouse.apply(event);
             } catch (IOException e) {
-
+                log.error("IOException", e);
             }
         }
 
