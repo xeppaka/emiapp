@@ -20,22 +20,37 @@ public class EmiCommandHandler {
     @Autowired
     private EmiWarehouseRepository emiWarehouseRepository;
 
-    public void handle(AddProductCommand command) throws CommandHandleException {
+    public void handle(CreateProductCommand command) throws CommandHandleException {
         Validate.notNull(command);
 
         final EmiWarehouse emiWarehouse = emiWarehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
-//        emiWarehouse.createProduct(command.getProductId(),
-//                command.getName(),
-//                command.getPrice(),
-//                command.getNote(),
-//                command.getCategory(),
-//                command.getFeatures());
+        emiWarehouse.createProduct(command.getProductId(),
+                command.getName(),
+                command.getPrice(),
+                command.getNote(),
+                command.getCategoryId(),
+                command.getFeatures(),
+                command.isVisible());
 
         try {
             emiWarehouseRepository.save(emiWarehouse);
         } catch (RepositoryException e) {
-            log.error("Error occurred while handling AddProductCommand command.", e);
-            throw new CommandHandleException("Error occurred while handling AddProductCommand command.", e);
+            log.error("Error occurred while handling CreateProductCommand command.", e);
+            throw new CommandHandleException("Error occurred while handling CreateProductCommand command.", e);
+        }
+    }
+
+    public void handle(CreateCategoryCommand command) throws CommandHandleException {
+        Validate.notNull(command);
+
+        final EmiWarehouse emiWarehouse = emiWarehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
+        emiWarehouse.createCategory(command.getCategoryId(), command.getName(), command.getParentCategoryId());
+
+        try {
+            emiWarehouseRepository.save(emiWarehouse);
+        } catch (RepositoryException e) {
+            log.error("Error occurred while handling CreateProductCommand command.", e);
+            throw new CommandHandleException("Error occurred while handling CreateProductCommand command.", e);
         }
     }
 }

@@ -16,7 +16,6 @@ import java.util.Properties;
 /**
  *
  */
-@Service
 public class OrderService {
     public void createOrder(Order order) throws MessagingException {
         final Properties properties = new Properties();

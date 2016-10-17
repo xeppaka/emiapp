@@ -1,7 +1,6 @@
 package com.xeppaka.emi.commands;
 
 import com.xeppaka.emi.domain.ProductFeature;
-import com.xeppaka.emi.domain.entities.Category;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
@@ -12,28 +11,29 @@ import java.util.UUID;
 /**
  *
  */
-public class AddProductCommand {
-    private UUID productId;
-    private String name;
-    private double price;
-    private String note;
-    private Category category;
-    private Set<ProductFeature> features;
+public class CreateProductCommand {
+    private final UUID productId;
+    private final String name;
+    private final double price;
+    private final String note;
+    private final UUID categoryId;
+    private final Set<ProductFeature> features;
+    private final boolean visible;
 
-    public AddProductCommand(UUID productId, String name, double price, String note, Category category, Collection<ProductFeature> features) {
+    public CreateProductCommand(UUID productId, String name, double price, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
         Validate.notNull(note);
-        Validate.notNull(category);
         Validate.notNull(features);
 
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.note = note;
-        this.category = category;
+        this.categoryId = categoryId;
         this.features = EnumSet.copyOf(features);
+        this.visible = visible;
     }
 
     public UUID getProductId() {
@@ -52,11 +52,15 @@ public class AddProductCommand {
         return note;
     }
 
-    public Category getCategory() {
-        return category;
+    public UUID getCategoryId() {
+        return categoryId;
     }
 
     public Set<ProductFeature> getFeatures() {
         return features;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 }
