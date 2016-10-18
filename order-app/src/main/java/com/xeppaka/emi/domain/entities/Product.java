@@ -24,7 +24,6 @@ public class Product extends BaseEntity {
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
         Validate.notNull(note);
-        Validate.notNull(categoryId);
         Validate.notNull(productFeatures);
 
         this.name = name;

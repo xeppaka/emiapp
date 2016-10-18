@@ -16,11 +16,8 @@ import javax.mail.MessagingException;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
-
     @RequestMapping(method = RequestMethod.POST)
     public void createOrder(@RequestBody OrderDto order) throws MessagingException {
-        orderService.createOrder(order.toOrder());
+        // orderService.createOrder(order.toOrder());
     }
 }

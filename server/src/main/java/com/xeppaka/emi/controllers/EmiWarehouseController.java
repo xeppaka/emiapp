@@ -1,8 +1,22 @@
 package com.xeppaka.emi.controllers;
 
-/**
- * Created by Pavel K. on 10/17/16.
- */
+import com.xeppaka.emi.service.EmiWarehouseDto;
+import com.xeppaka.emi.service.EmiWarehouseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
+@RestController
 public class EmiWarehouseController {
+    @Autowired
+    private EmiWarehouseService emiWarehouseService;
+
+    @RequestMapping(value = "/warehouse", method = RequestMethod.GET)
+    public EmiWarehouseDto getWarehouseState() {
+        return emiWarehouseService.getWarehouseState();
+    }
 }

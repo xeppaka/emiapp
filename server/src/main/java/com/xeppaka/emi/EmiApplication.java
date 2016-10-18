@@ -1,6 +1,7 @@
 package com.xeppaka.emi;
 
 import com.xeppaka.ddd.commands.CommandHandleException;
+import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
 import com.xeppaka.emi.domain.ProductFeature;
@@ -25,12 +26,15 @@ public class EmiApplication {
         final EmiCommandHandler emiCommandHandler = configurableApplicationContext.getBean(EmiCommandHandler.class);
 //        final EmiWarehouse emiWarehouse = warehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
 
+        final UUID categoryId = UUID.randomUUID();
+
+        emiCommandHandler.handle(new CreateCategoryCommand(categoryId, "Category 1", null));
         emiCommandHandler.handle(new CreateProductCommand(UUID.randomUUID(),
                 "Product 1",
                 10,
                 "Some note about the product.",
-                null,
-                EnumSet.noneOf(ProductFeature.class),
+                categoryId,
+                EnumSet.allOf(ProductFeature.class),
                 true));
     }
 }

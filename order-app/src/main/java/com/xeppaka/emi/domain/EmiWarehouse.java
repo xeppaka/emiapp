@@ -31,12 +31,12 @@ public class EmiWarehouse extends BaseAggregate {
         final EmiEvent emiEvent = (EmiEvent) event;
 
         switch (emiEvent.getType()) {
-            case PRODUCT_CREATED: {
+            case PRODUCT_CREATED:
                 applyProductCreated((ProductCreated) emiEvent);
-            }
-            case CATEGORY_CREATED: {
+                break;
+            case CATEGORY_CREATED:
                 applyCategoryCreated((CategoryCreated) emiEvent);
-            }
+                break;
         }
     }
 
