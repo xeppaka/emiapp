@@ -1,19 +1,17 @@
 package com.xeppaka.emi.commands;
 
 import com.xeppaka.emi.domain.ProductFeature;
-import com.xeppaka.emi.domain.entities.Category;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  *
  */
-public class AddProductCommand {
+public class CreateProductCommand {
     private final UUID productId;
     private final String name;
     private final double price;
@@ -22,7 +20,7 @@ public class AddProductCommand {
     private final Set<ProductFeature> features;
     private final boolean visible;
 
-    public AddProductCommand(UUID productId, String name, double price, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
+    public CreateProductCommand(UUID productId, String name, double price, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Double.MAX_VALUE, price);

@@ -1,10 +1,8 @@
 package com.xeppaka.emi;
 
 import com.xeppaka.ddd.commands.CommandHandleException;
-import com.xeppaka.ddd.persistence.RepositoryException;
-import com.xeppaka.emi.commands.AddProductCommand;
+import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
-import com.xeppaka.emi.domain.EmiWarehouse;
 import com.xeppaka.emi.domain.ProductFeature;
 import com.xeppaka.emi.persistence.CategoriesRepository;
 import com.xeppaka.emi.persistence.EmiWarehouseRepository;
@@ -12,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.UUID;
 
@@ -28,7 +25,7 @@ public class EmiApplication {
         final EmiCommandHandler emiCommandHandler = configurableApplicationContext.getBean(EmiCommandHandler.class);
 //        final EmiWarehouse emiWarehouse = warehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
 
-        emiCommandHandler.handle(new AddProductCommand(UUID.randomUUID(),
+        emiCommandHandler.handle(new CreateProductCommand(UUID.randomUUID(),
                 "Product 1",
                 10,
                 "Some note about the product.",

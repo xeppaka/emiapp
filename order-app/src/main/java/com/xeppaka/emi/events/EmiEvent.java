@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.xeppaka.ddd.events.BaseEvent;
 
-import java.util.UUID;
-
 /**
  * Created by Pavel K. on 10/11/16.
  */
