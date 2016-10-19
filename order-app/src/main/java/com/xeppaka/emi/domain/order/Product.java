@@ -10,15 +10,15 @@ import org.apache.commons.lang3.Validate;
 public class Product extends BaseEntity {
     private ProductFeature type;
     private String name;
-    private double price;
+    private int price;
     private int quantity;
 
-    public Product(ProductFeature type, String name, double price, int quantity) {
+    public Product(ProductFeature type, String name, int price, int quantity) {
         Validate.notNull(type);
         Validate.notEmpty(name);
         Validate.notNull(name);
         Validate.notNull(price);
-        Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
+        Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
         Validate.inclusiveBetween(1, Integer.MAX_VALUE, quantity);
 
         this.type = type;

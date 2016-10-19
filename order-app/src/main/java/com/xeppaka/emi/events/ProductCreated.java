@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ProductCreated extends EmiEvent {
     private final UUID productId;
     private final String name;
-    private final double price;
+    private final int price;
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
@@ -34,7 +34,7 @@ public class ProductCreated extends EmiEvent {
 
     public ProductCreated(UUID productId,
                           String name,
-                          double price,
+                          int price,
                           String note,
                           UUID categoryId,
                           Collection<ProductFeature> features,
@@ -42,7 +42,7 @@ public class ProductCreated extends EmiEvent {
         super(EmiEventType.PRODUCT_CREATED);
         Validate.notNull(productId);
         Validate.notNull(name);
-        Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
+        Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
         Validate.notNull(features);
 
         this.productId = productId;
@@ -62,7 +62,7 @@ public class ProductCreated extends EmiEvent {
         return name;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 

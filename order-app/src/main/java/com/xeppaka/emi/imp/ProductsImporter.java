@@ -25,7 +25,7 @@ public class ProductsImporter {
         JsonProducts jsonProducts = objectMapper.readValue(jsonFile.toFile(), JsonProducts.class);
 
         return jsonProducts.getProductsList().stream()
-                .map(jsonProduct -> new Product(ProductFeature.MAIN, jsonProduct.getName(), jsonProduct.getPrice(), 0))
+                .map(jsonProduct -> new Product(ProductFeature.MAIN, jsonProduct.getName(), (int)jsonProduct.getPrice(), 0))
                 .collect(Collectors.toList());
     }
 }

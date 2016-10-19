@@ -12,13 +12,13 @@ import java.util.UUID;
 public class ProductDto {
     private final UUID productId;
     private final String name;
-    private final double price;
+    private final int price;
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
     private final boolean visible;
 
-    public ProductDto(UUID productId, String name, double price, String note, Set<ProductFeature> productFeatures, UUID categoryId, boolean visible) {
+    public ProductDto(UUID productId, String name, int price, String note, Set<ProductFeature> productFeatures, UUID categoryId, boolean visible) {
         this.productId = productId;
         this.name = name;
         this.price = price;
@@ -36,7 +36,7 @@ public class ProductDto {
         return name;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 

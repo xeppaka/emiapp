@@ -7,7 +7,9 @@ import com.xeppaka.ddd.events.EventBus;
 import com.xeppaka.ddd.persistence.AggregateRepository;
 import com.xeppaka.ddd.persistence.RepositoryException;
 import com.xeppaka.emi.domain.EmiWarehouse;
+import com.xeppaka.emi.domain.value.UserName;
 import com.xeppaka.emi.events.EmiEvent;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class EmiWarehouseRepository implements AggregateRepository<UUID, EmiWare
 
     @Override
     public EmiWarehouse find(UUID id) {
+        Validate.notNull(id);
+
         if (!EmiWarehouse.AGGREGATE_ID.equals(id)) {
             return null;
         }
@@ -59,7 +63,10 @@ public class EmiWarehouseRepository implements AggregateRepository<UUID, EmiWare
     }
 
     @Override
-    public void save(EmiWarehouse emiWarehouse) throws RepositoryException {
+    public void save(String userName, EmiWarehouse emiWarehouse) throws RepositoryException {
+        Validate.notNull(userName);
+        Validate.notNull(emiWarehouse);
+
         final Collection<Event> events = emiWarehouse.getAndClearEvents();
 
         try {
@@ -67,7 +74,7 @@ public class EmiWarehouseRepository implements AggregateRepository<UUID, EmiWare
 
             for (Event event : events) {
                 postEvent(event);
-                saveEvent(aggregateId, event);
+                saveEvent(aggregateId, userName, event);
             }
         } catch (JsonProcessingException e) {
             log.error("Error while saving repository events.", e);
@@ -79,8 +86,8 @@ public class EmiWarehouseRepository implements AggregateRepository<UUID, EmiWare
         eventBus.post(event);
     }
 
-    private void saveEvent(UUID id, Event event) throws JsonProcessingException {
+    private void saveEvent(UUID id, String userName, Event event) throws JsonProcessingException {
         final String eventStr = objectMapper.writeValueAsString(event);
-        jdbcTemplate.update("INSERT INTO EVENTS(AGGREGATE_ID, EVENT_DATA) VALUES (?, ?)", id, eventStr);
+        jdbcTemplate.update("INSERT INTO EVENTS(AGGREGATE_ID, EVENT_DATA, USER) VALUES (?, ?, ?)", id, eventStr, userName);
     }
 }

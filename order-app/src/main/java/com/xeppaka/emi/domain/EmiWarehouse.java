@@ -2,14 +2,15 @@ package com.xeppaka.emi.domain;
 
 import com.xeppaka.ddd.domain.BaseAggregate;
 import com.xeppaka.ddd.events.Event;
+import com.xeppaka.emi.commands.CreateCategoryCommand;
+import com.xeppaka.emi.commands.CreateProductCommand;
+import com.xeppaka.emi.commands.EmiCommand;
 import com.xeppaka.emi.domain.entities.Category;
 import com.xeppaka.emi.domain.entities.Product;
 import com.xeppaka.emi.events.CategoryCreated;
 import com.xeppaka.emi.events.EmiEvent;
 import com.xeppaka.emi.events.ProductCreated;
-import org.apache.commons.lang3.Validate;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -62,20 +63,36 @@ public class EmiWarehouse extends BaseAggregate {
         }
     }
 
-    public void createProduct(UUID productId, String name, double price, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
-        Validate.notNull(productId);
-        Validate.notNull(name);
-        Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
-        Validate.notNull(features);
+    public <T extends EmiCommand> void handle(T command) {
+        if (command instanceof CreateCategoryCommand) {
+            handle((CreateCategoryCommand) command);
+        }
 
-        addEvent(new ProductCreated(productId, name, price, note, categoryId, features, visible));
+        if (command instanceof CreateProductCommand) {
+            handle((CreateProductCommand) command);
+        }
     }
 
-    public void createCategory(UUID categoryId, String name, UUID parentCategoryId) {
-        Validate.notNull(categoryId);
-        Validate.notNull(name);
+    public void handle(CreateProductCommand command) {
+        final ProductCreated productCreated = new ProductCreated(command.getProductId(),
+                command.getName(),
+                command.getPrice(),
+                command.getNote(),
+                command.getCategoryId(),
+                command.getFeatures(),
+                command.isVisible());
 
-        addEvent(new CategoryCreated(categoryId, name, parentCategoryId));
+        apply(productCreated);
+        addEvent(productCreated);
+    }
+
+    public void handle(CreateCategoryCommand command) {
+        final CategoryCreated categoryCreated = new CategoryCreated(command.getCategoryId(),
+                command.getName(),
+                command.getParentCategoryId());
+
+        apply(categoryCreated);
+        addEvent(categoryCreated);
     }
 
     @Override

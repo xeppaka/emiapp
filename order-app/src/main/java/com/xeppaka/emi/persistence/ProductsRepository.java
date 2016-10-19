@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -22,10 +21,10 @@ public class ProductsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void createProduct(UUID productId, String name, double price, String note, UUID categoryId, Set<ProductFeature> productFeatures, boolean visible) {
+    public void createProduct(UUID productId, String name, int price, String note, UUID categoryId, Set<ProductFeature> productFeatures, boolean visible) {
         Validate.notNull(productId);
         Validate.notNull(name);
-        Validate.exclusiveBetween(0, Double.MAX_VALUE, price);
+        Validate.exclusiveBetween(0, Integer.MAX_VALUE, price);
         Validate.notNull(note);
         Validate.notNull(productFeatures);
 
@@ -37,7 +36,7 @@ public class ProductsRepository {
         return jdbcTemplate.query("SELECT ID, NAME, PRICE, FEATURES, NOTE, CATEGORY, VISIBLE FROM PRODUCTS", new Object[]{}, (rs, rowNum) -> {
             final UUID productId = UUID.fromString(rs.getString("ID"));
             final String name = rs.getString("NAME");
-            final double price = rs.getDouble("PRICE");
+            final int price = rs.getInt("PRICE");
             final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
             final String note = rs.getString("NOTE");
             final String categoryIdStr = rs.getString("CATEGORY");

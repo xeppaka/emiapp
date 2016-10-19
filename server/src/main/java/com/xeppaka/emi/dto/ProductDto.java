@@ -9,7 +9,7 @@ import com.xeppaka.emi.domain.order.Product;
 public class ProductDto {
     private String type;
     private String name;
-    private double price;
+    private int price;
     private int quantity;
 
     private ProductDto() {}
@@ -30,11 +30,11 @@ public class ProductDto {
         this.name = name;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

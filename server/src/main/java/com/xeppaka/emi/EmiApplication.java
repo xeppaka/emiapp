@@ -5,6 +5,7 @@ import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
 import com.xeppaka.emi.domain.ProductFeature;
+import com.xeppaka.emi.domain.value.UserName;
 import com.xeppaka.emi.persistence.CategoriesRepository;
 import com.xeppaka.emi.persistence.EmiWarehouseRepository;
 import org.springframework.boot.SpringApplication;
@@ -26,15 +27,26 @@ public class EmiApplication {
         final EmiCommandHandler emiCommandHandler = configurableApplicationContext.getBean(EmiCommandHandler.class);
 //        final EmiWarehouse emiWarehouse = warehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
 
-        final UUID categoryId = UUID.randomUUID();
+        final UUID categoryId1 = UUID.randomUUID();
+        final UUID categoryId2 = UUID.randomUUID();
 
-        emiCommandHandler.handle(new CreateCategoryCommand(categoryId, "Category 1", null));
-        emiCommandHandler.handle(new CreateProductCommand(UUID.randomUUID(),
+        emiCommandHandler.handle(new CreateCategoryCommand(UserName.SYSTEM_USER_NAME, categoryId1, "Category 1", null));
+        emiCommandHandler.handle(new CreateCategoryCommand(UserName.SYSTEM_USER_NAME, categoryId2, "Category 2", categoryId1));
+        emiCommandHandler.handle(new CreateProductCommand(UserName.SYSTEM_USER_NAME, UUID.randomUUID(),
                 "Product 1",
                 10,
+                5,
                 "Some note about the product.",
-                categoryId,
+                categoryId2,
                 EnumSet.allOf(ProductFeature.class),
                 true));
+        emiCommandHandler.handle(new CreateProductCommand(UserName.SYSTEM_USER_NAME, UUID.randomUUID(),
+                "Product 2",
+                5,
+                7,
+                "Some note about the product sfdsdfdsfdsfdsfdsfsdf.",
+                categoryId2,
+                EnumSet.noneOf(ProductFeature.class),
+                false));
     }
 }

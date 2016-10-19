@@ -13,16 +13,16 @@ import java.util.UUID;
  */
 public class Product extends BaseEntity {
     private String name;
-    private double price;
+    private int price;
     private String note;
     private UUID categoryId;
     private Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
 
-    public Product(UUID id, String name, double price, String note, UUID categoryId, Set<ProductFeature> productFeatures) {
+    public Product(UUID id, String name, int price, String note, UUID categoryId, Set<ProductFeature> productFeatures) {
         super(id);
 
         Validate.notNull(name);
-        Validate.inclusiveBetween(0, Double.MAX_VALUE, price);
+        Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
         Validate.notNull(note);
         Validate.notNull(productFeatures);
 
@@ -37,7 +37,7 @@ public class Product extends BaseEntity {
         return name;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
