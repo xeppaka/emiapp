@@ -6,10 +6,11 @@ import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
 import com.xeppaka.emi.domain.ProductFeature;
 import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.persistence.CategoriesRepository;
-import com.xeppaka.emi.persistence.ProductsRepository;
+import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
+import com.xeppaka.emi.persistence.repositories.ProductsRepository;
 import com.xeppaka.emi.persistence.dto.CategoryDto;
 import com.xeppaka.emi.persistence.dto.ProductDto;
+import com.xeppaka.emi.service.dto.EmiWarehouseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,8 @@ public class EmiWarehouseService {
     public UUID createProduct(UserName userName, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) throws EmiWarehouseException {
         try {
             final UUID productId = UUID.randomUUID();
-            final CreateProductCommand createProductCommand = new CreateProductCommand(userName, productId, name, price, multiplicity, note, categoryId, features, visible);
-            emiCommandHandler.handle(createProductCommand);
+            final CreateProductCommand createProductCommand = new CreateProductCommand(productId, name, price, multiplicity, note, categoryId, features, visible);
+            emiCommandHandler.handle(userName, createProductCommand);
 
             return productId;
         } catch (CommandHandleException e) {
@@ -46,8 +47,8 @@ public class EmiWarehouseService {
     public UUID createCategory(UserName userName, String name, UUID parentCategoryId) throws EmiWarehouseException {
         try {
             final UUID categoryId = UUID.randomUUID();
-            final CreateCategoryCommand createCategoryCommand = new CreateCategoryCommand(userName, categoryId, name, parentCategoryId);
-            emiCommandHandler.handle(createCategoryCommand);
+            final CreateCategoryCommand createCategoryCommand = new CreateCategoryCommand(categoryId, name, parentCategoryId);
+            emiCommandHandler.handle(userName, createCategoryCommand);
 
             return categoryId;
         } catch (CommandHandleException e) {

@@ -1,4 +1,4 @@
-package com.xeppaka.emi.persistence;
+package com.xeppaka.emi.persistence.repositories;
 
 import com.xeppaka.emi.persistence.dto.CategoryDto;
 import org.apache.commons.lang3.Validate;

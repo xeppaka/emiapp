@@ -1,31 +1,69 @@
 package com.xeppaka.emi.imp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xeppaka.emi.commands.CreateCategoryCommand;
+import com.xeppaka.emi.commands.CreateProductCommand;
+import com.xeppaka.emi.domain.EmiWarehouse;
 import com.xeppaka.emi.domain.ProductFeature;
-import com.xeppaka.emi.domain.order.Product;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  *
  */
 public class ProductsImporter {
-    public void importProducts(Path jsonFile) throws IOException {
-        final List<Product> products = readProducts(jsonFile);
-        for (Product p : products) {
-            // productsJdbcRepository.save(p);
-        }
-    }
+    private static final Logger log = LoggerFactory.getLogger(ProductsImporter.class);
+    private JsonCategory rootCategory = new JsonCategory(UUID.randomUUID(), "ROOT");
 
-    private List<Product> readProducts(Path jsonFile) throws IOException {
+    private List<JsonProduct> readProducts(Path jsonFile) throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
         JsonProducts jsonProducts = objectMapper.readValue(jsonFile.toFile(), JsonProducts.class);
 
-        return jsonProducts.getProductsList().stream()
-                .map(jsonProduct -> new Product(ProductFeature.MAIN, jsonProduct.getName(), (int)jsonProduct.getPrice(), 0))
-                .collect(Collectors.toList());
+        return jsonProducts.getProductsList();
+    }
+
+    public void doImport(EmiWarehouse emiWarehouse) throws IOException {
+        List<JsonProduct> products = readProducts(Paths.get("/home/nnm/development/emi-order-app/server/products.json"));
+
+        for (JsonProduct p : products) {
+            String[] categoryNames = p.getCategory().split(":");
+            JsonCategory childCategory = rootCategory.getCategory(categoryNames);
+        }
+
+        for (JsonCategory c : rootCategory.getChildCategories()) {
+            createCategories(emiWarehouse, null, c);
+        }
+
+        for (JsonProduct p : products) {
+            log.debug("Create imported product: {}", p);
+
+            String[] cats = p.getCategory().split(":");
+            JsonCategory category = rootCategory.getCategory(cats);
+            Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
+            if (p.getType().equalsIgnoreCase("MAIN")) {
+                features.add(ProductFeature.MAIN);
+            } else if (p.getType().equalsIgnoreCase("POS")) {
+                features.add(ProductFeature.POS);
+            }
+            emiWarehouse.handle(new CreateProductCommand(UUID.randomUUID(), p.getName(), (int) (p.getPrice() * 100), p.getMultiplicity(), p.getNote(), category.getCategoryId(), features, true));
+        }
+    }
+
+    private void createCategories(EmiWarehouse emiWarehouse, UUID parentCategory, JsonCategory category) {
+        log.debug("Create imported category: {}", category);
+
+        emiWarehouse.handle(new CreateCategoryCommand(category.getCategoryId(), category.getName(), parentCategory));
+
+        for (JsonCategory c : category.getChildCategories()) {
+            createCategories(emiWarehouse, category.getCategoryId(), c);
+        }
     }
 }

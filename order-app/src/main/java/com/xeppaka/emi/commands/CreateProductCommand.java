@@ -1,7 +1,7 @@
 package com.xeppaka.emi.commands;
 
+import com.xeppaka.ddd.commands.Command;
 import com.xeppaka.emi.domain.ProductFeature;
-import com.xeppaka.emi.domain.value.UserName;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  *
  */
-public class CreateProductCommand extends EmiCommand {
+public class CreateProductCommand implements Command {
     private final UUID productId;
     private final String name;
     private final int price;
@@ -22,12 +22,11 @@ public class CreateProductCommand extends EmiCommand {
     private final Set<ProductFeature> features;
     private final boolean visible;
 
-    public CreateProductCommand(UserName userName, UUID productId, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
-        super(userName);
+    public CreateProductCommand(UUID productId, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
-        Validate.notNull(note);
+        Validate.inclusiveBetween(1, Integer.MAX_VALUE, multiplicity);
         Validate.notNull(features);
 
         this.productId = productId;

@@ -1,6 +1,6 @@
 package com.xeppaka.emi.controllers;
 
-import com.xeppaka.emi.persistence.CategoriesRepository;
+import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
 import com.xeppaka.emi.persistence.dto.CategoryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

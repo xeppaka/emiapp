@@ -1,10 +1,10 @@
 package com.xeppaka.emi.domain;
 
+import com.xeppaka.ddd.commands.Command;
 import com.xeppaka.ddd.domain.BaseAggregate;
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
-import com.xeppaka.emi.commands.EmiCommand;
 import com.xeppaka.emi.domain.entities.Category;
 import com.xeppaka.emi.domain.entities.Product;
 import com.xeppaka.emi.events.CategoryCreated;
@@ -63,7 +63,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
     }
 
-    public <T extends EmiCommand> void handle(T command) {
+    public <T extends Command> void handle(T command) {
         if (command instanceof CreateCategoryCommand) {
             handle((CreateCategoryCommand) command);
         }
@@ -77,6 +77,7 @@ public class EmiWarehouse extends BaseAggregate {
         final ProductCreated productCreated = new ProductCreated(command.getProductId(),
                 command.getName(),
                 command.getPrice(),
+                command.getMultiplicity(),
                 command.getNote(),
                 command.getCategoryId(),
                 command.getFeatures(),

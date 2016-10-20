@@ -1,4 +1,4 @@
-package com.xeppaka.emi.service;
+package com.xeppaka.emi.service.dto;
 
 import com.xeppaka.emi.persistence.dto.CategoryDto;
 import com.xeppaka.emi.persistence.dto.ProductDto;

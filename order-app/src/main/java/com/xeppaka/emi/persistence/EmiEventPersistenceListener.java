@@ -5,6 +5,8 @@ import com.xeppaka.ddd.events.EventListener;
 import com.xeppaka.emi.events.CategoryCreated;
 import com.xeppaka.emi.events.EmiEvent;
 import com.xeppaka.emi.events.ProductCreated;
+import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
+import com.xeppaka.emi.persistence.repositories.ProductsRepository;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -40,6 +42,7 @@ public class EmiEventPersistenceListener implements EventListener {
         productsRepository.createProduct(productCreated.getProductId(),
                 productCreated.getName(),
                 productCreated.getPrice(),
+                productCreated.getMultiplicity(),
                 productCreated.getNote(),
                 productCreated.getCategoryId(),
                 productCreated.getFeatures(),

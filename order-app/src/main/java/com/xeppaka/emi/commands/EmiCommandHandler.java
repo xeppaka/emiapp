@@ -1,9 +1,11 @@
 package com.xeppaka.emi.commands;
 
+import com.xeppaka.ddd.commands.Command;
 import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.ddd.persistence.RepositoryException;
 import com.xeppaka.emi.domain.EmiWarehouse;
-import com.xeppaka.emi.persistence.EmiWarehouseRepository;
+import com.xeppaka.emi.domain.value.UserName;
+import com.xeppaka.emi.persistence.repositories.EmiWarehouseRepository;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +22,15 @@ public class EmiCommandHandler {
     @Autowired
     private EmiWarehouseRepository emiWarehouseRepository;
 
-    public <T extends EmiCommand> void handle(T command) throws CommandHandleException {
+    public <T extends Command> void handle(UserName userName, T command) throws CommandHandleException {
+        Validate.notNull(userName);
         Validate.notNull(command);
 
         final EmiWarehouse emiWarehouse = emiWarehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
         emiWarehouse.handle(command);
 
         try {
-            emiWarehouseRepository.save(command.getUserNameStr(), emiWarehouse);
+            emiWarehouseRepository.save(userName.getUserName(), emiWarehouse);
         } catch (RepositoryException e) {
             log.error("Error occurred while handling command.", e);
             throw new CommandHandleException("Error occurred while handling command.", e);

@@ -1,4 +1,4 @@
-package com.xeppaka.emi.persistence;
+package com.xeppaka.emi.persistence.repositories;
 
 import com.xeppaka.emi.domain.ProductFeature;
 import com.xeppaka.emi.persistence.dto.ProductDto;
@@ -21,15 +21,14 @@ public class ProductsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void createProduct(UUID productId, String name, int price, String note, UUID categoryId, Set<ProductFeature> productFeatures, boolean visible) {
+    public void createProduct(UUID productId, String name, int price, int multiplicity, String note, UUID categoryId, Set<ProductFeature> productFeatures, boolean visible) {
         Validate.notNull(productId);
         Validate.notNull(name);
-        Validate.exclusiveBetween(0, Integer.MAX_VALUE, price);
-        Validate.notNull(note);
+        Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
         Validate.notNull(productFeatures);
 
-        jdbcTemplate.update("INSERT INTO PRODUCTS(ID, NAME, PRICE, FEATURES, NOTE, CATEGORY, VISIBLE) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                productId, name, price, productFeaturesToString(productFeatures), note, categoryId, visible);
+        jdbcTemplate.update("INSERT INTO PRODUCTS(ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, VISIBLE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+                productId, name, price, multiplicity, productFeaturesToString(productFeatures), note, categoryId, visible);
     }
 
     public List<ProductDto> getProducts() {

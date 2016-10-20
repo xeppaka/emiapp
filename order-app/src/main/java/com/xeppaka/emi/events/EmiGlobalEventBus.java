@@ -1,9 +1,9 @@
 package com.xeppaka.emi.events;
 
 import com.xeppaka.ddd.events.BaseEventBus;
-import com.xeppaka.emi.persistence.CategoriesRepository;
+import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
 import com.xeppaka.emi.persistence.EmiEventPersistenceListener;
-import com.xeppaka.emi.persistence.ProductsRepository;
+import com.xeppaka.emi.persistence.repositories.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

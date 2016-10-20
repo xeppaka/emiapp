@@ -15,6 +15,7 @@ public class ProductCreated extends EmiEvent {
     private final UUID productId;
     private final String name;
     private final int price;
+    private final int multiplicity;
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
@@ -26,6 +27,7 @@ public class ProductCreated extends EmiEvent {
         productId = null;
         name = null;
         price = 0;
+        multiplicity = 1;
         note = null;
         categoryId = null;
         features = null;
@@ -35,6 +37,7 @@ public class ProductCreated extends EmiEvent {
     public ProductCreated(UUID productId,
                           String name,
                           int price,
+                          int multiplicity,
                           String note,
                           UUID categoryId,
                           Collection<ProductFeature> features,
@@ -43,11 +46,13 @@ public class ProductCreated extends EmiEvent {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
+        Validate.inclusiveBetween(1, Integer.MAX_VALUE, multiplicity);
         Validate.notNull(features);
 
         this.productId = productId;
         this.name = name;
         this.price = price;
+        this.multiplicity = multiplicity;
         this.note = note;
         this.categoryId = categoryId;
         this.features = EnumSet.copyOf(features);
@@ -64,6 +69,10 @@ public class ProductCreated extends EmiEvent {
 
     public int getPrice() {
         return price;
+    }
+
+    public int getMultiplicity() {
+        return multiplicity;
     }
 
     public String getNote() {
