@@ -1,71 +1,135 @@
 class CategoryNode {
-    constructor(id, name) {
-        this.id = id;
+    constructor(name) {
+        this.menuId = '#';
         this.name = name;
-        this.nameToChildMap = {};
-        this.childCategories = [];
-        this.products = [];
+        this.childCategoryIds = [];
+        this.productIds = [];
     }
 
-    getProducts() {
-        return this.products;
+    setMenuId(menuId) {
+        this.menuId = menuId;
     }
 
-    getProduct(idx) {
-        return this.products[idx];
+    getProductIds() {
+        return this.productIds;
     }
 
-    addProduct(product) {
-        this.products.push(product);
+    addProductId(productId) {
+        this.productIds.push(productId);
     }
 
     getName() {
         return this.name;
     }
 
-    getChildCategories() {
-        return this.childCategories;
+    addChildCategoryId(categoryId) {
+        this.childCategoryIds.push(categoryId);
     }
 
-    getChildCategory(name) {
-        let child = this.nameToChildMap[name];
-        if (typeof child === 'undefined') {
-            let nextIdx = this.childCategories.length;
-            child = new CategoryNode(this.id + '.' + nextIdx, name);
-            this.nameToChildMap[name] = child;
-            this.childCategories.push(child);
-        }
-
-        return child;
+    getChildCategoryIds() {
+        return this.childCategoryIds;
     }
 
-    getMenu() {
-        let hasValue = this.products.length > 0;
-        let menu =
-            {
-                id: this.id,
-                text: this.name,
-                items: [],
-                hasValue: hasValue
-            };
+//    getMenu() {
+//        let hasValue = this.products.length > 0;
+//        let menu =
+//            {
+//                id: this.id,
+//                text: this.name,
+//                items: [],
+//                hasValue: hasValue
+//            };
+//
+//        let childCount = this.childCategories.length;
+//        for (let i = 0; i < childCount; i++) {
+//            let child = this.childCategories[i];
+//            let childMenu = child.getMenu();
+//            menu.items.push(childMenu);
+//        }
+//
+//        return menu;
+//    }
+}
 
-        let childCount = this.childCategories.length;
-        for (let i = 0; i < childCount; i++) {
-            let child = this.childCategories[i];
-            let childMenu = child.getMenu();
-            menu.items.push(childMenu);
-        }
-
-        return menu;
+class ProductNode {
+    constructor(productId, name, price, note, categoryId, productFeatures, visible) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+        this.note = note;
+        this.categoryId = categoryId;
+        this.productFeatures = productFeatures;
+        this.visible = visible;
     }
 }
 
-class ProductsTree {
-    constructor() {
-        this.rootCategory = new CategoryNode('', 'root');
+class CategoriesTree {
+    constructor(treeData) {
         this.allProductsList = null;
         this.mainProductsList = null;
         this.posProductsList = null;
+        this.categoryNodesById = {};
+        this.productNodesById = {};
+        this.rootCategory = this.createCategoryNodes(treeData, this.categoryNodesById, this.productNodesById);
+    }
+
+    createCategoryNodes(treeData, categoryNodesById, productNodesById) {
+        let categoryById = treeData.categoryById;
+        let productById = treeData.productById;
+        let rootCategory = new CategoryNode('root');
+
+        for (let key in categoryById) {
+            if (!categoryById.hasOwnProperty(key))
+                continue;
+
+            let category = categoryById[key];
+            categoryNodesById[key] = new CategoryNode(category.name);
+        }
+
+        for (let key in categoryById) {
+            if (!categoryById.hasOwnProperty(key))
+                continue;
+
+            let category = categoryById[key];
+            if (category.parentCategoryId !== null) {
+                let parentCategoryNode = categoryNodesById[category.parentCategoryId];
+                parentCategoryNode.addChildCategoryId(key);
+            } else {
+                rootCategory.addChildCategoryId(key);
+            }
+        }
+
+        this.setMenuId(rootCategory, categoryNodesById, '');
+
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
+                continue;
+
+            let product = productById[key];
+            productNodesById[key] = new ProductNode(product.productId,
+                product.name,
+                product.price,
+                product.note,
+                product.categoryId,
+                product.productFeatures,
+                product.visible
+            );
+
+            let categoryNode = categoryById[product.categoryId];
+            categoryNode.addProductId(key);
+        }
+
+        return rootCategory;
+    }
+
+    setMenuId(categoryNode, categoryNodesById, menuId) {
+        categoryNode.setMenuId(menuId);
+
+        let childCategoryIds = categoryNode.getChildCategoryIds();
+        let childCategoryIdsLength = childCategoryIds.length;
+        for (let i = 0; i < childCategoryIdsLength; i++) {
+            this.setMenuId(categoryNodesById[childCategoryIds[i]], categoryNodesById, menuId + '.' + i);
+        }
     }
 
     addProduct(categories, product) {
