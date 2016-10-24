@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import ProductsTree from './tree';
+import CategoriesTree from './tree';
 import { setMenu } from '../menu/menuactions';
 
 export const LOAD_PRODUCTS_STARTED = 'LOAD_PRODUCTS_STARTED';
@@ -24,32 +24,16 @@ export function setProductQuantity(id, value) {
     return { type: SET_PRODUCT_QUANTITY, id: id, value: value };
 }
 
-function createProductsTree(productsList) {
-    let productsTree = new ProductsTree();
-    let productsLength = productsList.length;
-
-    for (let i = 0; i < productsLength; i++) {
-        productsTree.addProduct(productsList[i].category, {
-            type: productsList[i].type,
-            name: productsList[i].name,
-            price: productsList[i].price,
-            multiplicity: productsList[i].multiplicity
-        });
-    }
-
-    return productsTree;
-}
-
 export function loadProducts() {
     return function(dispatch) {
         dispatch(loadProductsStarted());
 
-        return fetch('products.json')
+        return fetch('warehouse')
             .then(response => response.json())
-            .then(json => {
-                             let productsTree = createProductsTree(json.productsList);
-                             dispatch(loadProductsFinishedSuccess(productsTree.getProducts()));
-                             dispatch(setMenu(productsTree.getMenu('Product Categories')));
+            .then(warehouseData => {
+                             let categoriesTree = new CategoriesTree(warehouseData);
+                             dispatch(loadProductsFinishedSuccess(categoriesTree.getProducts()));
+                             dispatch(setMenu(categoriesTree.getMenu('Product Categories')));
                           });
     };
 }
