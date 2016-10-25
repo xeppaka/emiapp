@@ -40,5 +40,14 @@ module.exports = {
                 loader: ExtractTextPlugin.extract("style", "css!sass")
             }
         ]
+    },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8080',
+                secure: false
+            }
+        },
+        port: 10777
     }
 };

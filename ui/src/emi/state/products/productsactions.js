@@ -12,8 +12,8 @@ export function loadProductsStarted() {
     return { type: LOAD_PRODUCTS_STARTED };
 }
 
-export function loadProductsFinishedSuccess(productsList) {
-    return { type: LOAD_PRODUCTS_FINISHED_SUCCESS, productsList: productsList };
+export function loadProductsFinishedSuccess(products) {
+    return { type: LOAD_PRODUCTS_FINISHED_SUCCESS, products: products };
 }
 
 export function loadProductsFinishedFail() {
@@ -28,7 +28,7 @@ export function loadProducts() {
     return function(dispatch) {
         dispatch(loadProductsStarted());
 
-        return fetch('warehouse')
+        return fetch('/api/warehouse')
             .then(response => response.json())
             .then(warehouseData => {
                              let categoriesTree = new CategoriesTree(warehouseData);

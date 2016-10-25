@@ -15,35 +15,32 @@ function products(state = initialProductsState, action) {
                 loadingInProgress: {$set: true}
             });
         case LOAD_PRODUCTS_FINISHED_SUCCESS: {
-//            let productsList = action.productsList;
-//            let productsListLength = productsList.length;
-//
-//            let mainProductsIds = [];
-//            let posProductsIds = [];
-//            let productsById = {};
-//
-//            for (let i = 0; i < productsListLength; i++) {
-//                let product = productsList[i];
-//                product.id = i;
-//                productsById[i] = product;
-//                product.quantity = 0;
-//
-//                if (product.type === 'MAIN') {
-//                    mainProductsIds.push(i);
-//                }
-//
-//                if (product.type === 'POS') {
-//                    posProductsIds.push(i);
-//                }
-//            }
-//
-//            return update(state, {
-//                mainProductsIds: {$set: mainProductsIds},
-//                posProductsIds: {$set: posProductsIds},
-//                productsById: {$set: productsById},
-//                loadingInProgress: {$set: false}
-//            });
-            return state;
+            let productIds = action.products.productIds;
+            let productIdsLength = productIds.length;
+            let productsById = action.products.productsById;
+
+            let mainProductsIds = [];
+            let posProductsIds = [];
+
+            for (let i = 0; i < productIdsLength; i++) {
+                let product = productsById[productIds[i]];
+                // product.id = i;
+
+                if (product.isMain()) {
+                    mainProductsIds.push(productIds[i]);
+                }
+
+                if (product.isPos()) {
+                    posProductsIds.push(productIds[i]);
+                }
+            }
+
+            return update(state, {
+                mainProductsIds: {$set: mainProductsIds},
+                posProductsIds: {$set: posProductsIds},
+                productsById: {$set: productsById},
+                loadingInProgress: {$set: false}
+            });
         }
         case SET_PRODUCT_QUANTITY: {
                 return update(state, {

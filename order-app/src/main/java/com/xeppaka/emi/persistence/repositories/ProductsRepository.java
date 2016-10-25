@@ -32,17 +32,18 @@ public class ProductsRepository {
     }
 
     public List<ProductDto> getProducts() {
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, FEATURES, NOTE, CATEGORY, VISIBLE FROM PRODUCTS", new Object[]{}, (rs, rowNum) -> {
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, VISIBLE FROM PRODUCTS", new Object[]{}, (rs, rowNum) -> {
             final UUID productId = UUID.fromString(rs.getString("ID"));
             final String name = rs.getString("NAME");
             final int price = rs.getInt("PRICE");
+            final int multiplicity = rs.getInt("MULTIPLICITY");
             final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
             final String note = rs.getString("NOTE");
             final String categoryIdStr = rs.getString("CATEGORY");
             final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
             final boolean visible = rs.getBoolean("VISIBLE");
 
-            return new ProductDto(productId, name, price, note, productFeatures, categoryId, visible);
+            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, visible);
         });
     }
 

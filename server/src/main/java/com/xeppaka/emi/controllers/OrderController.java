@@ -14,7 +14,7 @@ import javax.mail.MessagingException;
  * Created by Pavel K. on 10/3/16.
  */
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/order")
 public class OrderController {
     @RequestMapping(method = RequestMethod.POST)
     public void createOrder(@RequestBody OrderDto order) throws MessagingException {

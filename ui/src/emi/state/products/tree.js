@@ -14,10 +14,6 @@ class CategoryNode {
         return this.menuId;
     }
 
-    getProductIds() {
-        return this.productIds;
-    }
-
     addProductId(productId) {
         this.productIds.push(productId);
     }
@@ -38,44 +34,54 @@ class CategoryNode {
         return this.productIds.length > 0;
     }
 
-//    getMenu() {
-//        let hasValue = this.products.length > 0;
-//        let menu =
-//            {
-//                id: this.id,
-//                text: this.name,
-//                items: [],
-//                hasValue: hasValue
-//            };
-//
-//        let childCount = this.childCategories.length;
-//        for (let i = 0; i < childCount; i++) {
-//            let child = this.childCategories[i];
-//            let childMenu = child.getMenu();
-//            menu.items.push(childMenu);
-//        }
-//
-//        return menu;
-//    }
+    getProductIds() {
+        return this.productIds;
+    }
 }
 
 class ProductNode {
-    constructor(productId, name, price, note, categoryId, productFeatures, visible) {
+    constructor(productId, name, price, multiplicity, note, categoryId, productFeatures, visible) {
         this.productId = productId;
         this.name = name;
         this.price = price;
+        this.multiplicity = multiplicity;
         this.note = note;
         this.categoryId = categoryId;
         this.productFeatures = productFeatures;
         this.visible = visible;
+        this.anchor = '';
+        this.quantity = 0;
+        this.type = 'MAIN';
+    }
+
+    isMain() {
+        return this.type === 'MAIN';
+    }
+
+    isPos() {
+        return this.type === 'POS';
+    }
+
+    setAnchor(anchor) {
+        this.anchor = anchor;
+    }
+
+    getAnchor() {
+        return this.anchor;
+    }
+
+    setCategoryAnchors(categoryAnchors) {
+        this.categoryAnchors = categoryAnchors;
+    }
+
+    setCategoryNames(categoryNames) {
+        this.categoryNames = categoryNames;
     }
 }
 
 class CategoriesTree {
     constructor(treeData) {
-        this.allProductsList = null;
-        this.mainProductsList = null;
-        this.posProductsList = null;
+        this.products = null;
         this.categoryNodesById = {};
         this.productNodesById = {};
         this.rootCategory = this.createCategoryNodes(treeData, this.categoryNodesById, this.productNodesById);
@@ -117,6 +123,7 @@ class CategoriesTree {
             productNodesById[key] = new ProductNode(product.productId,
                 product.name,
                 product.price,
+                product.multiplicity,
                 product.note,
                 product.categoryId,
                 product.productFeatures,
@@ -133,61 +140,60 @@ class CategoriesTree {
     setMenuId(categoryNode, categoryNodesById, menuId) {
         categoryNode.setMenuId(menuId);
 
-        let childCategoryIds = categoryNode.getChildCategoryIds();
-        let childCategoryIdsLength = childCategoryIds.length;
-        for (let i = 0; i < childCategoryIdsLength; i++) {
-            this.setMenuId(categoryNodesById[childCategoryIds[i]], categoryNodesById, menuId + '.' + i);
+        let childCategories = categoryNode.getChildCategoryIds().map(id => categoryNodesById[id]);
+        let childCategoriesLength = childCategories.length;
+        for (let i = 0; i < childCategoriesLength; i++) {
+            this.setMenuId(childCategories[i], categoryNodesById, menuId + '.' + i);
         }
-    }
-
-    getProduct(idx) {
-        var productsList = this.getProducts();
-        return productsList[idx];
     }
 
     getProducts() {
-        if (this.productsList === null) {
-            this.productsList = this.prepareProductsList(this.rootCategory);
+        if (this.products === null) {
+            let productIds = this.prepareProductIds(this.rootCategory);
+            this.products = {
+                productIds: productIds,
+                productsById: this.productNodesById
+            }
         }
 
-        return this.productsList;
+        return this.products;
     }
 
-    prepareProductsList(category, categoryAnchors = [], categoryNames = []) {
-//        let currProducts = category.getProducts().map(function(product) {
-//            return Object.assign({}, product, { anchor: category.id });
-//        });
-//
-//        if (currProducts.length > 0) {
-//            let currentCategoryAnchors = categoryAnchors.slice(0);
-//            currentCategoryAnchors.push(category.id);
-//            let currentCategoryNames = categoryNames.slice(0);
-//            currentCategoryNames.push(category.name);
-//
-//            currProducts[0] = Object.assign({}, currProducts[0], { categoryAnchors: currentCategoryAnchors, categoryNames: currentCategoryNames });
-//
-//            while (categoryAnchors.length > 0) {
-//                categoryAnchors.pop();
-//            }
-//
-//            while (categoryNames.length > 0) {
-//                categoryNames.pop();
-//            }
-//        } else {
-//            categoryAnchors.push(category.id);
-//            // categoryNames.push(category.name);
-//        }
-//
-//        let childCategories = category.getChildCategories();
-//        let childCategoriesLength = childCategories.length;
-//
-//        for (let i = 0; i < childCategoriesLength; i++) {
-//            currProducts = currProducts.concat(this.prepareProductsList(childCategories[i], categoryAnchors, categoryNames));
-//        }
-//
-//        return currProducts;
+    prepareProductIds(category, categoryAnchors = [], categoryNames = []) {
+        let currProductIds = category.getProductIds();
+        let anchor = category.getMenuId();
+        currProductIds.forEach(id => this.productNodesById[id].setAnchor(anchor));
 
-        return [];
+        if (currProductIds.length > 0) {
+            let currentCategoryAnchors = categoryAnchors.slice(0);
+            currentCategoryAnchors.push(category.getMenuId());
+            let currentCategoryNames = categoryNames.slice(0);
+            currentCategoryNames.push(category.name);
+
+            let productZero = this.productNodesById[currProductIds[0]];
+            productZero.setCategoryAnchors(currentCategoryAnchors);
+            productZero.setCategoryNames(currentCategoryNames);
+
+            while (categoryAnchors.length > 0) {
+                categoryAnchors.pop();
+            }
+
+            while (categoryNames.length > 0) {
+                categoryNames.pop();
+            }
+        } else {
+            categoryAnchors.push(category.getMenuId());
+            // categoryNames.push(category.name);
+        }
+
+        let childCategories = category.getChildCategoryIds().map(id => this.categoryNodesById[id]);
+        let childCategoriesLength = childCategories.length;
+
+        for (let i = 0; i < childCategoriesLength; i++) {
+            currProductIds = currProductIds.concat(this.prepareProductIds(childCategories[i], categoryAnchors, categoryNames));
+        }
+
+        return currProductIds;
     }
 
     getMenu(rootName) {

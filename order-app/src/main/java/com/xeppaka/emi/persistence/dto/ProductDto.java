@@ -13,15 +13,17 @@ public class ProductDto {
     private final UUID productId;
     private final String name;
     private final int price;
+    private final int multiplicity;
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
     private final boolean visible;
 
-    public ProductDto(UUID productId, String name, int price, String note, Set<ProductFeature> productFeatures, UUID categoryId, boolean visible) {
+    public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> productFeatures, UUID categoryId, boolean visible) {
         this.productId = productId;
         this.name = name;
         this.price = price;
+        this.multiplicity = multiplicity;
         this.note = note;
         this.productFeatures.addAll(productFeatures);
         this.categoryId = categoryId;
@@ -38,6 +40,10 @@ public class ProductDto {
 
     public int getPrice() {
         return price;
+    }
+
+    public int getMultiplicity() {
+        return multiplicity;
     }
 
     public String getNote() {

@@ -13,11 +13,12 @@ import java.util.List;
  *
  */
 @RestController
+@RequestMapping("/api/categories")
 public class CategoriesController {
     @Autowired
     private CategoriesRepository categoriesRepository;
 
-    @RequestMapping(value = "/categories", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<CategoryDto> getCategories() {
         return categoriesRepository.getCategories();
     }

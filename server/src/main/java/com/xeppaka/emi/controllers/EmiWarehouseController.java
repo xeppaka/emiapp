@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
+@RequestMapping("/api/warehouse")
 public class EmiWarehouseController {
     @Autowired
     private EmiWarehouseService emiWarehouseService;
 
-    @RequestMapping(value = "/warehouse", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public EmiWarehouseDto getWarehouseState() {
         return emiWarehouseService.getWarehouseState();
     }
