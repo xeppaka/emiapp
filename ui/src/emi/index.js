@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import { Router, Route, browserHistory } from 'react-router';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
@@ -34,18 +35,20 @@ store.dispatch(loadProducts());
 
 render(
     <Provider store={store}>
-        <div className="container-fluid">
-            <ProductsTotalContainer />
-            <div className="row">
-                <div className="col-sm-3 nopadding">
-                    <ProductsMenuContainer />
+        <Router>
+            <div className="container-fluid">
+                <ProductsTotalContainer />
+                <div className="row">
+                    <div className="col-sm-3 nopadding">
+                        <ProductsMenuContainer />
+                    </div>
+                    <div className="col-sm-9">
+                        <ProductsContainer />
+                    </div>
                 </div>
-                <div className="col-sm-9">
-                    <ProductsContainer />
-                </div>
+                <ModalsContainer />
             </div>
-            <ModalsContainer />
-        </div>
+        </Router>
     </Provider>,
     document.getElementById('applicationContainer')
 );
