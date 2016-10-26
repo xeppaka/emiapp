@@ -24,13 +24,12 @@ function products(state = initialProductsState, action) {
 
             for (let i = 0; i < productIdsLength; i++) {
                 let product = productsById[productIds[i]];
-                // product.id = i;
 
-                if (product.isMain()) {
+                if (product.type === 'MAIN') {
                     mainProductsIds.push(productIds[i]);
                 }
 
-                if (product.isPos()) {
+                if (product.type === 'POS') {
                     posProductsIds.push(productIds[i]);
                 }
             }
@@ -45,7 +44,7 @@ function products(state = initialProductsState, action) {
         case SET_PRODUCT_QUANTITY: {
                 return update(state, {
                     productsById: {
-                        [action.id]: {
+                        [action.productId]: {
                             quantity: {$set: action.value}
                         }
                     }
@@ -61,9 +60,13 @@ function products(state = initialProductsState, action) {
                 let id = mainProductsIds[i];
                 let product = productsById[id];
 
-                newProductsById[product.id] = update(product, {
-                    quantity: {$set: 0}
-                });
+                if (product.quantity !== 0) {
+                    newProductsById[product.productId] = update(product, {
+                        quantity: {$set: 0}
+                    });
+                } else {
+                    newProductsById[product.productId] = product;
+                }
             }
 
             let posProductsIds = state.posProductsIds;
@@ -73,9 +76,13 @@ function products(state = initialProductsState, action) {
                 let id = posProductsIds[i];
                 let product = productsById[id];
 
-                newProductsById[product.id] = update(product, {
-                    quantity: {$set: 0}
-                });
+                if (product.quantity !== 0) {
+                    newProductsById[product.productId] = update(product, {
+                        quantity: {$set: 0}
+                    });
+                } else {
+                    newProductsById[product.productId] = product;
+                }
             }
 
             return update(state, {

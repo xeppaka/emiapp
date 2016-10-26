@@ -22,14 +22,14 @@ class MainProductItem extends React.Component {
 
     render() {
         let product = this.props.product;
-        let calculatedPrice = Number((product.price * product.quantity).toFixed(2));
-        let calculatedPriceWithDiscount = Number((product.price / 2 * product.quantity).toFixed(2));
+        let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(2));
+        let calculatedPriceWithDiscount = Number((product.price / 200 * product.quantity).toFixed(2));
 
         return (<tr>
             <th scope="row">{this.props.idx}<div ref={'vis'}></div></th>
             <td style={{width: '300px'}}>{product.name}</td>
-            <td>{Number((product.price).toFixed(2))}</td>
-            <td>{Number((product.price / 2).toFixed(2))}</td>
+            <td>{Number((product.price / 100).toFixed(2))}</td>
+            <td>{Number((product.price / 200).toFixed(2))}</td>
             <td>
                 <MainProductItemQuantity
                     product={product}

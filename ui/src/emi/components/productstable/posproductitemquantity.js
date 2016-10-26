@@ -5,7 +5,7 @@ class PosProductItemQuantity extends React.Component {
         super(props);
     }
 
-    renderQuantityOptions(id, multiplicity) {
+    renderQuantityOptions(multiplicity) {
         let items = [];
         items.push(<option value={0}>None</option>);
 
@@ -17,7 +17,7 @@ class PosProductItemQuantity extends React.Component {
     }
 
     render() {
-        let id = this.props.product.id;
+        let productId = this.props.product.productId;
         let quantity = this.props.product.quantity;
         let multiplicity = this.props.product.multiplicity;
         let piecesLeftToOrder = this.props.product.piecesLeftToOrder;
@@ -25,9 +25,9 @@ class PosProductItemQuantity extends React.Component {
         if (multiplicity > 1) {
             return (
                         <select className='form-control form-control-sm' value={quantity}
-                                onChange={(event) => this.setProductQuantity(id, event.target.value)} style={{width: '65%'}}>
+                                onChange={(event) => this.setProductQuantity(productId, event.target.value)} style={{width: '65%'}}>
                             {
-                                this.renderQuantityOptions(id, multiplicity)
+                                this.renderQuantityOptions(multiplicity)
                             }
                         </select>
                    )
@@ -38,7 +38,7 @@ class PosProductItemQuantity extends React.Component {
                                         let v = Number(event.target.value);
                                         if (!isNaN(v) && v >= 0 &&
                                                 ( (v <= quantity + piecesLeftToOrder) || ((v > quantity + piecesLeftToOrder) && v < quantity) )) {
-                                            this.props.setProductQuantity(id, v);
+                                            this.props.setProductQuantity(productId, v);
                                         }
                                     }
                                 } style={{width: '65%'}} />

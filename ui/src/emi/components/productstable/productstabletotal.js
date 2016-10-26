@@ -36,10 +36,10 @@ class ProductsTableTotal extends React.Component {
                         {
                             this.props.posExceeded ?
                                 (<li className='nav-item' data-toggle='tooltip' data-placement='top' title='The total price for POS exceeded total price bla bla'><a className='nav-link active'>POS amount to order: <span style={{fontSize: '120%', color: '#e72626'}}>{this.props.posAmountToOrder.toFixed(2)}&#8364;</span></a></li>) :
-                                (<li className='nav-item'><a className='nav-link active'>POS amount to order: <span style={{fontSize: '120%'}}>{this.props.posAmountToOrder.toFixed(2)}&#8364;</span></a></li>)
+                                (<li className='nav-item'><a className='nav-link active'>POS amount to order: <span style={{fontSize: '120%'}}>{Number((this.props.posAmountToOrder / 100).toFixed(2))}&#8364;</span></a></li>)
                         }
-                        <li className='nav-item'><a className='nav-link active'>Total without discount: <span style={{fontSize: '120%'}}>{this.props.totalWithoutDiscount.toFixed(2)}&#8364;</span></a></li>
-                        <li className='nav-item'><a className='nav-link active'>Total with discount: <span style={{fontWeight: 'bold', fontSize: '120%'}}>{this.props.totalWithDiscount.toFixed(2)}&#8364;</span></a></li>
+                        <li className='nav-item'><a className='nav-link active'>Total without discount: <span style={{fontSize: '120%'}}>{Number((this.props.totalWithoutDiscount / 100).toFixed(2))}&#8364;</span></a></li>
+                        <li className='nav-item'><a className='nav-link active'>Total with discount: <span style={{fontWeight: 'bold', fontSize: '120%'}}>{Number((this.props.totalWithDiscount / 100).toFixed(2))}&#8364;</span></a></li>
                         <li className='nav-item'><a className='btn btn-secondary' href='#' onClick={(event) => this.onProductsReset(event)}>Reset</a></li>
                         <li className='nav-item'><button type='button' disabled={!this.props.canCreateOrder} className='btn btn-primary' onClick={(event) => this.onCreateProductsOrder(event)}>Create order&hellip;</button></li>
                     </ul>

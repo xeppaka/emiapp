@@ -13,11 +13,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setProductQuantity: (id, value) => {
-            dispatch(setProductQuantity(id, value));
+        setProductQuantity: (productId, value) => {
+            dispatch(setProductQuantity(productId, value));
         },
-        setProductCategory: (id) => {
-            dispatch(selectMenuNode(id));
+        scrolledToProduct: (productId) => {
+            dispatch(selectMenuNode(productId));
         }
     }
 }

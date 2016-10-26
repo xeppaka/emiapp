@@ -20,8 +20,8 @@ export function loadProductsFinishedFail() {
     return { type: LOAD_PRODUCTS_FINISHED_FAIL };
 }
 
-export function setProductQuantity(id, value) {
-    return { type: SET_PRODUCT_QUANTITY, id: id, value: value };
+export function setProductQuantity(productId, value) {
+    return { type: SET_PRODUCT_QUANTITY, productId: productId, value: value };
 }
 
 export function loadProducts() {

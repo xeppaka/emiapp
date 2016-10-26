@@ -23,7 +23,7 @@ class ProductsTables extends React.Component {
         }
 
         if (anchor !== null) {
-            this.props.setProductCategory(anchor);
+            this.props.scrolledToProduct(anchor);
         }
     }
 

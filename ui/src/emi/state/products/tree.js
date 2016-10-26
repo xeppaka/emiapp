@@ -4,6 +4,7 @@ class CategoryNode {
         this.name = name;
         this.childCategoryIds = [];
         this.productIds = [];
+        this.posCategory = false;
     }
 
     setMenuId(menuId) {
@@ -12,6 +13,14 @@ class CategoryNode {
 
     getMenuId() {
         return this.menuId;
+    }
+
+    setPosCategory(val) {
+        this.posCategory = val;
+    }
+
+    isPosCategory() {
+        return this.posCategory;
     }
 
     addProductId(productId) {
@@ -39,46 +48,6 @@ class CategoryNode {
     }
 }
 
-class ProductNode {
-    constructor(productId, name, price, multiplicity, note, categoryId, productFeatures, visible) {
-        this.productId = productId;
-        this.name = name;
-        this.price = price;
-        this.multiplicity = multiplicity;
-        this.note = note;
-        this.categoryId = categoryId;
-        this.productFeatures = productFeatures;
-        this.visible = visible;
-        this.anchor = '';
-        this.quantity = 0;
-        this.type = 'MAIN';
-    }
-
-    isMain() {
-        return this.type === 'MAIN';
-    }
-
-    isPos() {
-        return this.type === 'POS';
-    }
-
-    setAnchor(anchor) {
-        this.anchor = anchor;
-    }
-
-    getAnchor() {
-        return this.anchor;
-    }
-
-    setCategoryAnchors(categoryAnchors) {
-        this.categoryAnchors = categoryAnchors;
-    }
-
-    setCategoryNames(categoryNames) {
-        this.categoryNames = categoryNames;
-    }
-}
-
 class CategoriesTree {
     constructor(treeData) {
         this.products = null;
@@ -97,9 +66,11 @@ class CategoriesTree {
                 continue;
 
             let category = categoryById[key];
-            categoryNodesById[key] = new CategoryNode(category.name);
+            let categoryNode = new CategoryNode(category.name);
+            categoryNodesById[key] = categoryNode;
         }
 
+        let posCategoryId = null;
         for (let key in categoryById) {
             if (!categoryById.hasOwnProperty(key))
                 continue;
@@ -111,31 +82,51 @@ class CategoriesTree {
             } else {
                 rootCategory.addChildCategoryId(key);
             }
+
+            if (category.name === 'POS') {
+                posCategoryId = category.categoryId;
+            }
         }
 
         this.setMenuId(rootCategory, categoryNodesById, '');
+        if (posCategoryId !== null) {
+            this.setPosCategory(categoryNodesById[posCategoryId]);
+        }
 
         for (let key in productById) {
             if (!productById.hasOwnProperty(key))
                 continue;
 
             let product = productById[key];
-            productNodesById[key] = new ProductNode(product.productId,
-                product.name,
-                product.price,
-                product.multiplicity,
-                product.note,
-                product.categoryId,
-                product.productFeatures,
-                product.visible
-            );
+            let productNode = {
+                                    productId: product.productId,
+                                    name: product.name,
+                                    price: product.price,
+                                    multiplicity: product.multiplicity,
+                                    note: product.note,
+                                    categoryId: product.categoryId,
+                                    productFeatures: product.productFeatures,
+                                    visible: product.visible,
+                                    anchor: '',
+                                    quantity: 0,
+                                    type: null
+                              };
+            productNodesById[key] = productNode;
 
             let categoryNode = this.categoryNodesById[product.categoryId];
             categoryNode.addProductId(key);
+
+            if (categoryNode.isPosCategory()) {
+                productNode.type = 'POS';
+            } else {
+                productNode.type = 'MAIN';
+            }
         }
 
         return rootCategory;
     }
+
+
 
     setMenuId(categoryNode, categoryNodesById, menuId) {
         categoryNode.setMenuId(menuId);
@@ -144,6 +135,18 @@ class CategoriesTree {
         let childCategoriesLength = childCategories.length;
         for (let i = 0; i < childCategoriesLength; i++) {
             this.setMenuId(childCategories[i], categoryNodesById, menuId + '.' + i);
+        }
+    }
+
+    setPosCategory(categoryNode) {
+        categoryNode.setPosCategory(true);
+
+        let childCategoryIds = categoryNode.getChildCategoryIds();
+        let childCategoryIdsLength = childCategoryIds.length;
+
+        for (let i = 0; i < childCategoryIdsLength; i++) {
+            let childCategory = this.categoryNodesById[childCategoryIds[i]];
+            this.setPosCategory(childCategory);
         }
     }
 
@@ -162,7 +165,7 @@ class CategoriesTree {
     prepareProductIds(category, categoryAnchors = [], categoryNames = []) {
         let currProductIds = category.getProductIds();
         let anchor = category.getMenuId();
-        currProductIds.forEach(id => this.productNodesById[id].setAnchor(anchor));
+        currProductIds.forEach(id => this.productNodesById[id].anchor = anchor);
 
         if (currProductIds.length > 0) {
             let currentCategoryAnchors = categoryAnchors.slice(0);
@@ -171,8 +174,8 @@ class CategoriesTree {
             currentCategoryNames.push(category.name);
 
             let productZero = this.productNodesById[currProductIds[0]];
-            productZero.setCategoryAnchors(currentCategoryAnchors);
-            productZero.setCategoryNames(currentCategoryNames);
+            productZero.categoryAnchors = currentCategoryAnchors;
+            productZero.categoryNames = currentCategoryNames;
 
             while (categoryAnchors.length > 0) {
                 categoryAnchors.pop();

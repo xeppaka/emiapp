@@ -66,8 +66,8 @@ class OrderModal extends React.Component {
                                 <div className='row'>
                                     <nav className='navbar'>
                                         <ul className='nav navbar-nav pull-xs-right'>
-                                            <li className='nav-item'><a className='nav-link active'>Total without discount: <span style={{fontSize: '120%'}}>{this.props.order.totalWithoutDiscount.toFixed(2)}&#8364;</span></a></li>
-                                            <li className='nav-item'><a className='nav-link active'>Total with discount: <span style={{fontWeight: 'bold', fontSize: '120%'}}>{this.props.order.totalWithDiscount.toFixed(2)}&#8364;</span></a></li>
+                                            <li className='nav-item'><a className='nav-link active'>Total without discount: <span style={{fontSize: '120%'}}>{Number((this.props.order.totalWithoutDiscount / 100).toFixed(2))}&#8364;</span></a></li>
+                                            <li className='nav-item'><a className='nav-link active'>Total with discount: <span style={{fontWeight: 'bold', fontSize: '120%'}}>{Number((this.props.order.totalWithDiscount / 100).toFixed(2))}&#8364;</span></a></li>
                                         </ul>
                                     </nav>
                                 </div>
