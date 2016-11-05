@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import { Router, Route, Link, browserHistory } from 'react-router';
 
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -11,10 +11,8 @@ import createLogger from 'redux-logger';
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-import ProductsMenuContainer from './containers/productsmenucontainer';
-import ProductsContainer from './containers/productscontainer';
-import ProductsTotalContainer from './containers/productstotalcontainer';
-import ModalsContainer from './containers/modalscontainer';
+import CustomerMain from './components/customermain';
+import AdminMain from './components/admin/adminmain';
 
 import emiApp from './state/emiapp';
 import { loadProducts } from './state/products/productsactions';
@@ -34,18 +32,10 @@ store.dispatch(loadProducts());
 
 render(
     <Provider store={store}>
-        <div className="container-fluid">
-            <ProductsTotalContainer />
-            <div className="row">
-                <div className="col-sm-3 nopadding">
-                    <ProductsMenuContainer />
-                </div>
-                <div className="col-sm-9">
-                    <ProductsContainer />
-                </div>
-            </div>
-            <ModalsContainer />
-        </div>
+        <Router>
+            <Route path="/" component={CustomerMain} />
+            <Route path="/admin" component={AdminMain} />
+        </Router>
     </Provider>,
     document.getElementById('applicationContainer')
 );

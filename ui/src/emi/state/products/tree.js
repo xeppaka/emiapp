@@ -126,8 +126,6 @@ class CategoriesTree {
         return rootCategory;
     }
 
-
-
     setMenuId(categoryNode, categoryNodesById, menuId) {
         categoryNode.setMenuId(menuId);
 

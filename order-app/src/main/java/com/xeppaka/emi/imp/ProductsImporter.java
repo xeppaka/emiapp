@@ -31,7 +31,7 @@ public class ProductsImporter {
     }
 
     public void doImport(EmiWarehouse emiWarehouse) throws IOException {
-        List<JsonProduct> products = readProducts(Paths.get("/home/nnm/development/emi-order-app/server/products.json"));
+        List<JsonProduct> products = readProducts(Paths.get("/home/nnm/development/emi-app/server/products.json"));
 
         for (JsonProduct p : products) {
             String[] categoryNames = p.getCategory().split(":");
