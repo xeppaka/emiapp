@@ -1,9 +1,10 @@
 import 'babel-polyfill';
 import React, { Component, PropTypes } from 'react';
-import { Router, Route, Link, browserHistory } from 'react-router';
+import ReactDOM from 'react-dom';
 
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import { Router, Route, browserHistory } from 'react-router';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
@@ -11,8 +12,10 @@ import createLogger from 'redux-logger';
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-import CustomerMain from './components/customermain';
-import AdminMain from './components/admin/adminmain';
+import ProductsMenuContainer from './containers/productsmenucontainer';
+import ProductsContainer from './containers/productscontainer';
+import ProductsTotalContainer from './containers/productstotalcontainer';
+import ModalsContainer from './containers/modalscontainer';
 
 import emiApp from './state/emiapp';
 import { loadProducts } from './state/products/productsactions';
@@ -33,8 +36,18 @@ store.dispatch(loadProducts());
 render(
     <Provider store={store}>
         <Router>
-            <Route path="/" component={CustomerMain} />
-            <Route path="/admin" component={AdminMain} />
+            <div className="container-fluid">
+                <ProductsTotalContainer />
+                <div className="row">
+                    <div className="col-sm-3 nopadding">
+                        <ProductsMenuContainer />
+                    </div>
+                    <div className="col-sm-9">
+                        <ProductsContainer />
+                    </div>
+                </div>
+                <ModalsContainer />
+            </div>
         </Router>
     </Provider>,
     document.getElementById('applicationContainer')
