@@ -1,10 +1,11 @@
 import { connect } from 'react-redux';
 import { selectMenuNode } from '../state/menu/menuactions';
+import { menuSelector } from '../state/selectors/menuselector';
 import ProductsMenu from '../components/productsmenu/productsmenu';
 
 const mapStateToProps = (state) => {
     return {
-        menu: state.menu.menu,
+        menu: menuSelector(state),
         selectedNodeId: state.menu.selectedNodeId.split('.')
     }
 }

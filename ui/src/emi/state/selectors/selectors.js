@@ -4,7 +4,7 @@ import update from 'react-addons-update';
 export const mainTotalWithoutDiscountSelector = createSelector(
     [
         (state) => state.products.mainProductsIds,
-        (state) => state.products.productsById
+        (state) => state.products.productById
     ],
     (mainProductsIds, productsById) => {
         return mainProductsIds.reduce((prev, id) => { return prev + (productsById[id].price * productsById[id].quantity); }, 0);
@@ -14,7 +14,7 @@ export const mainTotalWithoutDiscountSelector = createSelector(
 export const posTotalWithoutDiscountSelector = createSelector(
     [
         (state) => state.products.posProductsIds,
-        (state) => state.products.productsById
+        (state) => state.products.productById
     ],
     (posProductsIds, productsById) => {
         return posProductsIds.reduce((prev, id) => { return prev + (productsById[id].price * productsById[id].quantity); }, 0);
@@ -47,7 +47,7 @@ export const posAmountToOrderSelector = createSelector(
 export const mainProductsSelector = createSelector(
         [
             (state) => state.products.mainProductsIds,
-            (state) => state.products.productsById
+            (state) => state.products.productById
         ],
         (mainProductIds, productsById) => {
             return mainProductIds.map((id) => productsById[id]);
@@ -57,7 +57,7 @@ export const mainProductsSelector = createSelector(
 export const posProductsSelector = createSelector(
         [
             (state) => state.products.posProductsIds,
-            (state) => state.products.productsById,
+            (state) => state.products.productById,
         ],
         (posProductIds, productsById) => {
             return posProductIds.map((id) => productsById[id]);
@@ -67,7 +67,7 @@ export const posProductsSelector = createSelector(
 export const posProductsWithLeftAmountSelector = createSelector(
         [
             (state) => state.products.posProductsIds,
-            (state) => state.products.productsById,
+            (state) => state.products.productById,
             posAmountToOrderSelector
         ],
         (posProductIds, productsById, posAmount) => {
