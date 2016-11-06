@@ -10,7 +10,7 @@ function createMenuNodeRecursively(categoryNode, tcategoryById, id) {
     };
 
     let childIds = categoryNode.childCategoryIds;
-    let l = categoryNode.childCategoryIds.lentgh;
+    let l = childIds.length;
 
     for (let i = 0; i < l; i++) {
         menuNode.items.push(createMenuNodeRecursively(tcategoryById[childIds[i]], tcategoryById, id + '.' + i));

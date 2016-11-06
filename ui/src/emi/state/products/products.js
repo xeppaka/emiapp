@@ -1,15 +1,40 @@
 import update from 'react-addons-update';
 import { SET_PRODUCTS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET } from './productsactions';
+import { SET_WAREHOUSE } from '../warehouse/warehouseactions';
 
 const initialProductsState = {
     productById: {}
 };
 
+function setInitialProductValues(productById) {
+    for (let key in productById) {
+        if (!productById.hasOwnProperty(key))
+            continue;
+
+        let product = productById[key];
+        product.quantity = 0;
+
+        if (product.productFeatures.indexOf('MAIN') !== -1) {
+            product.type = 'MAIN';
+        } else if (product.productFeatures.indexOf('POS') !== -1) {
+            product.type = 'POS';
+        } else {
+            product.type = 'UNKNOWN';
+        }
+    }
+
+    return productById;
+}
+
 function products(state = initialProductsState, action) {
     switch (action.type) {
+        case SET_WAREHOUSE:
+            return update(state, {
+                productById: {$set: setInitialProductValues(action.warehouse.productById)}
+            });
         case SET_PRODUCTS:
             return update(state, {
-                productById: {$set: action.productById}
+                productById: {$set: setInitialProductValues(action.productById)}
             });
         case SET_PRODUCT_QUANTITY: {
                 return update(state, {

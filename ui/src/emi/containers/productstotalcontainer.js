@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { posAmountToOrderSelector, totalWithoutDiscountSelector, totalWithDiscountSelector } from '../state/selectors/selectors';
+import { posAmountToOrderSelector, totalWithoutDiscountSelector, totalWithDiscountSelector } from '../state/selectors/productsselector';
 import { productsReset } from '../state/products/productsactions';
 import { showProductsOrderModal } from '../state/modals/modalsactions';
 import ProductsTableTotal from '../components/productstable/productstabletotal';

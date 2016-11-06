@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import ProductsTables from '../components/productstable/productstables';
 import { setProductQuantity } from '../state/products/productsactions';
 import { selectMenuNode } from '../state/menu/menuactions';
-import { mainProductsSelector, posProductsWithLeftAmountSelector } from '../state/selectors/selectors';
+import { mainProductsSelector, posProductsWithLeftAmountSelector } from '../state/selectors/productsselector';
 
 const mapStateToProps = (state) => {
     return {

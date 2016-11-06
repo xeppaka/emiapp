@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
-import categories from './categories/categories';
-import products from './products/products';
+import menu from './menu/menu';
 import order from './order/order';
 import modals from './modals/modals';
+import warehouse from './warehouse/warehouse';
 
 const emiApp = combineReducers({
-    categories,
-    products,
+    menu,
+    warehouse,
     order,
     modals
 });

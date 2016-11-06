@@ -2,20 +2,20 @@ import { createSelector } from 'reselect';
 
 export const categoriesTreeSelector = createSelector(
     [
-        (state) => state.categories.categoriesById,
-        (state) => state.products.productById
+        (state) => state.warehouse.categories.categoryById,
+        (state) => state.warehouse.products.productById
     ],
-    (categoriesById, productsById) => {
+    (categoryById, productById) => {
         let tcategoryById = {};
         tcategoryById['root'] = {
             categoryId: 'root',
-            name: 'root',
+            name: 'Product Categories',
             childCategoryIds: [],
             productIds: []
         }
 
         // first walk -> creating categories with childCategoryIds field
-        for (let key in categoriesById) {
+        for (let key in categoryById) {
             if (!categoryById.hasOwnProperty(key))
                 continue;
 
@@ -31,7 +31,7 @@ export const categoriesTreeSelector = createSelector(
         }
 
         // second walk -> fill childCategoryIds field
-        for (let key in categoriesById) {
+        for (let key in categoryById) {
             if (!categoryById.hasOwnProperty(key))
                 continue;
 
@@ -43,11 +43,11 @@ export const categoriesTreeSelector = createSelector(
             }
         }
 
-        for (let key in productsById) {
-            if (!productsById.hasOwnProperty(key))
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
                 continue;
 
-            let product = productsById[key];
+            let product = productById[key];
             if (product.categoryId !== null) {
                 tcategoryById[product.categoryId].productIds.push(key);
             } else {

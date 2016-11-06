@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { showMessageBoxModal, hideModal } from '../modals/modalsactions';
-import { orderSelector } from '../selectors/selectors';
+import { orderSelector } from '../selectors/orderselector';
 
 export const SET_ORDER_EMAIL = 'SET_ORDER_EMAIL';
 export const SET_ORDER_COUNTRY = 'SET_ORDER_COUNTRY';

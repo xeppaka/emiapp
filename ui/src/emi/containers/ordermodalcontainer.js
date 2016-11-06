@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { hideModal } from '../state/modals/modalsactions';
 import { setOrderEmail, setOrderCountry, submitOrder } from '../state/order/orderactions';
 import OrderModal from '../components/order/ordermodal';
-import { orderSelector } from '../state/selectors/selectors';
+import { orderSelector } from '../state/selectors/orderselector';
 
 const mapStateToProps = (state) => {
     return {
