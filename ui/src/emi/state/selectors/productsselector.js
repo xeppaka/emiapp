@@ -1,23 +1,83 @@
-import { createSelector } from 'reselect';
+import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 import update from 'react-addons-update';
 
-const productIdsSelector = createSelector(
+import { categoriesTreeSelector } from './categoriestree';
+
+function isProductByIdEqual(val1, val2) {
+    let val1Keys = 0;
+    let val2Keys = 0;
+    for (let key in val1) {
+        if (!val1.hasOwnProperty(key))
+            continue;
+
+        val1Keys++;
+        if (!val2.hasOwnProperty(key) || val1[key].type !== val2[key].type) {
+            return false;
+        }
+    }
+
+    for (let key in val2) {
+        if (!val2.hasOwnProperty(key))
+            continue;
+
+        val2Keys++;
+    }
+
+    return val1Keys === val2Keys;
+}
+
+function isEqualForProductIdsSelector(val1, val2) {
+    switch (val1.type) {
+        case 'categoriesTree':
+            return val1.value === val2.value;
+        case 'productById':
+            return isProductByIdEqual(val1.value, val2.value);
+        default:
+            return val1 === val2;
+    }
+}
+
+const createProductIdsSelector = createSelectorCreator(
+    defaultMemoize,
+    isEqualForProductIdsSelector
+);
+
+function getProductIds(categoriesTree, id, res) {
+    let currentCategory = categoriesTree[id];
+    Array.prototype.push.apply(res, currentCategory.productIds);
+
+    let childCategoryIds = currentCategory.childCategoryIds;
+    let l = childCategoryIds.length;
+
+    for (let i = 0; i < l; i++) {
+        getProductIds(categoriesTree, childCategoryIds[i], res);
+    }
+}
+
+const productIdsSelector = createProductIdsSelector(
     [
-        (state) => state.warehouse.products.productById
+        (state) => { return { type: 'categoriesTree', value: categoriesTreeSelector(state) } },
+        (state) => { return { type: 'productById', value: state.warehouse.products.productById } }
     ],
-    (productById) => {
+    (categoriesTreeVal, productByIdVal) => {
+        let categoriesTree = categoriesTreeVal.value;
+        let productById = productByIdVal.value;
+
+        let allProductIds = [];
+        getProductIds(categoriesTree, 'root', allProductIds);
+
         let mainProductIds = [];
         let posProductIds = [];
 
-        for (let key in productById) {
-            if (!productById.hasOwnProperty(key))
-                continue;
+        let l = allProductIds.length;
 
-            let product = productById[key];
+        for (let i = 0; i < l; i++) {
+            let product = productById[allProductIds[i]];
+
             if (product.type === 'MAIN') {
-                mainProductIds.push(key);
+                mainProductIds.push(allProductIds[i]);
             } else if (product.type === 'POS') {
-                posProductIds.push(key);
+                posProductIds.push(allProductIds[i]);
             }
         }
 
