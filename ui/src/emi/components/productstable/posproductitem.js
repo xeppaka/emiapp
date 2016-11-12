@@ -7,10 +7,7 @@ class PosProductItem extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (this.props.product === nextProps.product)
-            return false;
-
-        return true;
+        return this.props.product !== nextProps.product;
     }
 
     isVisible() {

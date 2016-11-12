@@ -34,7 +34,7 @@ class MainProductsTable extends React.Component {
         }
 
         if (firstVisible != null) {
-            return this.props.products[firstVisible].anchor;
+            return this.props.products[firstVisible].anchor.name;
         }
 
         return null;
@@ -46,11 +46,11 @@ class MainProductsTable extends React.Component {
         let productsLength = products.length;
 
         for (let i = 0; i < productsLength; i++) {
-            let product = products[i];
+            let anchor = products[i].anchor;
+            let product = products[i].product;
 
-            if (product.hasOwnProperty('categoryAnchors')) {
-                productsItems.push(<CategoryItem key={product.anchor} categoryAnchors={product.categoryAnchors}
-                                                 categoryNames={product.categoryNames} colspan={'6'} />);
+            if (anchor.hasOwnProperty('categoryAnchors')) {
+                productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'6'} />);
             }
 
             productsItems.push(<MainProductItem

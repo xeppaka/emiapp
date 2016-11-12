@@ -99,14 +99,14 @@ function fillProductAnchorsRecursively(categoriesTree, currentCategory, category
         let productIdsLength = productIds.length;
 
         res[productIds[0]] = {
-            anchor: currentCategory.anchor,
+            name: currentCategory.anchor,
             categoryAnchors: categoryAnchors.slice(0),
             categoryNames: categoryNames.slice(0)
         };
 
         for (let i = 1; i < productIdsLength; i++) {
             res[productIds[i]] = {
-                anchor: currentCategory.anchor
+                name: currentCategory.anchor
             };
         }
 
@@ -195,7 +195,7 @@ export const mainProductsSelector = createSelector(
         (state) => state.warehouse.products.productById
     ],
     (productIds, anchorsById, productById) => {
-        return productIds.mainProductIds.map((id) => Object.assign(productById[id], anchorsById[id]));
+        return productIds.mainProductIds.map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
     }
 );
 
@@ -206,7 +206,7 @@ export const posProductsSelector = createSelector(
         (state) => state.warehouse.products.productById,
     ],
     (productIds, anchorsById, productById) => {
-        return productIds.posProductIds.map((id) => Object.assign(productById[id], anchorsById[id]));
+        return productIds.posProductIds.map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
     }
 );
 
@@ -222,7 +222,7 @@ export const posProductsWithLeftAmountSelector = createSelector(
             let product = productById[id];
             let piecesLeftToOrder = posAmount >= 0 ? Math.floor((posAmount / product.price)) : 0;
 
-            return Object.assign(product, anchorsById[id], { piecesLeftToOrder: piecesLeftToOrder });
+            return { product: update(product, { piecesLeftToOrder: { $set: piecesLeftToOrder } }), anchor: anchorsById[id] }
         });
     }
 );

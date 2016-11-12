@@ -11,12 +11,12 @@ class PosProductsTable extends React.Component {
         if (this.props.products === nextProps.products)
             return false;
 
-        if (this.props.products.length != nextProps.products.length)
+        if (this.props.products.length !== nextProps.products.length)
             return true;
 
         let l = this.props.products.length;
         for (let i = 0; i < l; i++) {
-            if (this.props.products[i] != nextProps.products[i])
+            if (this.props.products[i] !== nextProps.products[i])
                 return true;
         }
 
@@ -34,7 +34,7 @@ class PosProductsTable extends React.Component {
         }
 
         if (firstVisible != null) {
-            return this.props.products[firstVisible].anchor;
+            return this.props.products[firstVisible].anchor.name;
         }
 
         return null;
@@ -46,11 +46,11 @@ class PosProductsTable extends React.Component {
         let productsLength = products.length;
 
         for (let i = 0; i < products.length; i++) {
-            let product = products[i];
+            let product = products[i].product;
+            let anchor = products[i].anchor;
 
-            if (product.hasOwnProperty('categoryAnchors')) {
-                productsItems.push(<CategoryItem key={product.anchor} categoryAnchors={product.categoryAnchors}
-                                                 categoryNames={product.categoryNames} colspan={'7'} />);
+            if (anchor.hasOwnProperty('categoryAnchors')) {
+                productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'7'} />);
             }
 
             productsItems.push(<PosProductItem
