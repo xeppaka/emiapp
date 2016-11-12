@@ -54,7 +54,7 @@ class MainProductsTable extends React.Component {
             }
 
             productsItems.push(<MainProductItem
-                            key={product.id} ref={'product' + i} idx={i + 1} product={product}
+                            key={product.productId} ref={'product' + i} idx={i + 1} product={product}
                             setProductQuantity={this.props.setProductQuantity} />)
         }
 

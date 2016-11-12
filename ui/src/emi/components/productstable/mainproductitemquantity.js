@@ -7,10 +7,10 @@ class MainProductItemQuantity extends React.Component {
 
     renderQuantityOptions(multiplicity) {
         let items = [];
-        items.push(<option value={0}>None</option>);
+        items.push(<option key={0} value={0}>None</option>);
 
         for (let i = 1; i < 20; i++) {
-            items.push(<option value={i * multiplicity}>{i * multiplicity}</option>);
+            items.push(<option key={i} value={i * multiplicity}>{i * multiplicity}</option>);
         }
 
         return items;
