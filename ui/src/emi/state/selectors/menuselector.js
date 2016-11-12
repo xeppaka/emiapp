@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import { categoriesTreeSelector } from './categoriestree';
 
-function createMenuNodeRecursively(categoryNode, tcategoryById, id) {
+function createMenuNodeRecursively(categoryNode, tcategoryById) {
     let menuNode = {
         hasValue: categoryNode.productIds.length > 0,
-        id: id,
+        id: categoryNode.anchor,
         items: [],
         text: categoryNode.name
     };
@@ -13,7 +13,7 @@ function createMenuNodeRecursively(categoryNode, tcategoryById, id) {
     let l = childIds.length;
 
     for (let i = 0; i < l; i++) {
-        menuNode.items.push(createMenuNodeRecursively(tcategoryById[childIds[i]], tcategoryById, id + '.' + i));
+        menuNode.items.push(createMenuNodeRecursively(tcategoryById[childIds[i]], tcategoryById));
     }
 
     return menuNode;
@@ -24,6 +24,6 @@ export const menuSelector = createSelector(
         categoriesTreeSelector
     ],
     (tcategoryById) => {
-        return createMenuNodeRecursively(tcategoryById['root'], tcategoryById, '');
+        return createMenuNodeRecursively(tcategoryById['root'], tcategoryById);
     }
 );

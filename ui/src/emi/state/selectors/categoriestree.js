@@ -68,14 +68,13 @@ export const categoriesTreeSelector = createDeepEqualSelector(
         (state) => { return { type: 'productById', value: state.warehouse.products.productById } }
     ],
     (categoryByIdVal, productByIdVal) => {
-        console.log('Recomputing categories tree');
-
         let categoryById = categoryByIdVal.value;
         let productById = productByIdVal.value;
         let tcategoryById = {};
         tcategoryById['root'] = {
             categoryId: 'root',
             name: 'Product Categories',
+            anchor: '#',
             childCategoryIds: [],
             parentCategoryId: null,
             productIds: []
@@ -91,6 +90,7 @@ export const categoriesTreeSelector = createDeepEqualSelector(
                 tcategoryById[key] = {
                     categoryId: category.categoryId,
                     name: category.name,
+                    anchor: '',
                     childCategoryIds: [],
                     parentCategoryId: category.parentCategoryId,
                     productIds: []
@@ -111,6 +111,9 @@ export const categoriesTreeSelector = createDeepEqualSelector(
             }
         }
 
+        // for anchors should walk recursively starting from root node
+        setAnchors(tcategoryById);
+
         for (let key in productById) {
             if (!productById.hasOwnProperty(key))
                 continue;
@@ -126,3 +129,19 @@ export const categoriesTreeSelector = createDeepEqualSelector(
         return tcategoryById;
     }
 );
+
+function setAnchors(categoriesTree) {
+    setAnchorsRecursively(categoriesTree, 'root', '#');
+}
+
+function setAnchorsRecursively(categoriesTree, id, anchor) {
+    let currentCategory = categoriesTree[id];
+    currentCategory.anchor = anchor;
+
+    let childCategoryIds = currentCategory.childCategoryIds;
+    let childCategoryIdsLength = childCategoryIds.length;
+
+    for (let i = 0; i < childCategoryIdsLength; i++) {
+        setAnchorsRecursively(categoriesTree, childCategoryIds[i], anchor + '.' + i);
+    }
+}

@@ -88,6 +88,63 @@ const productIdsSelector = createProductIdsSelector(
     }
 );
 
+function fillProductAnchorsRecursively(categoriesTree, currentCategory, categoryAnchors, categoryNames, res) {
+    let hasProducts = currentCategory.productIds.length > 0;
+
+    categoryAnchors.push(currentCategory.anchor);
+    categoryNames.push(currentCategory.name);
+
+    if (hasProducts) {
+        let productIds = currentCategory.productIds;
+        let productIdsLength = productIds.length;
+
+        res[productIds[0]] = {
+            anchor: currentCategory.anchor,
+            categoryAnchors: categoryAnchors.slice(0),
+            categoryNames: categoryNames.slice(0)
+        };
+
+        for (let i = 1; i < productIdsLength; i++) {
+            res[productIds[i]] = {
+                anchor: currentCategory.anchor
+            };
+        }
+
+        while (categoryAnchors.length > 0) {
+            categoryAnchors.pop();
+        }
+        while (categoryNames.length > 0) {
+            categoryNames.pop();
+        }
+    }
+
+    let childCategoryIds = currentCategory.childCategoryIds;
+    let childCategoryIdsLength = childCategoryIds.length;
+
+    for (let i = 0; i < childCategoryIdsLength; i++) {
+        fillProductAnchorsRecursively(categoriesTree, categoriesTree[childCategoryIds[i]], categoryAnchors, categoryNames, res);
+    }
+
+    categoryAnchors.pop();
+    categoryNames.pop();
+}
+
+function getProductAnchorsById(categoriesTree) {
+    let result = {};
+
+    fillProductAnchorsRecursively(categoriesTree, categoriesTree['root'], [], [], result);
+    return result;
+}
+
+export const productAnchorsSelector = createSelector(
+    [
+        categoriesTreeSelector
+    ],
+    (categoriesTree) => {
+        return getProductAnchorsById(categoriesTree);
+    }
+);
+
 export const mainTotalWithoutDiscountSelector = createSelector(
     [
         productIdsSelector,
@@ -134,37 +191,38 @@ export const posAmountToOrderSelector = createSelector(
 export const mainProductsSelector = createSelector(
     [
         productIdsSelector,
+        productAnchorsSelector,
         (state) => state.warehouse.products.productById
     ],
-    (productIds, productById) => {
-        return productIds.mainProductIds.map((id) => productById[id]);
+    (productIds, anchorsById, productById) => {
+        return productIds.mainProductIds.map((id) => Object.assign(productById[id], anchorsById[id]));
     }
 );
 
 export const posProductsSelector = createSelector(
     [
         productIdsSelector,
+        productAnchorsSelector,
         (state) => state.warehouse.products.productById,
     ],
-    (productIds, productById) => {
-        return productIds.posProductIds.map((id) => productById[id]);
+    (productIds, anchorsById, productById) => {
+        return productIds.posProductIds.map((id) => Object.assign(productById[id], anchorsById[id]));
     }
 );
 
 export const posProductsWithLeftAmountSelector = createSelector(
     [
         productIdsSelector,
+        productAnchorsSelector,
         (state) => state.warehouse.products.productById,
         posAmountToOrderSelector
     ],
-    (productIds, productById, posAmount) => {
+    (productIds, anchorsById, productById, posAmount) => {
         return productIds.posProductIds.map((id) => {
             let product = productById[id];
             let piecesLeftToOrder = posAmount >= 0 ? Math.floor((posAmount / product.price)) : 0;
 
-            return update(product, {
-                piecesLeftToOrder: {$set: piecesLeftToOrder}
-            });
+            return Object.assign(product, anchorsById[id], { piecesLeftToOrder: piecesLeftToOrder });
         });
     }
 );

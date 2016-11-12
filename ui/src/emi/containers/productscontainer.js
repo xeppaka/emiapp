@@ -9,7 +9,7 @@ const mapStateToProps = (state) => {
         mainProducts: mainProductsSelector(state),
         posProducts: posProductsWithLeftAmountSelector(state)
     }
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(selectMenuNode(productId));
         }
     }
-}
+};
 
 const ProductsContainer = connect(
     mapStateToProps,
