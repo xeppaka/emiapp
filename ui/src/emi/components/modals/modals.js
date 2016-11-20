@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import OrderModalContainer from '../../containers/ordermodalcontainer';
+import SaveProductsModalContainer from '../../containers/saveproductsmodalcontainer';
 import MessageBoxModal from './messageboxmodal';
 
 class Modals extends React.Component {
@@ -14,6 +15,8 @@ class Modals extends React.Component {
                     this.props.modals.map((modal, idx) => {
                         let zIndex = idx * 2;
                         switch (modal.type) {
+                            case 'SAVE_MODIFICATIONS_MODAL':
+                                return <SaveProductsModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} saveProducts={() => this.props.saveProducts(modal.id)} zIndex={zIndex} />;
                             case 'PRODUCTS_ORDER_MODAL':
                                 return <OrderModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} submitOrder={() => this.props.submitOrder(modal.id)} zIndex={zIndex} />;
                             case 'MESSAGE_BOX_MODAL':

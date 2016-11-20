@@ -11,7 +11,7 @@ import createLogger from 'redux-logger';
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-import CustomerMain from './components/customermain';
+import CustomerMain from './components/customer/customermain';
 import AdminMain from './components/admin/adminmain';
 
 import emiApp from './state/emiapp';
@@ -33,8 +33,8 @@ store.dispatch(loadWarehouse());
 render(
     <Provider store={store}>
         <Router>
-            <Route path="/" component={CustomerMain} />
-            <Route path="/admin" component={AdminMain} />
+            {/*<Route path="/" component={CustomerMain} />*/}
+            <Route path="/" component={AdminMain} />
         </Router>
     </Provider>,
     document.getElementById('applicationContainer')

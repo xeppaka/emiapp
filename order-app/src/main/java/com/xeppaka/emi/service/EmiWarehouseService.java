@@ -4,7 +4,10 @@ import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
+import com.xeppaka.emi.commands.UpdateProductCommand;
+import com.xeppaka.emi.domain.EmiWarehouse;
 import com.xeppaka.emi.domain.ProductFeature;
+import com.xeppaka.emi.domain.entities.Product;
 import com.xeppaka.emi.domain.value.UserName;
 import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
 import com.xeppaka.emi.persistence.repositories.ProductsRepository;
@@ -53,6 +56,17 @@ public class EmiWarehouseService {
             return categoryId;
         } catch (CommandHandleException e) {
             throw new EmiWarehouseException("Error occurred while creating category.", e);
+        }
+    }
+
+    public void updateProducts(UserName userName, Collection<ProductDto> products) throws EmiWarehouseException {
+        try {
+            for (ProductDto product : products) {
+                emiCommandHandler.handle(userName,
+                        new UpdateProductCommand(product.getProductId(), product.getName(), product.getPrice()));
+            }
+        } catch (CommandHandleException e) {
+            throw new EmiWarehouseException("Error occurred while updating products.", e);
         }
     }
 

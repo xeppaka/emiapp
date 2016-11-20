@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import { SHOW_PRODUCTS_ORDER_MODAL, SHOW_MESSAGE_BOX_MODAL, HIDE_MODAL } from './modalsactions';
+import { SHOW_SAVE_MODIFICATIONS_MODAL, SHOW_PRODUCTS_ORDER_MODAL, SHOW_MESSAGE_BOX_MODAL, HIDE_MODAL } from './modalsactions';
 
 const initialModalsState = {
     nextId: 0,
@@ -8,6 +8,13 @@ const initialModalsState = {
 
 function modals(state = initialModalsState, action) {
     switch (action.type) {
+        case SHOW_SAVE_MODIFICATIONS_MODAL: {
+            let id = state.nextId;
+            return update(state, {
+                                      visibleModals: {$push: [{id: id, type:'SAVE_MODIFICATIONS_MODAL'}]},
+                                      nextId: {$apply: (prev) => prev + 1}
+                                 });
+        }
         case SHOW_PRODUCTS_ORDER_MODAL: {
             let id = state.nextId;
             return update(state, {

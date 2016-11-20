@@ -3,8 +3,10 @@ import menu from './menu/menu';
 import order from './order/order';
 import modals from './modals/modals';
 import warehouse from './warehouse/warehouse';
+import admin from './admin/admin';
 
 const emiApp = combineReducers({
+    admin,
     menu,
     warehouse,
     order,

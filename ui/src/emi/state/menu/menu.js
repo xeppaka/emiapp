@@ -3,7 +3,7 @@ import { SELECT_MENU_NODE, SET_MENU } from './menuactions';
 
 const initialMenuState = {
     selectedNodeId: ''
-}
+};
 
 function menu(state = initialMenuState, action) {
     switch (action.type) {

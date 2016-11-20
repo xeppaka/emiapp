@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 
-import ProductsTotalContainer from '../containers/productstotalcontainer';
-import ProductsMenuContainer from '../containers/productsmenucontainer';
-import ProductsContainer from '../containers/productscontainer';
-import ModalsContainer from '../containers/modalscontainer';
+import ProductsTotalContainer from '../../containers/productstotalcontainer';
+import ProductsMenuContainer from '../../containers/productsmenucontainer';
+import ProductsContainer from '../../containers/productscontainer';
+import ModalsContainer from '../../containers/modalscontainer';
 
 class CustomerMain extends React.Component {
     constructor(props) {

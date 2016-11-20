@@ -1,9 +1,14 @@
 export const SHOW_PRODUCTS_ORDER_MODAL = 'SHOW_PRODUCTS_ORDER_MODAL';
+export const SHOW_SAVE_MODIFICATIONS_MODAL = 'SHOW_SAVE_MODIFICATIONS_MODAL';
 export const SHOW_MESSAGE_BOX_MODAL = 'SHOW_MESSAGE_BOX_MODAL';
 export const HIDE_MODAL = 'HIDE_MODAL';
 
 export function showProductsOrderModal() {
     return { type: SHOW_PRODUCTS_ORDER_MODAL };
+}
+
+export function showSaveModificationsModal() {
+    return { type: SHOW_SAVE_MODIFICATIONS_MODAL };
 }
 
 export function showMessageBoxModal(title, text) {

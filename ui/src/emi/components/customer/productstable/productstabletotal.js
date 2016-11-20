@@ -6,7 +6,6 @@ class ProductsTableTotal extends React.Component {
     }
 
     onProductsReset(event) {
-        event.preventDefault();
         this.props.productsReset();
     }
 
@@ -25,7 +24,7 @@ class ProductsTableTotal extends React.Component {
     render() {
         return (
                 <nav className='navbar navbar-fixed-bottom navbar-dark bg-inverse'>
-                    <ul className='nav navbar-nav pull-xs-right'>
+                    <ul className='nav navbar-nav float-lg-right'>
                         {
                             this.props.posExceeded ? (<li className='nav-item' data-toggle="tooltip" data-placement="top" title="The total price for POS exceeded total price bla bla">
                                                             <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 16 16' style={{fill: '#e72626'}}>
@@ -40,8 +39,8 @@ class ProductsTableTotal extends React.Component {
                         }
                         <li className='nav-item'><a className='nav-link active'>Total without discount: <span style={{fontSize: '120%'}}>{Number((this.props.totalWithoutDiscount / 100).toFixed(2))}&#8364;</span></a></li>
                         <li className='nav-item'><a className='nav-link active'>Total with discount: <span style={{fontWeight: 'bold', fontSize: '120%'}}>{Number((this.props.totalWithDiscount / 100).toFixed(2))}&#8364;</span></a></li>
-                        <li className='nav-item'><a className='btn btn-secondary' href='#' onClick={(event) => this.onProductsReset(event)}>Reset</a></li>
-                        <li className='nav-item'><button type='button' disabled={!this.props.canCreateOrder} className='btn btn-primary' onClick={(event) => this.onCreateProductsOrder(event)}>Create order&hellip;</button></li>
+                        <li className='nav-item'><button type='button' className='btn btn-secondary' onClick={(event) => this.onProductsReset(event)}>Reset</button></li>
+                        <li className='nav-item'><button type='button' className='btn btn-primary' disabled={!this.props.canCreateOrder} onClick={(event) => this.onCreateProductsOrder(event)}>Create order&hellip;</button></li>
                     </ul>
                 </nav>
                )

@@ -226,3 +226,27 @@ export const posProductsWithLeftAmountSelector = createSelector(
         });
     }
 );
+
+export const adminProductsSelector = createSelector(
+    [
+        productIdsSelector,
+        productAnchorsSelector,
+        (state) => state.warehouse.products.productById,
+        (state) => state.admin.modifiedProductById
+    ],
+    (productIds, anchorsById, productById, modifiedProductById) => {
+        let mainProducts = productIds.mainProductIds.map((id) => {
+            let product = (modifiedProductById.hasOwnProperty(id) && modifiedProductById[id] !== null) ? modifiedProductById[id] : productById[id];
+            return { product: product, anchor: anchorsById[id] }
+        });
+
+        let posProducts = productIds.posProductIds.map((id) => {
+                let product = (modifiedProductById.hasOwnProperty(id) && modifiedProductById[id] !== null) ? modifiedProductById[id] : productById[id];
+
+                return { product: product, anchor: anchorsById[id] }
+            }
+        );
+
+        return mainProducts.concat(posProducts);
+    }
+);

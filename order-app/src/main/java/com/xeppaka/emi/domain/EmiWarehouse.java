@@ -5,12 +5,12 @@ import com.xeppaka.ddd.domain.BaseAggregate;
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
+import com.xeppaka.emi.commands.UpdateProductCommand;
 import com.xeppaka.emi.domain.entities.Category;
 import com.xeppaka.emi.domain.entities.Product;
-import com.xeppaka.emi.events.CategoryCreated;
-import com.xeppaka.emi.events.EmiEvent;
-import com.xeppaka.emi.events.ProductCreated;
+import com.xeppaka.emi.events.*;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +38,8 @@ public class EmiWarehouse extends BaseAggregate {
             case CATEGORY_CREATED:
                 applyCategoryCreated((CategoryCreated) emiEvent);
                 break;
+            default:
+                throw new IllegalArgumentException(MessageFormat.format("Unknown event: {0}.", event));
         }
     }
 
@@ -66,11 +68,20 @@ public class EmiWarehouse extends BaseAggregate {
     public <T extends Command> void handle(T command) {
         if (command instanceof CreateCategoryCommand) {
             handle((CreateCategoryCommand) command);
+            return;
         }
 
         if (command instanceof CreateProductCommand) {
             handle((CreateProductCommand) command);
+            return;
         }
+
+        if (command instanceof UpdateProductCommand) {
+            handle((UpdateProductCommand) command);
+            return;
+        }
+
+        throw new IllegalArgumentException(MessageFormat.format("Provided command {0} is not supported", command));
     }
 
     public void handle(CreateProductCommand command) {
@@ -94,6 +105,26 @@ public class EmiWarehouse extends BaseAggregate {
 
         apply(categoryCreated);
         addEvent(categoryCreated);
+    }
+
+    public void handle(UpdateProductCommand command) {
+        final Product originalProduct = productsMap.get(command.getId());
+        final String name = command.getName();
+        final int price = command.getPrice();
+
+        if (!originalProduct.getName().equals(name)) {
+            final ProductNameChanged productNameChanged =
+                    new ProductNameChanged(originalProduct.getId(), name);
+            apply(productNameChanged);
+            addEvent(productNameChanged);
+        }
+
+        if (originalProduct.getPrice() != price) {
+            final ProductPriceChanged productPriceChanged =
+                    new ProductPriceChanged(originalProduct.getId(), price);
+            apply(productPriceChanged);
+            addEvent(productPriceChanged);
+        }
     }
 
     @Override
