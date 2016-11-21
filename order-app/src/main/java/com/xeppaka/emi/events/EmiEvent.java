@@ -12,7 +12,8 @@ import com.xeppaka.ddd.events.BaseEvent;
         @JsonSubTypes.Type(value = ProductCreated.class, name = "PRODUCT_CREATED"),
         @JsonSubTypes.Type(value = ProductRemoved.class, name = "PRODUCT_REMOVED"),
         @JsonSubTypes.Type(value = CategoryCreated.class, name = "CATEGORY_CREATED"),
-        @JsonSubTypes.Type(value = ProductNameChanged.class, name = "PRODUCT_NAME_CHANGED")
+        @JsonSubTypes.Type(value = ProductNameChanged.class, name = "PRODUCT_NAME_CHANGED"),
+        @JsonSubTypes.Type(value = ProductPriceChanged.class, name = "PRODUCT_PRICE_CHANGED")
 })
 public abstract class EmiEvent extends BaseEvent<EmiEventType> {
     public EmiEvent(EmiEventType eventType) {

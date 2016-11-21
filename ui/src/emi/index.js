@@ -33,8 +33,8 @@ store.dispatch(loadWarehouse());
 render(
     <Provider store={store}>
         <Router>
-            {/*<Route path="/" component={CustomerMain} />*/}
-            <Route path="/" component={AdminMain} />
+            <Route path="/" component={CustomerMain} />
+            <Route path="admin" component={AdminMain} />
         </Router>
     </Provider>,
     document.getElementById('applicationContainer')

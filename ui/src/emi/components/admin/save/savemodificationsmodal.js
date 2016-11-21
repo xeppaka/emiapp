@@ -11,8 +11,8 @@ class SaveModificationsModal extends React.Component {
         this.props.hideModal();
     }
 
-    onSubmit(event) {
-        this.props.submitOrder();
+    onSave(event) {
+        this.props.saveModifications(this.props.modalId);
     }
 
     render() {
@@ -49,7 +49,7 @@ class SaveModificationsModal extends React.Component {
                             <div className='modal-footer'>
                                 <button type='button' className='btn btn-secondary btn-sm' onClick={(event) => this.onCancel(event)}>Cancel</button>
                                 <span>&nbsp;&nbsp;</span>
-                                <button type='button' className='btn btn-primary' disabled={false} onClick={(event) => this.onSubmit(event)}>{'Save'}</button>
+                                <button type='button' className='btn btn-primary' disabled={this.props.saving} onClick={(event) => this.onSave(event)}>{this.props.saving ? 'Saving...' : 'Save'}</button>
                             </div>
                         </div>
                     </div>

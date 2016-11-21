@@ -19,6 +19,16 @@ public class ProductDto {
     private final Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
     private final boolean visible;
 
+    private ProductDto() {
+        productId = null;
+        name = null;
+        price = 0;
+        multiplicity = 0;
+        note = null;
+        categoryId = null;
+        visible = false;
+    }
+
     public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> productFeatures, UUID categoryId, boolean visible) {
         this.productId = productId;
         this.name = name;

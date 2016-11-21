@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
-import { resetModifications, saveModifications } from '../state/admin/adminactions';
+import { showSaveModificationsModal } from '../state/modals/modalsactions';
+import { resetModifications } from '../state/admin/adminactions';
 import { modifiedProductsCountSelector } from '../state/selectors/adminselector';
 import AdminTotal from '../components/admin/admintotal';
 
@@ -15,7 +16,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         resetModifications: () => dispatch(resetModifications()),
-        saveModifications: () => dispatch(saveModifications())
+        saveModifications: () => dispatch(showSaveModificationsModal())
     }
 };
 

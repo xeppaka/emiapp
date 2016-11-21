@@ -16,11 +16,11 @@ class Modals extends React.Component {
                         let zIndex = idx * 2;
                         switch (modal.type) {
                             case 'SAVE_MODIFICATIONS_MODAL':
-                                return <SaveProductsModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} saveProducts={() => this.props.saveProducts(modal.id)} zIndex={zIndex} />;
+                                return <SaveProductsModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
                             case 'PRODUCTS_ORDER_MODAL':
-                                return <OrderModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} submitOrder={() => this.props.submitOrder(modal.id)} zIndex={zIndex} />;
+                                return <OrderModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
                             case 'MESSAGE_BOX_MODAL':
-                                return <MessageBoxModal key={modal.id} hideModal={() => this.props.hideModal(modal.id)} title={modal.title} text={modal.text} zIndex={zIndex} />;
+                                return <MessageBoxModal key={modal.id} hideModal={() => this.props.hideModal(modal.id)} title={modal.title} text={modal.text} modalId={modal.id} zIndex={zIndex} />;
                             default:
                                 return null;
                         }

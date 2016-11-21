@@ -9,7 +9,7 @@ public class ProductPriceChanged extends EmiEvent {
     private final UUID productId;
     private final int newPrice;
 
-    private ProductPriceChanged(EmiEventType eventType) {
+    private ProductPriceChanged() {
         super(EmiEventType.PRODUCT_PRICE_CHANGED);
 
         productId = null;

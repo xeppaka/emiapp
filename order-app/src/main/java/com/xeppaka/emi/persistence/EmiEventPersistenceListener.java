@@ -2,12 +2,12 @@ package com.xeppaka.emi.persistence;
 
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.ddd.events.EventListener;
-import com.xeppaka.emi.events.CategoryCreated;
-import com.xeppaka.emi.events.EmiEvent;
-import com.xeppaka.emi.events.ProductCreated;
+import com.xeppaka.emi.events.*;
 import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
 import com.xeppaka.emi.persistence.repositories.ProductsRepository;
 import org.apache.commons.lang3.Validate;
+
+import java.text.MessageFormat;
 
 /**
  *
@@ -35,6 +35,14 @@ public class EmiEventPersistenceListener implements EventListener {
             case CATEGORY_CREATED:
                 onCategoryCreatedEvent((CategoryCreated) emiEvent);
                 break;
+            case PRODUCT_NAME_CHANGED:
+                onProductNameChanged((ProductNameChanged) emiEvent);
+                break;
+            case PRODUCT_PRICE_CHANGED:
+                onProductPriceChanged((ProductPriceChanged) emiEvent);
+                break;
+            default:
+                throw new IllegalArgumentException(MessageFormat.format("Unknown event {0}.", event));
         }
     }
 
@@ -53,5 +61,13 @@ public class EmiEventPersistenceListener implements EventListener {
         categoriesRepository.createCategory(categoryCreated.getCategoryId(),
                 categoryCreated.getName(),
                 categoryCreated.getParentCategoryId());
+    }
+
+    private void onProductNameChanged(ProductNameChanged productNameChanged) {
+        productsRepository.updateProductName(productNameChanged.getProductId(), productNameChanged.getNewName());
+    }
+
+    private void onProductPriceChanged(ProductPriceChanged productPriceChanged) {
+        productsRepository.updateProductPrice(productPriceChanged.getProductId(), productPriceChanged.getNewPrice());
     }
 }

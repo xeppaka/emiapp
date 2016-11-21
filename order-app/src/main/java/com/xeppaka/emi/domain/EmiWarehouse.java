@@ -38,6 +38,12 @@ public class EmiWarehouse extends BaseAggregate {
             case CATEGORY_CREATED:
                 applyCategoryCreated((CategoryCreated) emiEvent);
                 break;
+            case PRODUCT_NAME_CHANGED:
+                applyProductNameChanged((ProductNameChanged) emiEvent);
+                break;
+            case PRODUCT_PRICE_CHANGED:
+                applyProductPriceChanged((ProductPriceChanged) emiEvent);
+                break;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event: {0}.", event));
         }
@@ -51,6 +57,18 @@ public class EmiWarehouse extends BaseAggregate {
                         createProductEvent.getNote(),
                         createProductEvent.getCategoryId(),
                         createProductEvent.getFeatures()));
+    }
+
+    private void applyProductNameChanged(ProductNameChanged productNameChangedEvent) {
+        final UUID productId = productNameChangedEvent.getProductId();
+        final Product product = productsMap.get(productId);
+        product.setName(productNameChangedEvent.getNewName());
+    }
+
+    private void applyProductPriceChanged(ProductPriceChanged productPriceChangedEvent) {
+        final UUID productId = productPriceChangedEvent.getProductId();
+        final Product product = productsMap.get(productId);
+        product.setPrice(productPriceChangedEvent.getNewPrice());
     }
 
     private void applyCategoryCreated(CategoryCreated categoryCreatedEvent) {

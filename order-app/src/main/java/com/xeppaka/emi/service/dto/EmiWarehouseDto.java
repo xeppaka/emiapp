@@ -13,6 +13,11 @@ public class EmiWarehouseDto {
     private final Map<UUID, ProductDto> productById;
     private final Map<UUID, CategoryDto> categoryById;
 
+    private EmiWarehouseDto() {
+        productById = null;
+        categoryById = null;
+    }
+
     public EmiWarehouseDto(Map<UUID, ProductDto> productById, Map<UUID, CategoryDto> categoryById) {
         this.productById = productById;
         this.categoryById = categoryById;

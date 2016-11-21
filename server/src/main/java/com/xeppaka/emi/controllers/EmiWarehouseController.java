@@ -6,6 +6,7 @@ import com.xeppaka.emi.service.EmiWarehouseException;
 import com.xeppaka.emi.service.EmiWarehouseService;
 import com.xeppaka.emi.service.dto.EmiWarehouseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,8 +30,10 @@ public class EmiWarehouseController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public void bulkUpdate(@RequestBody EmiWarehouseDto warehouse) throws EmiWarehouseException {
+    public ResponseEntity<Void> bulkUpdate(@RequestBody EmiWarehouseDto warehouse) throws EmiWarehouseException {
         final Map<UUID, ProductDto> productsMap = warehouse.getProductById();
         emiWarehouseService.updateProducts(UserName.SYSTEM_USER_NAME, productsMap.values());
+
+        return ResponseEntity.ok().build();
     }
 }

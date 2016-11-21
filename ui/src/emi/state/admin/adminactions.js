@@ -1,12 +1,14 @@
 import update from 'react-addons-update';
-import { showSaveModificationsModal } from '../modals/modalsactions';
+import { modifiedProductsSelector } from '../selectors/adminselector';
+import { showMessageBoxModal, hideModal } from '../modals/modalsactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
 export const RESET_MODIFICATIONS = 'RESET_MODIFICATIONS';
 export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
 export const SET_NOTIFICATION_TEXT = 'SET_NOTIFICATION_TEXT';
-export const SAVE_MODIFIED_PRODUCTS = 'SAVE_MODIFIED_PRODUCTS';
+export const SAVE_MODIFIED_PRODUCTS_STARTED = 'SAVE_MODIFIED_PRODUCTS_STARTED';
+export const SAVE_MODIFIED_PRODUCTS_FINISHED = 'SAVE_MODIFIED_PRODUCTS_FINISHED';
 export const SET_CURRENT_TAB = 'SET_CURRENT_TAB';
 
 export function setCurrentTab(tab) {
@@ -33,9 +35,52 @@ export function setSendCustomerNotification(value) {
     return { type: SET_SEND_CUSTOMER_NOTIFICATION, value: value };
 }
 
-export function saveModifications() {
-    return function(dispatch) {
-        dispatch(showSaveModificationsModal());
+export function saveModifiedProductsStarted() {
+    return { type: SAVE_MODIFIED_PRODUCTS_STARTED };
+}
+
+export function saveModifiedProductsFinished() {
+    return { type: SAVE_MODIFIED_PRODUCTS_FINISHED };
+}
+
+function getModifiedProductsById(state) {
+    let modifiedProductsArray = modifiedProductsSelector(state);
+    let productsById = {};
+
+    for (let i = 0; i < modifiedProductsArray.length; i++) {
+        let product = modifiedProductsArray[i];
+        productsById[product.productId] = product;
+    }
+
+    return productsById;
+}
+
+export function saveModifications(saveModalId) {
+    return function(dispatch, getState) {
+        dispatch(saveModifiedProductsStarted());
+
+        let state = getState();
+        let warehouse = {
+            productById: getModifiedProductsById(state),
+            categoryById: {}
+        };
+        fetch('api/warehouse', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(warehouse)
+        }).then(response => {
+            if (response.status !== 200) {
+                dispatch(saveModifiedProductsFinished());
+                dispatch(showMessageBoxModal('Order submit failed', 'Error.'));
+            } else {
+                dispatch(saveModifiedProductsFinished());
+                dispatch(hideModal(saveModalId));
+                dispatch(showMessageBoxModal('Success.'));
+            }
+        })
     };
 }
 

@@ -31,6 +31,20 @@ public class ProductsRepository {
                 productId, name, price, multiplicity, productFeaturesToString(productFeatures), note, categoryId, visible);
     }
 
+    public void updateProductName(UUID productId, String name) {
+        Validate.notNull(productId);
+        Validate.notNull(name);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET NAME = ? WHERE ID = ?", name, productId);
+    }
+
+    public void updateProductPrice(UUID productId, int price) {
+        Validate.notNull(productId);
+        Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET PRICE = ? WHERE ID = ?", price, productId);
+    }
+
     public List<ProductDto> getProducts() {
         return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, VISIBLE FROM PRODUCTS", new Object[]{}, (rs, rowNum) -> {
             final UUID productId = UUID.fromString(rs.getString("ID"));
