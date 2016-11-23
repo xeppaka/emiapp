@@ -2,9 +2,7 @@ package com.xeppaka.emi;
 
 import com.xeppaka.ddd.persistence.RepositoryException;
 import com.xeppaka.emi.domain.EmiWarehouse;
-import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.imp.ProductsImporter;
-import com.xeppaka.emi.persistence.repositories.EmiWarehouseRepository;
+import com.xeppaka.emi.persistence.state.EmiWarehouseRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

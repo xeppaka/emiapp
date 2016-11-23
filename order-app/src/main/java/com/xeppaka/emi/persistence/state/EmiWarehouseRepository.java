@@ -1,4 +1,4 @@
-package com.xeppaka.emi.persistence.repositories;
+package com.xeppaka.emi.persistence.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

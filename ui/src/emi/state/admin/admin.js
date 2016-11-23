@@ -1,7 +1,7 @@
 import update from 'react-addons-update';
 import { SET_MODIFIED_PRODUCT, REMOVE_MODIFIED_PRODUCT, SET_SEND_CUSTOMER_NOTIFICATION,
          SET_CURRENT_TAB, RESET_MODIFICATIONS, SET_NOTIFICATION_TEXT, SAVE_MODIFIED_PRODUCTS_STARTED,
-         SAVE_MODIFIED_PRODUCTS_FINISHED } from './adminactions';
+         SAVE_MODIFIED_PRODUCTS_FINISHED, ACCEPT_MODIFIED_PRODUCTS } from './adminactions';
 
 const initialAdminState = {
     modifiedProductById: {},

@@ -1,6 +1,6 @@
-package com.xeppaka.emi.persistence.repositories;
+package com.xeppaka.emi.persistence.view;
 
-import com.xeppaka.emi.persistence.dto.CategoryDto;
+import com.xeppaka.emi.persistence.view.dto.CategoryDto;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

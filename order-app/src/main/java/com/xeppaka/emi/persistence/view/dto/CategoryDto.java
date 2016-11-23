@@ -1,4 +1,4 @@
-package com.xeppaka.emi.persistence.dto;
+package com.xeppaka.emi.persistence.view.dto;
 
 import java.util.UUID;
 

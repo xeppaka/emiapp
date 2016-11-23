@@ -1,10 +1,10 @@
-package com.xeppaka.emi.persistence;
+package com.xeppaka.emi.persistence.view;
 
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.ddd.events.EventListener;
 import com.xeppaka.emi.events.*;
-import com.xeppaka.emi.persistence.repositories.CategoriesRepository;
-import com.xeppaka.emi.persistence.repositories.ProductsRepository;
+import com.xeppaka.emi.persistence.view.CategoriesRepository;
+import com.xeppaka.emi.persistence.view.ProductsRepository;
 import org.apache.commons.lang3.Validate;
 
 import java.text.MessageFormat;

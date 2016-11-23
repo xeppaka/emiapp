@@ -1,6 +1,7 @@
 import update from 'react-addons-update';
 import { SET_PRODUCTS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET } from './productsactions';
 import { SET_WAREHOUSE } from '../warehouse/warehouseactions';
+import { ACCEPT_MODIFIED_PRODUCTS } from '../admin/adminactions';
 
 const initialProductsState = {
     productById: {}
@@ -67,6 +68,18 @@ function products(state = initialProductsState, action) {
             return update(state, {
                 productById: {$set: newProductById}
             });
+        }
+        case ACCEPT_MODIFIED_PRODUCTS: {
+            let products = action.products;
+            let newState = state;
+
+            for (let i = 0; i < products.length; i++) {
+                newState = update(newState, {
+                    [products[i].productId]: { $set: products[i] }
+                });
+            }
+
+            return newState;
         }
         default:
             return state;

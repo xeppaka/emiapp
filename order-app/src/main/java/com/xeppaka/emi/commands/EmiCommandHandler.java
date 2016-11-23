@@ -5,7 +5,7 @@ import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.ddd.persistence.RepositoryException;
 import com.xeppaka.emi.domain.EmiWarehouse;
 import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.persistence.repositories.EmiWarehouseRepository;
+import com.xeppaka.emi.persistence.state.EmiWarehouseRepository;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

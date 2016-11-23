@@ -4,6 +4,7 @@ import { showMessageBoxModal, hideModal } from '../modals/modalsactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
+export const ACCEPT_MODIFIED_PRODUCTS = 'ACCEPT_MODIFIED_PRODUCTS';
 export const RESET_MODIFICATIONS = 'RESET_MODIFICATIONS';
 export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
 export const SET_NOTIFICATION_TEXT = 'SET_NOTIFICATION_TEXT';
@@ -43,44 +44,36 @@ export function saveModifiedProductsFinished() {
     return { type: SAVE_MODIFIED_PRODUCTS_FINISHED };
 }
 
-function getModifiedProductsById(state) {
-    let modifiedProductsArray = modifiedProductsSelector(state);
-    let productsById = {};
-
-    for (let i = 0; i < modifiedProductsArray.length; i++) {
-        let product = modifiedProductsArray[i];
-        productsById[product.productId] = product;
-    }
-
-    return productsById;
+export function acceptModifiedProducts(products) {
+    return { type: ACCEPT_MODIFIED_PRODUCTS, products: products };
 }
 
 export function saveModifications(saveModalId) {
     return function(dispatch, getState) {
         dispatch(saveModifiedProductsStarted());
 
-        let state = getState();
-        let warehouse = {
-            productById: getModifiedProductsById(state),
-            categoryById: {}
-        };
-        fetch('api/warehouse', {
-            method: 'PUT',
+        let modifiedProducts = modifiedProductsSelector(getState());
+        fetch('api/products', {
+            method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(warehouse)
+            body: JSON.stringify(modifiedProducts)
         }).then(response => {
             if (response.status !== 200) {
                 dispatch(saveModifiedProductsFinished());
-                dispatch(showMessageBoxModal('Order submit failed', 'Error.'));
+                dispatch(showMessageBoxModal('Save products failed.', 'Error occurred while saving products.'));
+                throw new Error('Save products failed.');
             } else {
-                dispatch(saveModifiedProductsFinished());
-                dispatch(hideModal(saveModalId));
-                dispatch(showMessageBoxModal('Success.'));
+                return response.json();
             }
-        })
+        }).then(modifiedProductsData => {
+            dispatch(saveModifiedProductsFinished());
+            dispatch(acceptModifiedProducts(modifiedProductsData));
+            dispatch(resetModifications());
+            dispatch(hideModal(saveModalId));
+        });
     };
 }
 
