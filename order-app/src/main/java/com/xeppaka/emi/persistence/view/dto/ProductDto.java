@@ -17,19 +17,19 @@ public class ProductDto {
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
-    private final boolean visible;
+    private final int weight;
 
     private ProductDto() {
-        productId = null;
-        name = null;
-        price = 0;
-        multiplicity = 0;
-        note = null;
-        categoryId = null;
-        visible = false;
+        this.productId = null;
+        this.name = null;
+        this.price = 0;
+        this.multiplicity = 0;
+        this.note = null;
+        this.categoryId = null;
+        this.weight = 0;
     }
 
-    public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> productFeatures, UUID categoryId, boolean visible) {
+    public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> productFeatures, UUID categoryId, int weight) {
         this.productId = productId;
         this.name = name;
         this.price = price;
@@ -37,7 +37,7 @@ public class ProductDto {
         this.note = note;
         this.productFeatures.addAll(productFeatures);
         this.categoryId = categoryId;
-        this.visible = visible;
+        this.weight = weight;
     }
 
     public UUID getProductId() {
@@ -68,7 +68,7 @@ public class ProductDto {
         return productFeatures;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public int getWeight() {
+        return weight;
     }
 }

@@ -20,9 +20,9 @@ public class CreateProductCommand implements Command {
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
-    private final boolean visible;
+    private final int weight;
 
-    public CreateProductCommand(UUID productId, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) {
+    public CreateProductCommand(UUID productId, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, int weight) {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
@@ -36,7 +36,7 @@ public class CreateProductCommand implements Command {
         this.note = note;
         this.categoryId = categoryId;
         this.features = EnumSet.copyOf(features);
-        this.visible = visible;
+        this.weight = weight;
     }
 
     public UUID getProductId() {
@@ -67,7 +67,7 @@ public class CreateProductCommand implements Command {
         return features;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public int getWeight() {
+        return weight;
     }
 }

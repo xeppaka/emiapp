@@ -24,10 +24,10 @@ public class ProductsService {
     @Autowired
     private ProductsRepository productsRepository;
 
-    public UUID createProduct(UserName userName, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, boolean visible) throws EmiWarehouseException {
+    public UUID createProduct(UserName userName, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, int weight) throws EmiWarehouseException {
         try {
             final UUID productId = UUID.randomUUID();
-            final CreateProductCommand createProductCommand = new CreateProductCommand(productId, name, price, multiplicity, note, categoryId, features, visible);
+            final CreateProductCommand createProductCommand = new CreateProductCommand(productId, name, price, multiplicity, note, categoryId, features, weight);
             emiCommandHandler.handle(userName, createProductCommand);
 
             return productId;

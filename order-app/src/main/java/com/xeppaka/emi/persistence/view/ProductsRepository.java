@@ -20,7 +20,8 @@ public class ProductsRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public void createProduct(UUID productId, String name, int price, int multiplicity, String note, UUID categoryId, Set<ProductFeature> productFeatures, boolean visible) {
+    public void createProduct(UUID productId, String name, int price, int multiplicity, String note,
+                              UUID categoryId, Set<ProductFeature> productFeatures, int weight) {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
@@ -34,10 +35,10 @@ public class ProductsRepository {
         sqlParameterSource.addValue("FEATURES", productFeaturesToString(productFeatures));
         sqlParameterSource.addValue("NOTE", note);
         sqlParameterSource.addValue("CATEGORY", categoryId);
-        sqlParameterSource.addValue("VISIBLE", visible);
+        sqlParameterSource.addValue("WEIGHT", weight);
 
-        jdbcTemplate.update("INSERT INTO PRODUCTS(ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, VISIBLE) " +
-                        "VALUES(:ID, :NAME, :PRICE, :MULTIPLICITY, :FEATURES, :NOTE, :CATEGORY, :VISIBLE)", sqlParameterSource);
+        jdbcTemplate.update("INSERT INTO PRODUCTS(ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT) " +
+                        "VALUES(:ID, :NAME, :PRICE, :MULTIPLICITY, :FEATURES, :NOTE, :CATEGORY, :WEIGHT)", sqlParameterSource);
     }
 
     public void updateProductName(UUID productId, String name) {
@@ -63,7 +64,7 @@ public class ProductsRepository {
     }
 
     public List<ProductDto> getProducts() {
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, VISIBLE FROM PRODUCTS", (rs, rowNum) -> {
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS", (rs, rowNum) -> {
             final UUID productId = UUID.fromString(rs.getString("ID"));
             final String name = rs.getString("NAME");
             final int price = rs.getInt("PRICE");
@@ -72,9 +73,9 @@ public class ProductsRepository {
             final String note = rs.getString("NOTE");
             final String categoryIdStr = rs.getString("CATEGORY");
             final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
-            final boolean visible = rs.getBoolean("VISIBLE");
+            final int weight = rs.getInt("WEIGHT");
 
-            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, visible);
+            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, weight);
         });
     }
 
@@ -82,7 +83,7 @@ public class ProductsRepository {
         final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         sqlParameterSource.addValue("IDS", ids);
 
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, VISIBLE FROM PRODUCTS WHERE ID IN (:IDS) ", sqlParameterSource, (rs, rowNum) -> {
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE ID IN (:IDS) ", sqlParameterSource, (rs, rowNum) -> {
             final UUID productId = UUID.fromString(rs.getString("ID"));
             final String name = rs.getString("NAME");
             final int price = rs.getInt("PRICE");
@@ -91,15 +92,15 @@ public class ProductsRepository {
             final String note = rs.getString("NOTE");
             final String categoryIdStr = rs.getString("CATEGORY");
             final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
-            final boolean visible = rs.getBoolean("VISIBLE");
+            final int weight = rs.getInt("WEIGHT");
 
-            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, visible);
+            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, weight);
         });
     }
 
     private String productFeaturesToString(Set<ProductFeature> productFeatures) {
         if (productFeatures.isEmpty()) {
-            return null;
+            return "";
         } else {
             return productFeatures.stream().map(Enum::name).collect(Collectors.joining(":"));
         }
@@ -108,7 +109,7 @@ public class ProductsRepository {
     private Set<ProductFeature> productFeaturesFromString(String productFeatures) {
         final Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
 
-        if (productFeatures == null || productFeatures.isEmpty()) {
+        if (productFeatures.isEmpty()) {
             return features;
         }
 

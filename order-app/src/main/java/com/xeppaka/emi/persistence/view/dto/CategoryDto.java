@@ -9,11 +9,20 @@ public class CategoryDto {
     private final UUID categoryId;
     private final String name;
     private final UUID parentCategoryId;
+    private final int weight;
 
-    public CategoryDto(UUID categoryId, String name, UUID parentCategoryId) {
+    public CategoryDto() {
+        this.categoryId = null;
+        this.name = null;
+        this.parentCategoryId = null;
+        this.weight = 0;
+    }
+
+    public CategoryDto(UUID categoryId, String name, UUID parentCategoryId, int weight) {
         this.categoryId = categoryId;
         this.name = name;
         this.parentCategoryId = parentCategoryId;
+        this.weight = weight;
     }
 
     public UUID getCategoryId() {
@@ -26,5 +35,9 @@ public class CategoryDto {
 
     public UUID getParentCategoryId() {
         return parentCategoryId;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 }

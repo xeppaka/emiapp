@@ -17,25 +17,26 @@ public class CategoriesRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void createCategory(UUID categoryId, String name) {
-        createCategory(categoryId, name, null);
+    public void createCategory(UUID categoryId, String name, int weight) {
+        createCategory(categoryId, name, null, weight);
     }
 
-    public void createCategory(UUID categoryId, String name, UUID parentCategoryId) {
+    public void createCategory(UUID categoryId, String name, UUID parentCategoryId, int weight) {
         Validate.notNull(categoryId);
         Validate.notNull(name);
 
-        jdbcTemplate.update("INSERT INTO CATEGORIES(ID, NAME, PARENT_CATEGORY) VALUES(?, ?, ?)", categoryId, name, parentCategoryId);
+        jdbcTemplate.update("INSERT INTO CATEGORIES(ID, NAME, PARENT_CATEGORY, WEIGHT) VALUES(?, ?, ?, ?)", categoryId, name, parentCategoryId, weight);
     }
 
     public List<CategoryDto> getCategories() {
-        return jdbcTemplate.query("SELECT ID, NAME, PARENT_CATEGORY FROM CATEGORIES", new Object[]{}, (rs, rowNum) -> {
+        return jdbcTemplate.query("SELECT ID, NAME, PARENT_CATEGORY, WEIGHT FROM CATEGORIES", new Object[]{}, (rs, rowNum) -> {
             final UUID categoryId = UUID.fromString(rs.getString("ID"));
             final String name = rs.getString("NAME");
             final String parentCategoryIdStr = rs.getString("PARENT_CATEGORY");
             final UUID parentCategoryId = parentCategoryIdStr == null ? null : UUID.fromString(parentCategoryIdStr);
+            final int weight = rs.getInt("WEIGHT");
 
-            return new CategoryDto(categoryId, name, parentCategoryId);
+            return new CategoryDto(categoryId, name, parentCategoryId, weight);
         });
     }
 }

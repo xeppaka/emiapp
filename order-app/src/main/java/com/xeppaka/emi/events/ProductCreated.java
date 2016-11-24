@@ -19,19 +19,19 @@ public class ProductCreated extends EmiEvent {
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
-    private final boolean visible;
+    private final int weight;
 
     private ProductCreated() {
         super(EmiEventType.PRODUCT_CREATED);
 
-        productId = null;
-        name = null;
-        price = 0;
-        multiplicity = 1;
-        note = null;
-        categoryId = null;
-        features = null;
-        visible = false;
+        this.productId = null;
+        this.name = null;
+        this.price = 0;
+        this.multiplicity = 1;
+        this.note = null;
+        this.categoryId = null;
+        this.features = null;
+        this.weight = 0;
     }
 
     public ProductCreated(UUID productId,
@@ -41,7 +41,7 @@ public class ProductCreated extends EmiEvent {
                           String note,
                           UUID categoryId,
                           Collection<ProductFeature> features,
-                          boolean visible) {
+                          int weight) {
         super(EmiEventType.PRODUCT_CREATED);
         Validate.notNull(productId);
         Validate.notNull(name);
@@ -56,7 +56,7 @@ public class ProductCreated extends EmiEvent {
         this.note = note;
         this.categoryId = categoryId;
         this.features = EnumSet.copyOf(features);
-        this.visible = visible;
+        this.weight = weight;
     }
 
     public UUID getProductId() {
@@ -87,7 +87,7 @@ public class ProductCreated extends EmiEvent {
         return features;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public int getWeight() {
+        return weight;
     }
 }

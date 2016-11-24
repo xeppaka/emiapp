@@ -110,7 +110,7 @@ public class EmiWarehouse extends BaseAggregate {
                 command.getNote(),
                 command.getCategoryId(),
                 command.getFeatures(),
-                command.isVisible());
+                command.getWeight());
 
         apply(productCreated);
         addEvent(productCreated);
@@ -119,7 +119,8 @@ public class EmiWarehouse extends BaseAggregate {
     public void handle(CreateCategoryCommand command) {
         final CategoryCreated categoryCreated = new CategoryCreated(command.getCategoryId(),
                 command.getName(),
-                command.getParentCategoryId());
+                command.getParentCategoryId(),
+                command.getWeight());
 
         apply(categoryCreated);
         addEvent(categoryCreated);

@@ -53,14 +53,14 @@ public class ProductsImporter {
             } else if (p.getType().equalsIgnoreCase("POS")) {
                 features.add(ProductFeature.POS);
             }
-            emiWarehouse.handle(new CreateProductCommand(UUID.randomUUID(), p.getName(), (int) (p.getPrice() * 100), p.getMultiplicity(), p.getNote(), category.getCategoryId(), features, true));
+            emiWarehouse.handle(new CreateProductCommand(UUID.randomUUID(), p.getName(), (int) (p.getPrice() * 100), p.getMultiplicity(), p.getNote(), category.getCategoryId(), features, 0));
         }
     }
 
     private void createCategories(EmiWarehouse emiWarehouse, UUID parentCategory, JsonCategory category) {
         log.debug("Create imported category: {}", category);
 
-        emiWarehouse.handle(new CreateCategoryCommand(category.getCategoryId(), category.getName(), parentCategory));
+        emiWarehouse.handle(new CreateCategoryCommand(category.getCategoryId(), category.getName(), parentCategory, 0));
 
         for (JsonCategory c : category.getChildCategories()) {
             createCategories(emiWarehouse, category.getCategoryId(), c);

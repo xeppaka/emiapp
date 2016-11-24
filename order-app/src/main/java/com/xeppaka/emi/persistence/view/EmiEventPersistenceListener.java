@@ -54,13 +54,14 @@ public class EmiEventPersistenceListener implements EventListener {
                 productCreated.getNote(),
                 productCreated.getCategoryId(),
                 productCreated.getFeatures(),
-                productCreated.isVisible());
+                productCreated.getWeight());
     }
 
     private void onCategoryCreatedEvent(CategoryCreated categoryCreated) {
         categoriesRepository.createCategory(categoryCreated.getCategoryId(),
                 categoryCreated.getName(),
-                categoryCreated.getParentCategoryId());
+                categoryCreated.getParentCategoryId(),
+                categoryCreated.getWeight());
     }
 
     private void onProductNameChanged(ProductNameChanged productNameChanged) {

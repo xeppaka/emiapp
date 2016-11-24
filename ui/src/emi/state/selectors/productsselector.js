@@ -74,9 +74,9 @@ const productIdsSelector = createProductIdsSelector(
         for (let i = 0; i < l; i++) {
             let product = productById[allProductIds[i]];
 
-            if (product.type === 'MAIN') {
+            if (product.productFeatures.indexOf('MAIN') !== -1) {
                 mainProductIds.push(allProductIds[i]);
-            } else if (product.type === 'POS') {
+            } else if (product.productFeatures.indexOf('POS') !== -1) {
                 posProductIds.push(allProductIds[i]);
             }
         }

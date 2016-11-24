@@ -7,8 +7,9 @@ class OrderProductItem extends React.Component {
 
     render() {
         let product = this.props.product;
+        let isMain = product.productFeatures.indexOf('MAIN') !== -1;
         let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(2));
-        let calculatedPriceWithDiscount = product.type === 'MAIN' ? Number((product.price / 200 * product.quantity).toFixed(2)) : 0;
+        let calculatedPriceWithDiscount = isMain ? Number((product.price / 200 * product.quantity).toFixed(2)) : 0;
 
         return (<tr>
             <th scope="row">{this.props.idx}</th>

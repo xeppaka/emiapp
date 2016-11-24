@@ -14,14 +14,6 @@ function setInitialProductValues(productById) {
 
         let product = productById[key];
         product.quantity = 0;
-
-        if (product.productFeatures.indexOf('MAIN') !== -1) {
-            product.type = 'MAIN';
-        } else if (product.productFeatures.indexOf('POS') !== -1) {
-            product.type = 'POS';
-        } else {
-            product.type = 'UNKNOWN';
-        }
     }
 
     return productById;
