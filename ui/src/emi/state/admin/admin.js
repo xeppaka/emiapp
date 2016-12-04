@@ -1,10 +1,13 @@
 import update from 'react-addons-update';
-import { SET_MODIFIED_PRODUCT, REMOVE_MODIFIED_PRODUCT, SET_SEND_CUSTOMER_NOTIFICATION,
-         SET_CURRENT_TAB, RESET_MODIFICATIONS, SET_NOTIFICATION_TEXT, SAVE_MODIFIED_PRODUCTS_STARTED,
-         SAVE_MODIFIED_PRODUCTS_FINISHED, ACCEPT_MODIFIED_PRODUCTS } from './adminactions';
+import { SET_MODIFIED_PRODUCT, REMOVE_MODIFIED_PRODUCT,
+         SET_MODIFIED_CATEGORY, REMOVE_MODIFIED_CATEGORY,
+         SET_SEND_CUSTOMER_NOTIFICATION, SET_CURRENT_TAB,
+         RESET_PRODUCTS, SET_NOTIFICATION_TEXT,
+         SAVE_STARTED, SAVE_FINISHED } from './adminactions';
 
 const initialAdminState = {
     modifiedProductById: {},
+    modifiedCategoryById: {},
     sendNotificationToCustomers: false,
     notificationText: null,
     saving: false,
@@ -13,16 +16,17 @@ const initialAdminState = {
 
 function admin(state = initialAdminState, action) {
     switch (action.type) {
-        case RESET_MODIFICATIONS:
+        case RESET_PRODUCTS:
             return update(state, {
-                modifiedProductById: {$set: {}}
+                modifiedProductById: {$set: {}},
+                modifiedCategoryById: {$set: {}}
             });
         case SET_MODIFIED_PRODUCT: {
             let modifiedProduct = action.product;
 
             return update(state, {
                 modifiedProductById: {
-                    [modifiedProduct.productId]: {$set: action.product}
+                    [modifiedProduct.productId]: {$set: modifiedProduct}
                 }
             });
         }
@@ -33,6 +37,20 @@ function admin(state = initialAdminState, action) {
                 }
             });
         }
+        case SET_MODIFIED_CATEGORY:
+            let modifiedCategory = action.category;
+
+            return update(state, {
+                modifiedCategoryById: {
+                    [modifiedCategory.categoryId]: {$set: modifiedCategory}
+                }
+            });
+        case REMOVE_MODIFIED_CATEGORY:
+            return update(state, {
+                modifiedCategoryById: {
+                    [action.id]: {$set: null}
+                }
+            });
         case SET_SEND_CUSTOMER_NOTIFICATION:
             return update(state, {
                 sendNotificationToCustomers: {$set: action.value}
@@ -41,11 +59,11 @@ function admin(state = initialAdminState, action) {
             return update(state, {
                 notificationText: {$set: action.text}
             });
-        case SAVE_MODIFIED_PRODUCTS_STARTED:
+        case SAVE_STARTED:
             return update(state, {
                 saving: {$set: true}
             });
-        case SAVE_MODIFIED_PRODUCTS_FINISHED:
+        case SAVE_FINISHED:
             return update(state, {
                 saving: {$set: false}
             });

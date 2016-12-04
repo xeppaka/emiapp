@@ -1,18 +1,17 @@
 import React, { PropTypes } from 'react';
-import SaveProductsTable from './saveproductstable';
-import Notification from './notification';
+import SaveCategoriesTable from './savecategoriestable';
 
-class SaveModificationsModal extends React.Component {
+class SaveCategoriesModal extends React.Component {
     constructor(props) {
         super(props);
     }
 
     onCancel(event) {
-        this.props.hideModal();
+        this.props.onHideModal();
     }
 
     onSave(event) {
-        this.props.saveModifications(this.props.modalId);
+        this.props.onSave(this.props.modalId);
     }
 
     render() {
@@ -37,11 +36,7 @@ class SaveModificationsModal extends React.Component {
                                 <div className='container-fluid'>
                                     <div className='row'>
                                         <form>
-                                            <Notification notification={this.props.notification}
-                                                          setSendNotification={this.props.setSendNotification}
-                                                          setNotificationText={this.props.setNotificationText}
-                                            />
-                                            <SaveProductsTable products={this.props.products} />
+                                            <SaveCategoriesTable categories={this.props.categories} />
                                         </form>
                                     </div>
                                 </div>
@@ -60,4 +55,4 @@ class SaveModificationsModal extends React.Component {
     }
 }
 
-export default SaveModificationsModal;
+export default SaveCategoriesModal;

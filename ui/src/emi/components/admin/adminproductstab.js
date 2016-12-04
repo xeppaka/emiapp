@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import AdminProductsContainer from '../../containers/adminproductscontainer';
+import AdminProductsTotalContainer from '../../containers/adminproductstotalcontainer';
 
 class AdminProductsTab extends React.Component {
     constructor(props) {
@@ -7,7 +8,12 @@ class AdminProductsTab extends React.Component {
     }
 
     render() {
-        return <AdminProductsContainer />;
+        return (
+            <div>
+                <AdminProductsContainer />
+                <AdminProductsTotalContainer />
+            </div>
+        )
     }
 }
 

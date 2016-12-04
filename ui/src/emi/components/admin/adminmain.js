@@ -1,8 +1,5 @@
 import React, { PropTypes } from 'react';
-
-import AdminTabs from './admintabs';
-import AdminProductsTab from './adminproductstab';
-import AdminTotalContainer from '../../containers/admintotalcontainer';
+import { Link } from 'react-router';
 import ModalsContainer from '../../containers/modalscontainer';
 
 class AdminMain extends React.Component {
@@ -12,11 +9,17 @@ class AdminMain extends React.Component {
 
     render() {
         return (
-            <div className="container-fluid">
-                <AdminTotalContainer />
-                <AdminTabs />
-                <AdminProductsTab />
+            <div>
+                <ul className='nav nav-tabs'>
+                    <li className='nav-item'>
+                        <Link className={'nav-link'} to={'/admin/products'}>Products</Link>
+                    </li>
+                    <li className='nav-item'>
+                        <Link className={'nav-link'} to={'/admin/categories'}>Categories</Link>
+                    </li>
+                </ul>
                 <ModalsContainer />
+                { this.props.children }
             </div>
         )
     }

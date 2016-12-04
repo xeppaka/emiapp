@@ -21,8 +21,8 @@ public class EmiApplication {
         final EmiWarehouseRepository warehouseRepository = configurableApplicationContext.getBean(EmiWarehouseRepository.class);
         final EmiWarehouse emiWarehouse = warehouseRepository.find(EmiWarehouse.AGGREGATE_ID);
 
-        final ProductsImporter pi = new ProductsImporter();
-        pi.doImport(emiWarehouse);
-        warehouseRepository.save(UserName.SYSTEM_USER_NAME.getUserName(), emiWarehouse);
+//        final ProductsImporter pi = new ProductsImporter();
+//        pi.doImport(emiWarehouse);
+//        warehouseRepository.save(UserName.SYSTEM_USER_NAME.getUserName(), emiWarehouse);
     }
 }

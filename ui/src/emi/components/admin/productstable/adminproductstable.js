@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import AdminProductItem from './adminproductitem';
+import AdminProductsTableRow from './adminproductstablerow';
 
 class AdminProductsTable extends React.Component {
     constructor(props) {
@@ -14,9 +14,11 @@ class AdminProductsTable extends React.Component {
         for (let i = 0; i < productsLength; i++) {
             let product = products[i].product;
 
-            productsItems.push(<AdminProductItem
-                key={product.productId} idx={i + 1} product={product}
-                setProductName={this.props.setProductName} setProductPrice={this.props.setProductPrice}
+            productsItems.push(<AdminProductsTableRow
+                key={product.productId} idx={i + 1}
+                product={product}
+                setProductName={this.props.setProductName}
+                setProductPrice={this.props.setProductPrice}
             />)
         }
 
@@ -29,8 +31,9 @@ class AdminProductsTable extends React.Component {
                 <thead>
                 <tr>
                     <th scope='row' style={{width:'2%'}}>#</th>
-                    <th style={{width:'33%'}}>Product Name</th>
-                    <th style={{width:'13%'}}>Retail price<br />(without VAT, in &#8364; cents)</th>
+                    <th style={{width:'54%'}}>Product Name</th>
+                    <th style={{width:'22%'}}>Retail price<br />(without VAT, in &#8364; cents)</th>
+                    <th style={{width:'22%'}}>Weight</th>
                 </tr>
                 </thead>
                 <tbody>

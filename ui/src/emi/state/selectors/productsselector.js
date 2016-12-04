@@ -241,11 +241,9 @@ export const adminProductsSelector = createSelector(
         });
 
         let posProducts = productIds.posProductIds.map((id) => {
-                let product = (modifiedProductById.hasOwnProperty(id) && modifiedProductById[id] !== null) ? modifiedProductById[id] : productById[id];
-
-                return { product: product, anchor: anchorsById[id] }
-            }
-        );
+            let product = (modifiedProductById.hasOwnProperty(id) && modifiedProductById[id] !== null) ? modifiedProductById[id] : productById[id];
+            return { product: product, anchor: anchorsById[id] }
+        });
 
         return mainProducts.concat(posProducts);
     }

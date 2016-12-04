@@ -13,6 +13,8 @@ import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 import CustomerMain from './components/customer/customermain';
 import AdminMain from './components/admin/adminmain';
+import AdminProductsTab from './components/admin/adminproductstab';
+import AdminCategoriesTab from './components/admin/admincategoriestab';
 
 import emiApp from './state/emiapp';
 import { loadWarehouse } from './state/warehouse/warehouseactions';
@@ -34,7 +36,10 @@ render(
     <Provider store={store}>
         <Router>
             <Route path="/" component={CustomerMain} />
-            <Route path="admin" component={AdminMain} />
+            <Route path="/admin" component={AdminMain}>
+                <Route path="products" component={AdminProductsTab}/>
+                <Route path="categories" component={AdminCategoriesTab}/>
+            </Route>
         </Router>
     </Provider>,
     document.getElementById('applicationContainer')

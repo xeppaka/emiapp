@@ -1,5 +1,58 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 
+function createProductsComparator(productById) {
+    return function compareProducts(prodId1, prodId2) {
+        let prod1 = productById[prodId1];
+        let prod2 = productById[prodId2];
+
+        if (prod1.weight < prod2.weight) {
+            return -1;
+        }
+
+        if (prod1.weight > prod2.weight) {
+            return 1;
+        }
+
+        return prod1.name.localeCompare(prod2.name);
+    }
+}
+
+function createCategoriesComparator(categoryById) {
+    return function compareCategories(categoryId1, categoryId2) {
+        let category1 = categoryById[categoryId1];
+        let category2 = categoryById[categoryId2];
+
+        if (category1.weight < category2.weight) {
+            return -1;
+        }
+
+        if (category1.weight > category2.weight) {
+            return 1;
+        }
+
+        return category1.name.localeCompare(category2.name);
+    }
+}
+
+function sortCategoryTree(categoryById, productById) {
+    sortCategoryTreeWithComparators('root',
+        categoryById,
+        createCategoriesComparator(categoryById),
+        createProductsComparator(productById));
+}
+
+function sortCategoryTreeWithComparators(catId, categoryById, categoriesComparator, productsComparator) {
+    let category = categoryById[catId];
+    category.childCategoryIds = category.childCategoryIds.sort(categoriesComparator);
+    category.productIds = category.productIds.sort(productsComparator);
+
+    let l = category.childCategoryIds.length;
+    for (let i = 0; i < l; i++) {
+        sortCategoryTreeWithComparators(category.childCategoryIds[i], categoryById,
+            categoriesComparator, productsComparator);
+    }
+}
+
 function isProductByIdEqual(val1, val2) {
     let val1Keys = 0;
     let val2Keys = 0;
@@ -62,6 +115,22 @@ const createDeepEqualSelector = createSelectorCreator(
     isEqual
 );
 
+function setAnchors(categoriesTree) {
+    setAnchorsRecursively(categoriesTree, 'root', '#');
+}
+
+function setAnchorsRecursively(categoriesTree, id, anchor) {
+    let currentCategory = categoriesTree[id];
+    currentCategory.anchor = anchor;
+
+    let childCategoryIds = currentCategory.childCategoryIds;
+    let childCategoryIdsLength = childCategoryIds.length;
+
+    for (let i = 0; i < childCategoryIdsLength; i++) {
+        setAnchorsRecursively(categoriesTree, childCategoryIds[i], anchor + '.' + i);
+    }
+}
+
 export const categoriesTreeSelector = createDeepEqualSelector(
     [
         (state) => { return { type: 'categoryById', value: state.warehouse.categories.categoryById } },
@@ -92,7 +161,7 @@ export const categoriesTreeSelector = createDeepEqualSelector(
                     name: category.name,
                     anchor: '',
                     childCategoryIds: [],
-                    parentCategoryId: category.parentCategoryId,
+                    parentCategoryId: category.parentCategoryId === null ? 'root' : category.parentCategoryId,
                     productIds: []
                 };
             }
@@ -111,8 +180,6 @@ export const categoriesTreeSelector = createDeepEqualSelector(
             }
         }
 
-        // for anchors should walk recursively starting from root node
-        setAnchors(tcategoryById);
 
         for (let key in productById) {
             if (!productById.hasOwnProperty(key))
@@ -126,22 +193,9 @@ export const categoriesTreeSelector = createDeepEqualSelector(
             }
         }
 
+        sortCategoryTree(tcategoryById, productById);
+        setAnchors(tcategoryById);
+
         return tcategoryById;
     }
 );
-
-function setAnchors(categoriesTree) {
-    setAnchorsRecursively(categoriesTree, 'root', '#');
-}
-
-function setAnchorsRecursively(categoriesTree, id, anchor) {
-    let currentCategory = categoriesTree[id];
-    currentCategory.anchor = anchor;
-
-    let childCategoryIds = currentCategory.childCategoryIds;
-    let childCategoryIdsLength = childCategoryIds.length;
-
-    for (let i = 0; i < childCategoryIdsLength; i++) {
-        setAnchorsRecursively(categoriesTree, childCategoryIds[i], anchor + '.' + i);
-    }
-}

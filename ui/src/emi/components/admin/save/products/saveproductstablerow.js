@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-class SaveProductItem extends React.Component {
+class SaveProductsTableRow extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -16,4 +16,4 @@ class SaveProductItem extends React.Component {
     }
 }
 
-export default SaveProductItem;
+export default SaveProductsTableRow;

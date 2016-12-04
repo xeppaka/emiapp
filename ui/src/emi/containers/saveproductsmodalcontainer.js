@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
-import { setSendCustomerNotification, setNotificationText, saveModifications } from '../state/admin/adminactions';
+import { setSendCustomerNotification, setNotificationText, saveProducts } from '../state/admin/adminactions';
 import { modifiedProductsSelector, notificationSelector } from '../state/selectors/adminselector';
-import SaveModificationsModal from '../components/admin/save/savemodificationsmodal';
+import SaveModificationsModal from '../components/admin/save/products/saveproductsmodal';
 
 const mapStateToProps = (state) => {
     return {
@@ -15,7 +15,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         setSendNotification: (value) => dispatch(setSendCustomerNotification(value)),
         setNotificationText: (text) => dispatch(setNotificationText(text)),
-        saveModifications: (saveModalId) => dispatch(saveModifications(saveModalId))
+        saveModifications: (saveModalId) => dispatch(saveProducts(saveModalId))
     }
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AdminTotal extends React.Component {
+class AdminProductsTotal extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -26,4 +26,4 @@ class AdminTotal extends React.Component {
     }
 }
 
-export default AdminTotal;
+export default AdminProductsTotal;

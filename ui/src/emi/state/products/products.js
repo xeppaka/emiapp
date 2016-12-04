@@ -1,13 +1,12 @@
 import update from 'react-addons-update';
-import { SET_PRODUCTS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET } from './productsactions';
+import { UPDATE_PRODUCTS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET } from './productsactions';
 import { SET_WAREHOUSE } from '../warehouse/warehouseactions';
-import { ACCEPT_MODIFIED_PRODUCTS } from '../admin/adminactions';
 
 const initialProductsState = {
     productById: {}
 };
 
-function setInitialProductValues(productById) {
+function setZeroQuantity(productById) {
     for (let key in productById) {
         if (!productById.hasOwnProperty(key))
             continue;
@@ -23,11 +22,11 @@ function products(state = initialProductsState, action) {
     switch (action.type) {
         case SET_WAREHOUSE:
             return update(state, {
-                productById: {$set: setInitialProductValues(action.warehouse.productById)}
+                productById: {$set: setZeroQuantity(action.warehouse.productById)}
             });
-        case SET_PRODUCTS:
+        case UPDATE_PRODUCTS:
             return update(state, {
-                productById: {$set: setInitialProductValues(action.productById)}
+                productById: {$merge: setZeroQuantity(action.productById)}
             });
         case SET_PRODUCT_QUANTITY: {
                 return update(state, {
@@ -61,18 +60,18 @@ function products(state = initialProductsState, action) {
                 productById: {$set: newProductById}
             });
         }
-        case ACCEPT_MODIFIED_PRODUCTS: {
-            let products = action.products;
-            let newState = state;
-
-            for (let i = 0; i < products.length; i++) {
-                newState = update(newState, {
-                    [products[i].productId]: { $set: products[i] }
-                });
-            }
-
-            return newState;
-        }
+        // case ACCEPT_MODIFIED_PRODUCTS: {
+        //     let products = action.products;
+        //     let newState = state;
+        //
+        //     for (let i = 0; i < products.length; i++) {
+        //         newState = update(newState, {
+        //             [products[i].productId]: { $set: products[i] }
+        //         });
+        //     }
+        //
+        //     return newState;
+        // }
         default:
             return state;
     }
