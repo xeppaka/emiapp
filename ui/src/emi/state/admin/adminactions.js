@@ -107,7 +107,7 @@ export function saveCategories(saveModalId) {
         }).then(modifiedCategoriesData => {
             dispatch(saveFinished());
             dispatch(updateCategories(modifiedCategoriesData));
-            dispatch(resetProducts());
+            dispatch(resetCategories());
             dispatch(hideModal(saveModalId));
         });
     };
@@ -124,7 +124,9 @@ export function setProductName(productId, name) {
             name: {$set: name}
         });
 
-        if (newProduct.name === originalProduct.name && newProduct.price === originalProduct.price) {
+        if (newProduct.name === originalProduct.name &&
+            newProduct.price === originalProduct.price &&
+            newProduct.categoryId === originalProduct.categoryId) {
             dispatch(removeModifiedProduct(productId));
         } else {
             dispatch(setModifiedProduct(newProduct));
@@ -143,7 +145,30 @@ export function setProductPrice(productId, price) {
             price: {$set: price}
         });
 
-        if ((newProduct.name === originalProduct.name) && (newProduct.price === originalProduct.price)) {
+        if (newProduct.name === originalProduct.name &&
+            newProduct.price === originalProduct.price &&
+            newProduct.categoryId === originalProduct.categoryId) {
+            dispatch(removeModifiedProduct(productId));
+        } else {
+            dispatch(setModifiedProduct(newProduct));
+        }
+    };
+}
+
+export function setProductCategory(productId, categoryId) {
+    return function(dispatch, getState) {
+        let state = getState();
+        let originalProduct = state.warehouse.products.productById[productId];
+        let modifiedProduct = state.admin.modifiedProductById.hasOwnProperty(productId) ? state.admin.modifiedProductById[productId] : null;
+        let modifyProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        let newProduct = update(modifyProduct, {
+            categoryId: {$set: categoryId}
+        });
+
+        if (newProduct.name === originalProduct.name &&
+            newProduct.price === originalProduct.price &&
+            newProduct.categoryId === originalProduct.categoryId) {
             dispatch(removeModifiedProduct(productId));
         } else {
             dispatch(setModifiedProduct(newProduct));

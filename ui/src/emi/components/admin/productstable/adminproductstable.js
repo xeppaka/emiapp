@@ -17,8 +17,10 @@ class AdminProductsTable extends React.Component {
             productsItems.push(<AdminProductsTableRow
                 key={product.productId} idx={i + 1}
                 product={product}
-                setProductName={this.props.setProductName}
-                setProductPrice={this.props.setProductPrice}
+                categoriesList={this.props.categoriesList}
+                onProductNameChanged={this.props.onProductNameChanged}
+                onProductPriceChanged={this.props.onProductPriceChanged}
+                onProductCategoryChanged={this.props.onProductCategoryChanged}
             />)
         }
 
@@ -31,9 +33,10 @@ class AdminProductsTable extends React.Component {
                 <thead>
                 <tr>
                     <th scope='row' style={{width:'2%'}}>#</th>
-                    <th style={{width:'54%'}}>Product Name</th>
-                    <th style={{width:'22%'}}>Retail price<br />(without VAT, in &#8364; cents)</th>
-                    <th style={{width:'22%'}}>Weight</th>
+                    <th style={{width:'38%'}}>Product Name</th>
+                    <th style={{width:'20%'}}>Product Category</th>
+                    <th style={{width:'20%'}}>Retail price<br />(without VAT, in &#8364; cents)</th>
+                    <th style={{width:'20%'}}>Weight</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -17,15 +17,24 @@ public class Product extends BaseEntity {
     private int price;
     private String note;
     private UUID categoryId;
+    private int weight;
     private Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
 
-    public Product(UUID id, String name, int price, String note, UUID categoryId, Collection<ProductFeature> productFeatures) {
+    public Product(UUID id,
+                   String name,
+                   int price,
+                   String note,
+                   UUID categoryId,
+                   int weight,
+                   Collection<ProductFeature> productFeatures) {
         super(id);
 
         setName(name);
         setPrice(price);
         this.note = note;
         this.categoryId = categoryId;
+        this.weight = weight;
+        this.productFeatures = EnumSet.copyOf(productFeatures);
     }
 
     public String getName() {
@@ -54,15 +63,28 @@ public class Product extends BaseEntity {
         return productFeatures;
     }
 
-    public void addFeatures(Collection<ProductFeature> features) {
-        Validate.notNull(productFeatures);
-        this.productFeatures.addAll(features);
+    public void setProductFeatures(Collection<ProductFeature> productFeatures) {
+        this.productFeatures = EnumSet.copyOf(productFeatures);
     }
 
-    public void addFeature(ProductFeature feature) {
-        Validate.notNull(feature);
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-        productFeatures.add(feature);
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public UUID getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(UUID categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override

@@ -63,6 +63,17 @@ public class ProductsRepository {
         jdbcTemplate.update("UPDATE PRODUCTS SET PRICE = :PRICE WHERE ID = :ID", sqlParameterSource);
     }
 
+    public void updateProductCategory(UUID productId, UUID categoryId) {
+        Validate.notNull(productId);
+        Validate.notNull(categoryId);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+        sqlParameterSource.addValue("CATEGORY", categoryId);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET CATEGORY = :CATEGORY WHERE ID = :ID", sqlParameterSource);
+    }
+
     public List<ProductDto> getProducts() {
         return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS", (rs, rowNum) -> {
             final UUID productId = UUID.fromString(rs.getString("ID"));

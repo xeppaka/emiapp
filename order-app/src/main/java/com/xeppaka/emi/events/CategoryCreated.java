@@ -15,6 +15,7 @@ public class CategoryCreated extends EmiEvent {
 
     private CategoryCreated() {
         super(EmiEventType.CATEGORY_CREATED);
+
         this.categoryId = null;
         this.name = null;
         this.parentCategoryId = null;

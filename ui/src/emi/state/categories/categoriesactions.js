@@ -5,6 +5,6 @@ export function setCategories(categoriesById) {
     return { type: SET_CATEGORIES, categoriesById: categoriesById };
 }
 
-export function updateCategories(categoriesById) {
-    return { type: UPDATE_CATEGORIES, categoriesById: categoriesById }
+export function updateCategories(categories) {
+    return { type: UPDATE_CATEGORIES, categories: categories }
 }

@@ -41,6 +41,9 @@ public class EmiEventPersistenceListener implements EventListener {
             case PRODUCT_PRICE_CHANGED:
                 onProductPriceChanged((ProductPriceChanged) emiEvent);
                 break;
+            case PRODUCT_CATEGORY_CHANGED:
+                onProductCategoryChanged((ProductCategoryChanged) emiEvent);
+                break;
             case CATEGORY_NAME_CHANGED:
                 onCategoryNameChanged((CategoryNameChanged) emiEvent);
                 break;
@@ -79,6 +82,10 @@ public class EmiEventPersistenceListener implements EventListener {
                 productCreated.getCategoryId(),
                 productCreated.getFeatures(),
                 productCreated.getWeight());
+    }
+
+    private void onProductCategoryChanged(ProductCategoryChanged productCategoryChanged) {
+        productsRepository.updateProductCategory(productCategoryChanged.getProductId(), productCategoryChanged.getCategoryId());
     }
 
     private void onCategoryCreatedEvent(CategoryCreated categoryCreated) {

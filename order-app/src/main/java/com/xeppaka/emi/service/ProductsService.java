@@ -40,7 +40,7 @@ public class ProductsService {
         try {
             for (ProductDto product : products) {
                 emiCommandHandler.handle(userName,
-                        new UpdateProductCommand(product.getProductId(), product.getName(), product.getPrice()));
+                        new UpdateProductCommand(product.getProductId(), product.getName(), product.getPrice(), product.getCategoryId()));
             }
 
             return productsRepository.getProducts(products.stream().map(ProductDto::getProductId).collect(Collectors.toList()));

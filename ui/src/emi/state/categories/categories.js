@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import { SET_CATEGORIES } from './categoriesactions';
+import { SET_CATEGORIES, UPDATE_CATEGORIES } from './categoriesactions';
 import { SET_WAREHOUSE } from '../warehouse/warehouseactions';
 
 const initialCategoriesState = {
@@ -16,6 +16,20 @@ function categories(state = initialCategoriesState, action) {
             return update(state, {
                 categoryById: {$set: action.categoryById}
             });
+        case UPDATE_CATEGORIES: {
+            let updatedCategories = action.categories;
+            let updatedState = state;
+
+            for (let i = 0; i < updatedCategories.length; i++) {
+                updatedState = update(updatedState, {
+                    categoryById: {
+                        [updatedCategories[i].categoryId]: {$set: updatedCategories[i]}
+                    }
+                });
+            }
+
+            return updatedState;
+        }
         default:
             return state;
     }

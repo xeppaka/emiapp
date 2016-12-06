@@ -12,6 +12,7 @@ public class ProductRemoved extends EmiEvent {
 
     private ProductRemoved() {
         super(EmiEventType.PRODUCT_REMOVED);
+
         productId = null;
     }
 

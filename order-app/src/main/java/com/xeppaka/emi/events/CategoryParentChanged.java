@@ -11,6 +11,13 @@ public class CategoryParentChanged extends EmiEvent {
     private final UUID categoryId;
     private final UUID parentCategoryId;
 
+    private CategoryParentChanged() {
+        super(EmiEventType.CATEGORY_PARENT_CHANGED);
+
+        categoryId = null;
+        parentCategoryId = null;
+    }
+
     public CategoryParentChanged(UUID categoryId, UUID parentCategoryId) {
         super(EmiEventType.CATEGORY_PARENT_CHANGED);
 

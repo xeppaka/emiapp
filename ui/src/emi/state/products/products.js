@@ -25,9 +25,18 @@ function products(state = initialProductsState, action) {
                 productById: {$set: setZeroQuantity(action.warehouse.productById)}
             });
         case UPDATE_PRODUCTS:
-            return update(state, {
-                productById: {$merge: setZeroQuantity(action.productById)}
-            });
+            let updatedProducts = setZeroQuantity(action.products);
+            let updatedState = state;
+
+            for (let i = 0; i < updatedProducts.length; i++) {
+                updatedState = update(updatedState, {
+                    productById: {
+                        [updatedProducts[i].productId]: {$set: updatedProducts[i]}
+                    }
+                });
+            }
+
+            return updatedState;
         case SET_PRODUCT_QUANTITY: {
                 return update(state, {
                     productById: {

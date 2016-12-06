@@ -21,7 +21,7 @@ import java.util.UUID;
  */
 public class ProductsImporter {
     private static final Logger log = LoggerFactory.getLogger(ProductsImporter.class);
-    private JsonCategory rootCategory = new JsonCategory(UUID.randomUUID(), "ROOT");
+    private JsonCategory rootCategory = new JsonCategory(UUID.randomUUID(), "Product Categories");
 
     private List<JsonProduct> readProducts(Path jsonFile) throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -38,9 +38,7 @@ public class ProductsImporter {
             JsonCategory childCategory = rootCategory.getCategory(categoryNames);
         }
 
-        for (JsonCategory c : rootCategory.getChildCategories()) {
-            createCategories(emiWarehouse, null, c);
-        }
+        createCategories(emiWarehouse, null, rootCategory);
 
         for (JsonProduct p : products) {
             log.debug("Create imported product: {}", p);

@@ -16,7 +16,6 @@ class SaveCategoriesModal extends React.Component {
         let modalWidth = $(window).width() * 0.8;
         // let divFeedbackClass = this.props.order.emailValid ? 'has-success' : 'has-danger';
         // let inputFeedbackClass = this.props.order.emailValid ? 'form-control-success' : 'form-control-danger';
-        console.log(this.props.categories);
 
         return (
             <div>

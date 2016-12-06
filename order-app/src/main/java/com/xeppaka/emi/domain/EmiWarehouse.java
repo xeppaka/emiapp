@@ -45,6 +45,9 @@ public class EmiWarehouse extends BaseAggregate {
             case PRODUCT_PRICE_CHANGED:
                 applyProductPriceChanged((ProductPriceChanged) emiEvent);
                 break;
+            case PRODUCT_CATEGORY_CHANGED:
+                applyProductCategoryChanged((ProductCategoryChanged) emiEvent);
+                break;
             case CATEGORY_NAME_CHANGED:
                 applyCategoryNameChanged((CategoryNameChanged) emiEvent);
                 break;
@@ -57,6 +60,11 @@ public class EmiWarehouse extends BaseAggregate {
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event: {0}.", event));
         }
+    }
+
+    private void applyProductCategoryChanged(ProductCategoryChanged productCategoryChanged) {
+        final Product product = productsMap.get(productCategoryChanged.getProductId());
+        product.setCategoryId(productCategoryChanged.getCategoryId());
     }
 
     private void applyCategoryWeightChanged(CategoryWeightChanged categoryWeightChanged) {
@@ -81,6 +89,7 @@ public class EmiWarehouse extends BaseAggregate {
                         createProductEvent.getPrice(),
                         createProductEvent.getNote(),
                         createProductEvent.getCategoryId(),
+                        createProductEvent.getWeight(),
                         createProductEvent.getFeatures()));
     }
 
@@ -156,6 +165,7 @@ public class EmiWarehouse extends BaseAggregate {
         final Product originalProduct = productsMap.get(command.getId());
         final String name = command.getName();
         final int price = command.getPrice();
+        final UUID categoryId = command.getCategoryId();
 
         if (!originalProduct.getName().equals(name)) {
             final ProductNameChanged productNameChanged =
@@ -169,6 +179,13 @@ public class EmiWarehouse extends BaseAggregate {
                     new ProductPriceChanged(originalProduct.getId(), price);
             apply(productPriceChanged);
             addEvent(productPriceChanged);
+        }
+
+        if (!originalProduct.getCategoryId().equals(categoryId)) {
+            final ProductCategoryChanged productCategoryChanged =
+                    new ProductCategoryChanged(originalProduct.getId(), categoryId);
+            apply(productCategoryChanged);
+            addEvent(productCategoryChanged);
         }
     }
 

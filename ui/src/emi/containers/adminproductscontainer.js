@@ -1,21 +1,26 @@
 import { connect } from 'react-redux';
 import AdminProductsTable from '../components/admin/productstable/adminproductstable';
 import { adminProductsSelector } from '../state/selectors/productsselector';
-import { setProductName, setProductPrice } from '../state/admin/adminactions';
+import { adminCategoriesListSelector } from '../state/selectors/adminselector';
+import { setProductName, setProductPrice, setProductCategory } from '../state/admin/adminactions';
 
 const mapStateToProps = (state) => {
     return {
-        products: adminProductsSelector(state)
+        products: adminProductsSelector(state),
+        categoriesList: adminCategoriesListSelector(state)
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setProductName: (productId, name) => {
+        onProductNameChanged: (productId, name) => {
             dispatch(setProductName(productId, name));
         },
-        setProductPrice: (productId, price) => {
+        onProductPriceChanged: (productId, price) => {
             dispatch(setProductPrice(productId, price));
+        },
+        onProductCategoryChanged: (productId, categoryId) => {
+            dispatch(setProductCategory(productId, categoryId))
         }
     }
 };

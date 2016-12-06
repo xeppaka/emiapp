@@ -13,7 +13,7 @@ class SaveCategoriesTable extends React.Component {
             let category = categories[i];
 
             categoryItems.push(<SaveCategoriesTableRow
-                key={category.productId}
+                key={category.categoryId}
                 idx={i + 1}
                 category={category}
             />)

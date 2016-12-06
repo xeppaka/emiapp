@@ -131,6 +131,18 @@ function setAnchorsRecursively(categoriesTree, id, anchor) {
     }
 }
 
+function getDefaultRootCategory() {
+    return {
+        categoryId: 'root',
+        name: '',
+        anchor: '',
+        childCategoryIds: [],
+        parentCategoryId: null,
+        productIds: [],
+        weight: 0
+    }
+}
+
 export const categoriesTreeSelector = createDeepEqualSelector(
     [
         (state) => { return { type: 'categoryById', value: state.warehouse.categories.categoryById } },
@@ -140,14 +152,6 @@ export const categoriesTreeSelector = createDeepEqualSelector(
         let categoryById = categoryByIdVal.value;
         let productById = productByIdVal.value;
         let tcategoryById = {};
-        tcategoryById['root'] = {
-            categoryId: 'root',
-            name: 'Product Categories',
-            anchor: '#',
-            childCategoryIds: [],
-            parentCategoryId: null,
-            productIds: []
-        };
 
         // first walk -> creating categories with childCategoryIds field
         for (let key in categoryById) {
@@ -161,25 +165,32 @@ export const categoriesTreeSelector = createDeepEqualSelector(
                     name: category.name,
                     anchor: '',
                     childCategoryIds: [],
-                    parentCategoryId: category.parentCategoryId === null ? 'root' : category.parentCategoryId,
-                    productIds: []
+                    parentCategoryId: category.parentCategoryId,
+                    productIds: [],
+                    weight: category.weight
                 };
             }
         }
 
+        let rootCategoryId = null;
         // second walk -> fill childCategoryIds field
-        for (let key in categoryById) {
-            if (!categoryById.hasOwnProperty(key))
+        for (let key in tcategoryById) {
+            if (!tcategoryById.hasOwnProperty(key))
                 continue;
 
-            let category = categoryById[key];
+            let category = tcategoryById[key];
             if (category.parentCategoryId !== null) {
                 tcategoryById[category.parentCategoryId].childCategoryIds.push(category.categoryId);
             } else {
-                tcategoryById['root'].childCategoryIds.push(category.categoryId);
+                rootCategoryId = category.categoryId;
             }
         }
 
+        if (rootCategoryId !== null) {
+            tcategoryById.root = tcategoryById[rootCategoryId];
+        } else {
+            tcategoryById.root = getDefaultRootCategory();
+        }
 
         for (let key in productById) {
             if (!productById.hasOwnProperty(key))
@@ -188,8 +199,6 @@ export const categoriesTreeSelector = createDeepEqualSelector(
             let product = productById[key];
             if (product.categoryId !== null) {
                 tcategoryById[product.categoryId].productIds.push(key);
-            } else {
-                tcategoryById['root'].productIds.push(key);
             }
         }
 

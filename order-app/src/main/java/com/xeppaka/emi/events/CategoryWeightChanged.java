@@ -9,6 +9,13 @@ public class CategoryWeightChanged extends EmiEvent {
     private final UUID categoryId;
     private final int weight;
 
+    private CategoryWeightChanged() {
+        super(EmiEventType.CATEGORY_WEIGHT_CHANGED);
+
+        categoryId = null;
+        weight = 0;
+    }
+
     public CategoryWeightChanged(UUID categoryId, int weight) {
         super(EmiEventType.CATEGORY_WEIGHT_CHANGED);
 

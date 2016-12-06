@@ -26,7 +26,6 @@ function admin(state = initialAdminState, action) {
             });
         case SET_MODIFIED_PRODUCT: {
             let modifiedProduct = action.product;
-
             return update(state, {
                 modifiedProductById: {
                     [modifiedProduct.productId]: {$set: modifiedProduct}
@@ -40,14 +39,14 @@ function admin(state = initialAdminState, action) {
                 }
             });
         }
-        case SET_MODIFIED_CATEGORY:
+        case SET_MODIFIED_CATEGORY: {
             let modifiedCategory = action.category;
-
             return update(state, {
                 modifiedCategoryById: {
                     [modifiedCategory.categoryId]: {$set: modifiedCategory}
                 }
             });
+        }
         case REMOVE_MODIFIED_CATEGORY:
             return update(state, {
                 modifiedCategoryById: {

@@ -109,6 +109,17 @@ function sortCategoryTreeWithComparator(catId, categoryById, categoriesComparato
     }
 }
 
+function getDefaultRootCategory() {
+    return {
+        categoryId: 'root',
+        name: '',
+        anchor: '',
+        childCategoryIds: [],
+        parentCategoryId: null,
+        productIds: []
+    }
+}
+
 export const adminCategoriesTreeSelector = createSelector(
     [
         (state) => state.warehouse.categories.categoryById,
@@ -116,13 +127,6 @@ export const adminCategoriesTreeSelector = createSelector(
     ],
     (categoryById, modifiedCategoryById) => {
         let tcategoryById = {};
-        tcategoryById['root'] = {
-            categoryId: 'root',
-            name: 'Product Categories',
-            childCategoryIds: [],
-            parentCategoryId: null,
-            weight: 0
-        };
 
         // first walk -> creating categories with childCategoryIds field
         for (let key in categoryById) {
@@ -131,32 +135,34 @@ export const adminCategoriesTreeSelector = createSelector(
 
             let category = (modifiedCategoryById.hasOwnProperty(key) && modifiedCategoryById[key] !== null) ? modifiedCategoryById[key] : categoryById[key];
             if (!tcategoryById.hasOwnProperty(key)) {
-                tcategoryById[key] = {
-                    categoryId: category.categoryId,
-                    name: category.name,
-                    childCategoryIds: [],
-                    parentCategoryId: category.parentCategoryId === null ? 'root' : category.parentCategoryId,
-                    parentCategoryName: category.parentCategoryId === null ? 'ROOT' : categoryById[category.parentCategoryId].name,
-                    weight: category.weight
-                };
+                tcategoryById[key] = Object.assign({}, category, {
+                    childCategoryIds: []
+                });
             }
         }
 
+        let rootCategoryId = null;
         // second walk -> fill childCategoryIds and parentCategoryName fields
         for (let key in tcategoryById) {
             if (!tcategoryById.hasOwnProperty(key))
                 continue;
 
-            let category = (modifiedCategoryById.hasOwnProperty(key) && modifiedCategoryById[key] !== null) ? modifiedCategoryById[key] : tcategoryById[key];
+            let category = tcategoryById[key];
             if (category.parentCategoryId !== null) {
                 let parentKey = category.parentCategoryId;
-                let parentCategory = (modifiedCategoryById.hasOwnProperty(parentKey) && modifiedCategoryById[parentKey] !== null) ? modifiedCategoryById[parentKey] : tcategoryById[parentKey];
-                parentCategory.childCategoryIds.push(category.categoryId);
+                let parentCategory = tcategoryById[parentKey];
+                parentCategory.childCategoryIds.push(key);
+                category.parentCategoryName = parentCategory.name;
             } else {
-                if (category.categoryId != 'root') {
-                    tcategoryById['root'].childCategoryIds.push(category.categoryId);
-                }
+                rootCategoryId = category.categoryId;
+                category.parentCategoryName = '-----';
             }
+        }
+
+        if (rootCategoryId !== null) {
+            tcategoryById.root = tcategoryById[rootCategoryId];
+        } else {
+            tcategoryById.root = getDefaultRootCategory();
         }
 
         sortCategoryTree(tcategoryById);
@@ -220,7 +226,7 @@ export const modifiedCategoriesSelector = createSelector(
                 continue;
 
             if (modifiedCategoryById[key] !== null) {
-                modifiedCategories.push(categoryTree[key]);
+                 modifiedCategories.push(categoryTree[key]);
             }
         }
 

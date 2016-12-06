@@ -12,7 +12,7 @@ public class CategoryNameChanged extends EmiEvent {
     private final String newName;
 
     private CategoryNameChanged() {
-        super(EmiEventType.PRODUCT_NAME_CHANGED);
+        super(EmiEventType.CATEGORY_NAME_CHANGED);
 
         categoryId = null;
         newName = null;
