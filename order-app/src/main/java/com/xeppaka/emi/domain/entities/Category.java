@@ -13,35 +13,39 @@ import java.util.UUID;
  *
  */
 public class Category extends BaseEntity {
-    private final String name;
-    private final List<UUID> childCategoryIds = new ArrayList<>();
-    private final List<UUID> unmodifiableChildCategoryIds = Collections.unmodifiableList(childCategoryIds);
+    private String name;
+    private UUID parentCategoryId;
+    private int weight;
 
-    public Category(UUID id, String name) {
-        this(id, name, Collections.emptyList());
-    }
-
-    public Category(UUID id, String name, Collection<UUID> childCategoryIds) {
+    public Category(UUID id, String name, UUID parentCategoryId, int weight) {
         super(id);
-        Validate.notNull(name);
 
         this.name = name;
-        this.childCategoryIds.addAll(childCategoryIds);
+        this.parentCategoryId = parentCategoryId;
+        this.weight = weight;
     }
 
     public String getName() {
         return name;
     }
 
-    public void addChildCategory(UUID childCategoryId) {
-        childCategoryIds.add(childCategoryId);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void removeChildCategory(UUID childCategoryId) {
-        childCategoryIds.remove(childCategoryId);
+    public UUID getParentCategoryId() {
+        return parentCategoryId;
     }
 
-    public List<UUID> getChildCategoryIds() {
-        return unmodifiableChildCategoryIds;
+    public void setParentCategoryId(UUID parentCategoryId) {
+        this.parentCategoryId = parentCategoryId;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 }

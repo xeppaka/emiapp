@@ -6,7 +6,7 @@ class MessageBoxModal extends React.Component {
     }
 
     onClose(event) {
-        this.props.hideModal();
+        this.props.onHideModal();
     }
 
     renderSelectedItems() {

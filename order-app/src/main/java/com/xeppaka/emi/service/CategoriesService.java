@@ -1,16 +1,20 @@
 package com.xeppaka.emi.service;
 
-import com.xeppaka.ddd.commands.CommandHandleException;
-import com.xeppaka.emi.commands.CreateCategoryCommand;
-import com.xeppaka.emi.commands.EmiCommandHandler;
-import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.persistence.view.CategoriesRepository;
-import com.xeppaka.emi.persistence.view.dto.CategoryDto;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import com.xeppaka.ddd.commands.CommandHandleException;
+import com.xeppaka.emi.commands.CreateCategoryCommand;
+import com.xeppaka.emi.commands.EmiCommandHandler;
+import com.xeppaka.emi.commands.UpdateCategoryCommand;
+import com.xeppaka.emi.domain.value.UserName;
+import com.xeppaka.emi.persistence.view.CategoriesRepository;
+import com.xeppaka.emi.persistence.view.dto.CategoryDto;
 
 @Service
 public class CategoriesService {
@@ -28,6 +32,22 @@ public class CategoriesService {
             return categoryId;
         } catch (CommandHandleException e) {
             throw new EmiWarehouseException("Error occurred while creating category.", e);
+        }
+    }
+
+    public List<CategoryDto> updateCategories(UserName userName, Collection<CategoryDto> categories) throws EmiWarehouseException {
+        try {
+            for (CategoryDto category : categories) {
+                emiCommandHandler.handle(userName,
+                        new UpdateCategoryCommand(category.getCategoryId(),
+                                category.getName(),
+                                category.getParentCategoryId(),
+                                category.getWeight()));
+            }
+
+            return categoriesRepository.getCategories(categories.stream().map(CategoryDto::getCategoryId).collect(Collectors.toList()));
+        } catch (CommandHandleException e) {
+            throw new EmiWarehouseException("Error occurred while updating products.", e);
         }
     }
 

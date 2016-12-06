@@ -24,7 +24,7 @@ class NameValueSelector extends React.Component {
         let nameValueList = this.props.nameValueList;
 
         return (<select className='form-control form-control-sm' value={currentValue}
-                    onChange={(event) => this.onValueSelected(event.target.value)} style={{width: '65%'}}>
+                    onChange={(event) => this.onValueSelected(event.target.value)}>
             {
                 NameValueSelector.renderList(nameValueList)
             }

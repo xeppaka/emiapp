@@ -41,9 +41,33 @@ public class EmiEventPersistenceListener implements EventListener {
             case PRODUCT_PRICE_CHANGED:
                 onProductPriceChanged((ProductPriceChanged) emiEvent);
                 break;
+            case CATEGORY_NAME_CHANGED:
+                onCategoryNameChanged((CategoryNameChanged) emiEvent);
+                break;
+            case CATEGORY_PARENT_CHANGED:
+                onCategoryParentChanged((CategoryParentChanged) emiEvent);
+                break;
+            case CATEGORY_WEIGHT_CHANGED:
+                onCategoryWeightChanged((CategoryWeightChanged) emiEvent);
+                break;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event {0}.", event));
         }
+    }
+
+    private void onCategoryWeightChanged(CategoryWeightChanged categoryWeightChanged) {
+        categoriesRepository.updateCategoryWeight(categoryWeightChanged.getCategoryId(),
+                categoryWeightChanged.getWeight());
+    }
+
+    private void onCategoryParentChanged(CategoryParentChanged categoryParentChanged) {
+        categoriesRepository.updateCategoryParent(categoryParentChanged.getCategoryId(),
+                categoryParentChanged.getParentCategoryId());
+    }
+
+    private void onCategoryNameChanged(CategoryNameChanged categoryNameChanged) {
+        categoriesRepository.updateCategoryName(categoryNameChanged.getCategoryId(),
+                categoryNameChanged.getNewName());
     }
 
     private void onProductCreatedEvent(ProductCreated productCreated) {

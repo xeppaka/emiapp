@@ -7,11 +7,11 @@ class OrderModal extends React.Component {
     }
 
     onCancel(event) {
-        this.props.hideModal();
+        this.props.onHideModal();
     }
 
     onSubmit(event) {
-        this.props.submitOrder();
+        this.props.onSubmitOrder();
     }
 
     onEmailChanged(event) {

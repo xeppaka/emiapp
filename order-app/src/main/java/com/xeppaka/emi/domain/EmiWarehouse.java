@@ -5,6 +5,7 @@ import com.xeppaka.ddd.domain.BaseAggregate;
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
+import com.xeppaka.emi.commands.UpdateCategoryCommand;
 import com.xeppaka.emi.commands.UpdateProductCommand;
 import com.xeppaka.emi.domain.entities.Category;
 import com.xeppaka.emi.domain.entities.Product;
@@ -44,9 +45,33 @@ public class EmiWarehouse extends BaseAggregate {
             case PRODUCT_PRICE_CHANGED:
                 applyProductPriceChanged((ProductPriceChanged) emiEvent);
                 break;
+            case CATEGORY_NAME_CHANGED:
+                applyCategoryNameChanged((CategoryNameChanged) emiEvent);
+                break;
+            case CATEGORY_PARENT_CHANGED:
+                applyCategoryParentChanged((CategoryParentChanged) emiEvent);
+                break;
+            case CATEGORY_WEIGHT_CHANGED:
+                applyCategoryWeightChanged((CategoryWeightChanged) emiEvent);
+                break;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event: {0}.", event));
         }
+    }
+
+    private void applyCategoryWeightChanged(CategoryWeightChanged categoryWeightChanged) {
+        final Category category = categoryMap.get(categoryWeightChanged.getCategoryId());
+        category.setWeight(categoryWeightChanged.getWeight());
+    }
+
+    private void applyCategoryParentChanged(CategoryParentChanged categoryParentChanged) {
+        final Category category = categoryMap.get(categoryParentChanged.getCategoryId());
+        category.setParentCategoryId(categoryParentChanged.getParentCategoryId());
+    }
+
+    private void applyCategoryNameChanged(CategoryNameChanged categoryNameChanged) {
+        final Category category = categoryMap.get(categoryNameChanged.getCategoryId());
+        category.setName(categoryNameChanged.getNewName());
     }
 
     private void applyProductCreated(ProductCreated createProductEvent) {
@@ -72,15 +97,11 @@ public class EmiWarehouse extends BaseAggregate {
     }
 
     private void applyCategoryCreated(CategoryCreated categoryCreatedEvent) {
-        final Category newCategory = new Category(categoryCreatedEvent.getCategoryId(), categoryCreatedEvent.getName());
+        final Category newCategory = new Category(categoryCreatedEvent.getCategoryId(),
+                categoryCreatedEvent.getName(),
+                categoryCreatedEvent.getParentCategoryId(),
+                categoryCreatedEvent.getWeight());
         categoryMap.put(newCategory.getId(), newCategory);
-
-        if (categoryCreatedEvent.getParentCategoryId() != null) {
-            final Category parentCategory = categoryMap.get(categoryCreatedEvent.getParentCategoryId());
-            if (parentCategory != null) {
-                parentCategory.addChildCategory(newCategory.getId());
-            }
-        }
     }
 
     public <T extends Command> void handle(T command) {
@@ -96,6 +117,11 @@ public class EmiWarehouse extends BaseAggregate {
 
         if (command instanceof UpdateProductCommand) {
             handle((UpdateProductCommand) command);
+            return;
+        }
+
+        if (command instanceof UpdateCategoryCommand) {
+            handle((UpdateCategoryCommand) command);
             return;
         }
 
@@ -143,6 +169,34 @@ public class EmiWarehouse extends BaseAggregate {
                     new ProductPriceChanged(originalProduct.getId(), price);
             apply(productPriceChanged);
             addEvent(productPriceChanged);
+        }
+    }
+
+    public void handle(UpdateCategoryCommand command) {
+        final Category originalCategory = categoryMap.get(command.getCategoryId());
+        final String name = command.getName();
+        final UUID parentCategoryId = command.getParentCategoryId();
+        final int weight = command.getWeight();
+
+        if (!originalCategory.getName().equals(name)) {
+            final CategoryNameChanged categoryNameChanged =
+                    new CategoryNameChanged(originalCategory.getId(), name);
+            apply(categoryNameChanged);
+            addEvent(categoryNameChanged);
+        }
+
+        if (!originalCategory.getParentCategoryId().equals(parentCategoryId)) {
+            final CategoryParentChanged categoryParentChanged = new CategoryParentChanged(originalCategory.getId(),
+                    parentCategoryId);
+            apply(categoryParentChanged);
+            addEvent(categoryParentChanged);
+        }
+
+        if (originalCategory.getWeight() != weight) {
+            final CategoryWeightChanged categoryWeightChanged = new CategoryWeightChanged(originalCategory.getId(),
+                    weight);
+            apply(categoryWeightChanged);
+            addEvent(categoryWeightChanged);
         }
     }
 

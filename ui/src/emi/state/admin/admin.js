@@ -1,9 +1,9 @@
 import update from 'react-addons-update';
 import { SET_MODIFIED_PRODUCT, REMOVE_MODIFIED_PRODUCT,
          SET_MODIFIED_CATEGORY, REMOVE_MODIFIED_CATEGORY,
-         SET_SEND_CUSTOMER_NOTIFICATION, SET_CURRENT_TAB,
-         RESET_PRODUCTS, SET_NOTIFICATION_TEXT,
-         SAVE_STARTED, SAVE_FINISHED } from './adminactions';
+         SET_SEND_CUSTOMER_NOTIFICATION,
+         RESET_PRODUCTS, RESET_CATEGORIES,
+         SET_NOTIFICATION_TEXT, SAVE_STARTED, SAVE_FINISHED } from './adminactions';
 
 const initialAdminState = {
     modifiedProductById: {},
@@ -18,7 +18,10 @@ function admin(state = initialAdminState, action) {
     switch (action.type) {
         case RESET_PRODUCTS:
             return update(state, {
-                modifiedProductById: {$set: {}},
+                modifiedProductById: {$set: {}}
+            });
+        case RESET_CATEGORIES:
+            return update(state, {
                 modifiedCategoryById: {$set: {}}
             });
         case SET_MODIFIED_PRODUCT: {
@@ -66,10 +69,6 @@ function admin(state = initialAdminState, action) {
         case SAVE_FINISHED:
             return update(state, {
                 saving: {$set: false}
-            });
-        case SET_CURRENT_TAB:
-            return update(state, {
-                currentTab: {$set: action.tab}
             });
         default:
             return state;

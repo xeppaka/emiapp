@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import SaveProductItem from './saveproductstablerow';
+import SaveProductTableRow from './saveproductstablerow';
 
 class SaveProductsTable extends React.Component {
     constructor(props) {
@@ -12,7 +12,7 @@ class SaveProductsTable extends React.Component {
         for (let i = 0; i < products.length; i++) {
             let product = products[i];
 
-            productsItems.push(<SaveProductItem
+            productsItems.push(<SaveProductTableRow
                 key={product.productId} idx={i + 1} product={product} />)
         }
 
@@ -25,8 +25,9 @@ class SaveProductsTable extends React.Component {
                 <thead>
                 <tr>
                     <th scope='row' style={{width:'2%'}}>#</th>
-                    <th style={{width:'33%'}}>Product Name</th>
-                    <th style={{width:'13%'}}>Retail price<br />(without VAT, in &#8364; cents)</th>
+                    <th style={{width:'34%'}}>Product Name</th>
+                    <th style={{width:'22%'}}>Retail price<br />(without VAT, in &#8364; cents)</th>
+                    <th style={{width:'22%'}}>Weight</th>
                 </tr>
                 </thead>
                 <tbody>

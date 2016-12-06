@@ -30,9 +30,9 @@ class CategoriesTable extends React.Component {
             <table className="table table-striped table-sm">
                 <thead>
                 <tr>
-                    <th style={{width:'33%'}}>Category Name</th>
-                    <th style={{width:'33%'}}>Parent Category Name</th>
-                    <th style={{width:'13%'}}>Weight</th>
+                    <th style={{width:'46%'}}>Category Name</th>
+                    <th style={{width:'22%'}}>Parent Category Name</th>
+                    <th style={{width:'22%'}}>Weight</th>
                 </tr>
                 </thead>
                 <tbody>

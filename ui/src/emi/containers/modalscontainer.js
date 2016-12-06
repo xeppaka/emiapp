@@ -11,8 +11,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        hideModal: (id) => dispatch(hideModal(id)),
-        submitOrder: (id) => dispatch(submitOrder(id))
+        onHideModal: (id) => dispatch(hideModal(id)),
+        onSubmitOrder: (id) => dispatch(submitOrder(id))
     }
 };
 

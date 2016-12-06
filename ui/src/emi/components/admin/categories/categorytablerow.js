@@ -8,8 +8,11 @@ class CategoryTableRow extends React.Component {
 
     render() {
         let category = this.props.category;
-        let categoryNameIdList = this.props.categoriesList.map(
-                (category) => { return { name: category.name, value: category.categoryId } }
+        let categoryNameIdList = this.props.categoriesList
+            .filter(
+                cat => category.categoryId !== cat.categoryId
+            ).map(
+                cat => { return { name: cat.name, value: cat.categoryId } }
             );
 
         return (<tr>

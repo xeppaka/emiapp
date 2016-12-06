@@ -8,7 +8,7 @@ class SaveProductsModal extends React.Component {
     }
 
     onCancel(event) {
-        this.props.hideModal();
+        this.props.onHideModal();
     }
 
     onSave(event) {
@@ -36,13 +36,13 @@ class SaveProductsModal extends React.Component {
                             <div className='modal-body'>
                                 <div className='container-fluid'>
                                     <div className='row'>
-                                        <form>
-                                            <Notification notification={this.props.notification}
-                                                          setSendNotification={this.props.setSendNotification}
-                                                          setNotificationText={this.props.setNotificationText}
-                                            />
-                                            <SaveProductsTable products={this.props.products} />
-                                        </form>
+                                        <Notification notification={this.props.notification}
+                                                      setSendNotification={this.props.setSendNotification}
+                                                      setNotificationText={this.props.setNotificationText}
+                                        />
+                                    </div>
+                                    <div className='row'>
+                                        <SaveProductsTable products={this.props.products} />
                                     </div>
                                 </div>
                             </div>

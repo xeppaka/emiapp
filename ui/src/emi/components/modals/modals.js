@@ -17,13 +17,13 @@ class Modals extends React.Component {
                         let zIndex = idx * 2;
                         switch (modal.type) {
                             case 'SAVE_PRODUCTS_MODAL':
-                                return <SaveProductsModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
+                                return <SaveProductsModalContainer key={modal.id} onHideModal={() => this.props.onHideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
                             case 'SAVE_CATEGORIES_MODAL':
-                                return <SaveCategoriesModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
+                                return <SaveCategoriesModalContainer key={modal.id} onHideModal={() => this.props.onHideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
                             case 'PRODUCTS_ORDER_MODAL':
-                                return <OrderModalContainer key={modal.id} hideModal={() => this.props.hideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
+                                return <OrderModalContainer key={modal.id} onHideModal={() => this.props.onHideModal(modal.id)} modalId={modal.id} zIndex={zIndex} />;
                             case 'MESSAGE_BOX_MODAL':
-                                return <MessageBoxModal key={modal.id} hideModal={() => this.props.hideModal(modal.id)} title={modal.title} text={modal.text} modalId={modal.id} zIndex={zIndex} />;
+                                return <MessageBoxModal key={modal.id} onHideModal={() => this.props.onHideModal(modal.id)} title={modal.title} text={modal.text} modalId={modal.id} zIndex={zIndex} />;
                             default:
                                 return null;
                         }

@@ -9,7 +9,7 @@ class SaveCategoriesTable extends React.Component {
     renderCategories(categories) {
         let categoryItems = [];
 
-        for (let i = 0; i < categoryItems.length; i++) {
+        for (let i = 0; i < categories.length; i++) {
             let category = categories[i];
 
             categoryItems.push(<SaveCategoriesTableRow
@@ -27,9 +27,9 @@ class SaveCategoriesTable extends React.Component {
             <table className="table table-striped table-sm">
                 <thead>
                 <tr>
-                    <th style={{width:'33%'}}>Category Name</th>
-                    <th style={{width:'13%'}}>Parent Category Name</th>
-                    <th style={{width:'13%'}}>Weight</th>
+                    <th style={{width:'46%'}}>Category Name</th>
+                    <th style={{width:'22%'}}>Parent Category Name</th>
+                    <th style={{width:'22%'}}>Weight</th>
                 </tr>
                 </thead>
                 <tbody>
