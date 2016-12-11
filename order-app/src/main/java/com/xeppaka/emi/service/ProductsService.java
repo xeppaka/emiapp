@@ -24,13 +24,15 @@ public class ProductsService {
     @Autowired
     private ProductsRepository productsRepository;
 
-    public UUID createProduct(UserName userName, String name, int price, int multiplicity, String note, UUID categoryId, Collection<ProductFeature> features, int weight) throws EmiWarehouseException {
+    public ProductDto createProduct(UserName userName, String name, int price, int multiplicity,
+                              String note, UUID categoryId, Collection<ProductFeature> features,
+                              int weight) throws EmiWarehouseException {
         try {
             final UUID productId = UUID.randomUUID();
             final CreateProductCommand createProductCommand = new CreateProductCommand(productId, name, price, multiplicity, note, categoryId, features, weight);
             emiCommandHandler.handle(userName, createProductCommand);
 
-            return productId;
+            return productsRepository.getProduct(productId);
         } catch (CommandHandleException e) {
             throw new EmiWarehouseException("Error occurred while creating product.", e);
         }

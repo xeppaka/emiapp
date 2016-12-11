@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import NameValueSelector from '../namevalueselector';
+import NameValueSelector from '../../common/namevalueselector';
 
 class CategoryTableRow extends React.Component {
     constructor(props) {

@@ -8,10 +8,7 @@ class ProductsMenu extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (this.props.selectedNodeId !== nextProps.selectedNodeId)
-            return true;
-
-        return false;
+        return this.props.selectedNodeId !== nextProps.selectedNodeId;
     }
 
     render() {

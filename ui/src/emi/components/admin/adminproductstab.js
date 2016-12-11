@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import AdminProductsContainer from '../../containers/adminproductscontainer';
-import AdminProductsTotalContainer from '../../containers/adminproductstotalcontainer';
+import AdminProductsTable from './products/adminproductstable';
+import AdminProductsTotal from './products/adminproductstotal';
 
 class AdminProductsTab extends React.Component {
     constructor(props) {
@@ -10,8 +10,24 @@ class AdminProductsTab extends React.Component {
     render() {
         return (
             <div>
-                <AdminProductsContainer />
-                <AdminProductsTotalContainer />
+                <button type='button' className='btn btn-primary' onClick={this.props.onCreateProduct}>New Product</button>
+                <AdminProductsTable productsList={this.props.productsList}
+                                    categoriesList={this.props.categoriesList}
+                                    onProductNameChanged={this.props.onProductNameChanged}
+                                    onProductPriceChanged={this.props.onProductPriceChanged}
+                                    onProductCategoryChanged={this.props.onProductCategoryChanged}
+                                    onProductMultiplicityChanged={this.props.onProductMultiplicityChanged}
+                                    onProductNoteChanged={this.props.onProductNoteChanged}
+                                    onProductWeightChanged={this.props.onProductWeightChanged}
+                                    onDeleteProduct={this.props.onDeleteProduct}
+                />
+                <AdminProductsTotal modifiedProducts={this.props.modifiedProducts}
+                                    newProducts={this.props.newProducts}
+                                    deletedProducts={this.props.deletedProducts}
+                                    canSave={this.props.canSave}
+                                    onResetModifications={this.props.onResetModifications}
+                                    onSaveModifications={this.props.onSaveModifications}
+                />
             </div>
         )
     }

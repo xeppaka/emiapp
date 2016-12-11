@@ -1,80 +1,16 @@
 import { createSelector } from 'reselect';
+import update from 'react-addons-update';
 
-export const modifiedProductsCountSelector = createSelector(
-    [
-        (state) => state.admin.modifiedProductById
-    ],
-    (modifiedProductById) => {
-        let modifiedProductsCount = 0;
-
-        for (let key in modifiedProductById) {
-            if (!modifiedProductById.hasOwnProperty(key))
-                continue;
-
-            if (modifiedProductById[key] !== null) {
-                modifiedProductsCount++;
-            }
-        }
-
-        return modifiedProductsCount;
+function getDefaultRootCategory() {
+    return {
+        categoryId: 'root',
+        name: '',
+        anchor: '',
+        childCategoryIds: [],
+        parentCategoryId: null,
+        productIds: []
     }
-);
-
-export const modifiedProductsSelector = createSelector(
-    [
-        (state) => state.admin.modifiedProductById
-    ],
-    (modifiedProductById) => {
-        let modifiedProducts = [];
-
-        for (let key in modifiedProductById) {
-            if (!modifiedProductById.hasOwnProperty(key))
-                continue;
-
-            if (modifiedProductById[key] !== null) {
-                modifiedProducts.push(modifiedProductById[key]);
-            }
-        }
-
-        return modifiedProducts;
-    }
-);
-
-function generateCustomerNotification(products) {
-    let header = "List of modified products:\n";
-    let footer = "Sincerely, your E.Mi team, hahaha.";
-
-    let productsText = "";
-    let productsLength = products.length;
-
-    for (let i = 0; i < productsLength; i++) {
-        let product = products[i];
-        productsText += 'Name: ' + product.name + ', price: ' + product.price + '\n';
-    }
-
-    return header + productsText + footer;
 }
-
-export const notificationSelector = createSelector(
-    [
-        (state) => state.admin.sendNotificationToCustomers,
-        (state) => state.admin.notificationText,
-        modifiedProductsSelector
-    ],
-    (sendNotification, notificationText, modifiedProducts) => {
-        if (!sendNotification) {
-            return {
-                sendNotification: false
-            }
-        }
-
-        let text = notificationText !== null ? notificationText : generateCustomerNotification(modifiedProducts);
-        return {
-            sendNotification: true,
-            text: text
-        }
-    }
-);
 
 function createCategoriesComparator(categoryById) {
     return function compareCategories(categoryId1, categoryId2) {
@@ -109,34 +45,41 @@ function sortCategoryTreeWithComparator(catId, categoryById, categoriesComparato
     }
 }
 
-function getDefaultRootCategory() {
-    return {
-        categoryId: 'root',
-        name: '',
-        anchor: '',
-        childCategoryIds: [],
-        parentCategoryId: null,
-        productIds: []
-    }
-}
-
 export const adminCategoriesTreeSelector = createSelector(
     [
         (state) => state.warehouse.categories.categoryById,
-        (state) => state.admin.modifiedCategoryById
+        (state) => state.admin.modifiedCategoryById,
+        (state) => state.warehouse.products.productById,
+        (state) => state.admin.modifiedProductById,
+        (state) => state.admin.deletedProducts
     ],
-    (categoryById, modifiedCategoryById) => {
+    (categoryById, modifiedCategoryById, productById, modifiedProductById, deletedProductIds) => {
         let tcategoryById = {};
 
-        // first walk -> creating categories with childCategoryIds field
+        // creating categories with childCategoryIds field from modifiedCategoryById
+        for (let key in modifiedCategoryById) {
+            if (!modifiedCategoryById.hasOwnProperty(key))
+                continue;
+
+            let category = modifiedCategoryById[key];
+            if (!tcategoryById.hasOwnProperty(key)) {
+                tcategoryById[key] = update(category, {
+                    childCategoryIds: {$set: []},
+                    productIds: {$set: []}
+                });
+            }
+        }
+
+        // creating categories with childCategoryIds field from categoryById
         for (let key in categoryById) {
             if (!categoryById.hasOwnProperty(key))
                 continue;
 
-            let category = (modifiedCategoryById.hasOwnProperty(key) && modifiedCategoryById[key] !== null) ? modifiedCategoryById[key] : categoryById[key];
+            let category = categoryById[key];
             if (!tcategoryById.hasOwnProperty(key)) {
-                tcategoryById[key] = Object.assign({}, category, {
-                    childCategoryIds: []
+                tcategoryById[key] = update(category, {
+                    childCategoryIds: {$set: []},
+                    productIds: {$set: []}
                 });
             }
         }
@@ -163,6 +106,33 @@ export const adminCategoriesTreeSelector = createSelector(
             tcategoryById.root = tcategoryById[rootCategoryId];
         } else {
             tcategoryById.root = getDefaultRootCategory();
+        }
+
+        for (let key in modifiedProductById) {
+            if (!modifiedProductById.hasOwnProperty(key) || modifiedProductById[key] === null)
+                continue;
+
+            if (deletedProductIds.indexOf(key) >= 0) {
+                continue;
+            }
+
+            let product = modifiedProductById[key];
+            tcategoryById[product.categoryId].productIds.push(product.productId);
+        }
+
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
+                continue;
+
+            if (deletedProductIds.indexOf(key) >= 0) {
+                continue;
+            }
+
+            if (modifiedProductById.hasOwnProperty(key) && modifiedProductById[key] !== null)
+                continue;
+
+            let product = productById[key];
+            tcategoryById[product.categoryId].productIds.push(product.productId);
         }
 
         sortCategoryTree(tcategoryById);
@@ -226,7 +196,7 @@ export const modifiedCategoriesSelector = createSelector(
                 continue;
 
             if (modifiedCategoryById[key] !== null) {
-                 modifiedCategories.push(categoryTree[key]);
+                modifiedCategories.push(categoryTree[key]);
             }
         }
 

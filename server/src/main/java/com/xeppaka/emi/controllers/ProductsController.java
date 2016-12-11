@@ -32,4 +32,18 @@ public class ProductsController {
 
         return productsService.updateProducts(UserName.SYSTEM_USER_NAME, products);
     }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ProductDto createProduct(@RequestBody ProductDto product) throws EmiWarehouseException {
+        Validate.notNull(product);
+
+        return productsService.createProduct(UserName.SYSTEM_USER_NAME,
+                product.getName(),
+                product.getPrice(),
+                product.getMultiplicity(),
+                product.getNote(),
+                product.getCategoryId(),
+                product.getFeatures(),
+                product.getWeight());
+    }
 }

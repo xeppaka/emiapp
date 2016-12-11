@@ -13,7 +13,7 @@ import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 import CustomerMain from './components/customer/customermain';
 import AdminMain from './components/admin/adminmain';
-import AdminProductsTab from './components/admin/adminproductstab';
+import AdminProductsTab from './containers/adminproducttabcontainer';
 import AdminCategoriesTab from './components/admin/admincategoriestab';
 
 import emiApp from './state/emiapp';

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import CategoriesTable from '../components/admin/categories/categoriestable';
-import { adminCategoriesListSelector } from '../state/selectors/adminselector';
+import { adminCategoriesListSelector } from '../state/selectors/admin/admincategoriesselector';
 import { setCategoryName, setCategoryWeight, setCategoryParentId } from '../state/admin/adminactions';
 
 const mapStateToProps = (state) => {

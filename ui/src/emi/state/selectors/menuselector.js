@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { categoriesTreeSelector } from './categoriestree';
+import { categoriesTreeSelector } from './categoriesselector';
 
 function createMenuNodeRecursively(categoryNode, tcategoryById) {
     let menuNode = {

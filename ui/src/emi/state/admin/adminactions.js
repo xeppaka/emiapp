@@ -1,13 +1,17 @@
 import update from 'react-addons-update';
-import { modifiedProductsSelector, modifiedCategoriesSaveSelector } from '../selectors/adminselector';
-import { showMessageBoxModal, hideModal } from '../modals/modalsactions';
-import { updateProducts } from '../products/productsactions';
-import { updateCategories } from '../categories/categoriesactions';
+import {adminCategoriesTreeSelector} from '../selectors/admin/admincategoriesselector';
+import {adminProductListSaveSelector} from '../selectors/admin/adminproductsselector';
+import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
+import {updateProducts, removeProduct} from '../products/productsactions';
+import {updateCategories} from '../categories/categoriesactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
 export const SET_MODIFIED_CATEGORY = 'SET_MODIFIED_CATEGORY';
 export const REMOVE_MODIFIED_CATEGORY = 'REMOVE_MODIFIED_CATEGORY';
+export const ADD_NEW_PRODUCT = 'ADD_NEW_PRODUCT';
+export const ADD_NEW_CATEGORY = 'ADD_NEW_CATEGORY';
+export const SET_PRODUCT_DELETED = 'SET_PRODUCT_DELETED';
 export const RESET_PRODUCTS = 'RESET_PRODUCTS';
 export const RESET_CATEGORIES = 'RESET_CATEGORIES';
 export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
@@ -16,76 +20,166 @@ export const SAVE_STARTED = 'SAVE_STARTED';
 export const SAVE_FINISHED = 'SAVE_FINISHED';
 
 export function resetProducts() {
-    return { type: RESET_PRODUCTS };
+    return {type: RESET_PRODUCTS};
 }
 
 export function resetCategories() {
-    return { type: RESET_CATEGORIES };
+    return {type: RESET_CATEGORIES};
 }
 
 export function setModifiedProduct(product) {
-    return { type: SET_MODIFIED_PRODUCT, product: product };
+    return {type: SET_MODIFIED_PRODUCT, product: product};
+}
+
+export function deleteProduct(productId) {
+    return {type: SET_PRODUCT_DELETED, productId: productId};
+}
+
+export function createProduct() {
+    return function (dispatch, getState) {
+        let categories = adminCategoriesTreeSelector(getState());
+        let rootCategoryId = categories['root'].categoryId;
+        dispatch(addNewProduct({
+            productId: '',
+            name: '',
+            price: 0,
+            categoryId: rootCategoryId,
+            weight: 0,
+            note: ''
+        }));
+    }
+}
+
+export function addNewProduct(product) {
+    return {type: ADD_NEW_PRODUCT, product};
+}
+
+export function addNewCategory() {
+    return {type: ADD_NEW_CATEGORY};
 }
 
 export function removeModifiedProduct(id) {
-    return { type: REMOVE_MODIFIED_PRODUCT, id: id };
+    return {type: REMOVE_MODIFIED_PRODUCT, id: id};
 }
 
 export function setModifiedCategory(category) {
-    return { type: SET_MODIFIED_CATEGORY, category: category }
+    return {type: SET_MODIFIED_CATEGORY, category: category}
 }
 
 export function removeModifiedCategory(id) {
-    return { type: REMOVE_MODIFIED_CATEGORY, id: id }
+    return {type: REMOVE_MODIFIED_CATEGORY, id: id}
 }
 
 export function setNotificationText(text) {
-    return { type: SET_NOTIFICATION_TEXT, text: text };
+    return {type: SET_NOTIFICATION_TEXT, text: text};
 }
 
 export function setSendCustomerNotification(value) {
-    return { type: SET_SEND_CUSTOMER_NOTIFICATION, value: value };
+    return {type: SET_SEND_CUSTOMER_NOTIFICATION, value: value};
 }
 
 export function saveStarted() {
-    return { type: SAVE_STARTED };
+    return {type: SAVE_STARTED};
 }
 
 export function saveFinished() {
-    return { type: SAVE_FINISHED };
+    return {type: SAVE_FINISHED};
 }
 
-export function saveProducts(saveModalId) {
-    return function(dispatch, getState) {
-        dispatch(saveStarted());
+function deleteProducts(dispatch, productIds) {
+    let promises = [];
+    for (let i = 0; i < productIds.length; i++) {
+        let productId = productIds[i];
+        let p = fetch('api/products/' + productId, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.status !== 204) {
+                return Promise.reject();
+            } else {
+                dispatch(removeProduct(productId));
+            }
+        });
 
-        let modifiedProducts = modifiedProductsSelector(getState());
-        fetch('api/products', {
-            method: 'PATCH',
+        promises.push(p);
+    }
+
+    return Promise.all(promises);
+}
+
+function createProducts(dispatch, products) {
+    let promises = [];
+    for (let key in products) {
+        if (!products.hasOwnProperty(key))
+            continue;
+
+        let product = products[key];
+        let p = fetch('api/products', {
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(modifiedProducts)
+            body: JSON.stringify(product)
         }).then(response => {
-            if (response.status !== 200) {
-                dispatch(saveFinished());
-                dispatch(showMessageBoxModal('Save products failed.', 'Error occurred while saving products.'));
-                throw new Error('Save products failed.');
+            if (response.status !== 201) {
+                return Promise.reject();
             } else {
                 return response.json();
             }
-        }).then(modifiedProductsData => {
-            dispatch(saveFinished());
-            dispatch(updateProducts(modifiedProductsData));
-            dispatch(resetProducts());
-            dispatch(hideModal(saveModalId));
+        }).then(createdProduct => {
+            dispatch(updateProducts([createdProduct]));
         });
+
+        promises.push(p);
+    }
+
+    return Promise.all(promises);
+}
+
+function modifyProducts(dispatch, products) {
+    return fetch('api/products', {
+        method: 'PATCH',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(products)
+    }).then(response => {
+        if (response.status !== 200) {
+            return Promise.reject();
+        } else {
+            return response.json();
+        }
+    }).then(modifiedProductsData => {
+        dispatch(updateProducts(modifiedProductsData));
+    });
+}
+
+export function saveProducts(saveModalId) {
+    return function (dispatch, getState) {
+        dispatch(saveStarted());
+        let products = adminProductListSaveSelector(getState());
+        deleteProducts(dispatch, products.deletedProducts)
+            .then(() => createProducts(dispatch, products.createdProducts))
+            .then(() => modifyProducts(dispatch, products.modifiedProducts))
+            .then(() => {
+                    dispatch(saveFinished());
+                    dispatch(resetProducts());
+                    dispatch(hideModal(saveModalId));
+                }, () => {
+                    dispatch(saveFinished());
+                    dispatch(showMessageBoxModal('Product(s) save failed.', 'Error occurred while saving products.'));
+                }
+            );
     };
 }
 
 export function saveCategories(saveModalId) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         dispatch(saveStarted());
 
         let modifiedCategories = modifiedCategoriesSaveSelector(getState());
@@ -113,71 +207,145 @@ export function saveCategories(saveModalId) {
     };
 }
 
-export function setProductName(productId, name) {
-    return function(dispatch, getState) {
-        let state = getState();
-        let originalProduct = state.warehouse.products.productById[productId];
-        let modifiedProduct = state.admin.modifiedProductById.hasOwnProperty(productId) ? state.admin.modifiedProductById[productId] : null;
-        let modifyProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+function featuresEquals(features1, features2) {
+    if (features1.length !== features2.length) {
+        return false;
+    }
 
-        let newProduct = update(modifyProduct, {
+    for (let i = 0; i < features1.length; i++) {
+        if (features2.indexOf(features1[i]) < 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct) {
+    if (originalProduct !== null &&
+        modifiedProduct.name === originalProduct.name &&
+        modifiedProduct.price === originalProduct.price &&
+        modifiedProduct.categoryId === originalProduct.categoryId &&
+        modifiedProduct.multiplicity === originalProduct.multiplicity &&
+        featuresEquals(modifiedProduct.features, originalProduct.features) &&
+        modifiedProduct.note === originalProduct.note &&
+        modifiedProduct.weight === originalProduct.weight) {
+        dispatch(removeModifiedProduct(originalProduct.productId));
+    } else {
+        dispatch(setModifiedProduct(modifiedProduct));
+    }
+}
+
+export function setProductName(productId, name) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        modifiedProduct = update(modifiedProduct, {
             name: {$set: name}
         });
 
-        if (newProduct.name === originalProduct.name &&
-            newProduct.price === originalProduct.price &&
-            newProduct.categoryId === originalProduct.categoryId) {
-            dispatch(removeModifiedProduct(productId));
-        } else {
-            dispatch(setModifiedProduct(newProduct));
-        }
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
     };
 }
 
 export function setProductPrice(productId, price) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
-        let originalProduct = state.warehouse.products.productById[productId];
-        let modifiedProduct = state.admin.modifiedProductById.hasOwnProperty(productId) ? state.admin.modifiedProductById[productId] : null;
-        let modifyProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
 
-        let newProduct = update(modifyProduct, {
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        modifiedProduct = update(modifiedProduct, {
             price: {$set: price}
         });
 
-        if (newProduct.name === originalProduct.name &&
-            newProduct.price === originalProduct.price &&
-            newProduct.categoryId === originalProduct.categoryId) {
-            dispatch(removeModifiedProduct(productId));
-        } else {
-            dispatch(setModifiedProduct(newProduct));
-        }
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
     };
 }
 
 export function setProductCategory(productId, categoryId) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
-        let originalProduct = state.warehouse.products.productById[productId];
-        let modifiedProduct = state.admin.modifiedProductById.hasOwnProperty(productId) ? state.admin.modifiedProductById[productId] : null;
-        let modifyProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
 
-        let newProduct = update(modifyProduct, {
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        modifiedProduct = update(modifiedProduct, {
             categoryId: {$set: categoryId}
         });
 
-        if (newProduct.name === originalProduct.name &&
-            newProduct.price === originalProduct.price &&
-            newProduct.categoryId === originalProduct.categoryId) {
-            dispatch(removeModifiedProduct(productId));
-        } else {
-            dispatch(setModifiedProduct(newProduct));
-        }
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductMultiplicity(productId, multiplicity) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        modifiedProduct = update(modifiedProduct, {
+            multiplicity: {$set: multiplicity}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductNote(productId, note) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        modifiedProduct = update(modifiedProduct, {
+            note: {$set: note}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductWeight(productId, weight) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        modifiedProduct = update(modifiedProduct, {
+            weight: {$set: weight}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
     };
 }
 
 export function setCategoryName(categoryId, name) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
         let originalCategory = state.warehouse.categories.categoryById[categoryId];
         let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
@@ -198,7 +366,7 @@ export function setCategoryName(categoryId, name) {
 }
 
 export function setCategoryParentId(categoryId, parentCategoryId) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
         let originalCategory = state.warehouse.categories.categoryById[categoryId];
         let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
@@ -219,7 +387,7 @@ export function setCategoryParentId(categoryId, parentCategoryId) {
 }
 
 export function setCategoryWeight(categoryId, weight) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
         let originalCategory = state.warehouse.categories.categoryById[categoryId];
         let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;

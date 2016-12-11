@@ -208,3 +208,25 @@ export const categoriesTreeSelector = createDeepEqualSelector(
         return tcategoryById;
     }
 );
+
+export const categoriesListSelector = createSelector(
+    [
+        categoriesTreeSelector
+    ],
+    (categoryTree) => {
+        let idsQueue = ['root'];
+        let categoriesList = [];
+
+        while (idsQueue.length > 0) {
+            let catId = idsQueue.pop();
+            let category = categoryTree[catId];
+            categoriesList.push(category);
+
+            for (let i = category.childCategoryIds.length; i > 0; i--) {
+                idsQueue.push(category.childCategoryIds[i - 1]);
+            }
+        }
+
+        return categoriesList;
+    }
+);

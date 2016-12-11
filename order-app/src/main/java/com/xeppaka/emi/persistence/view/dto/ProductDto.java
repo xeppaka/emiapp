@@ -16,7 +16,7 @@ public class ProductDto {
     private final int multiplicity;
     private final String note;
     private final UUID categoryId;
-    private final Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
+    private final Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
     private final int weight;
 
     private ProductDto() {
@@ -29,13 +29,13 @@ public class ProductDto {
         this.weight = 0;
     }
 
-    public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> productFeatures, UUID categoryId, int weight) {
+    public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> features, UUID categoryId, int weight) {
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.multiplicity = multiplicity;
         this.note = note;
-        this.productFeatures.addAll(productFeatures);
+        this.features.addAll(features);
         this.categoryId = categoryId;
         this.weight = weight;
     }
@@ -64,8 +64,8 @@ public class ProductDto {
         return categoryId;
     }
 
-    public Set<ProductFeature> getProductFeatures() {
-        return productFeatures;
+    public Set<ProductFeature> getFeatures() {
+        return features;
     }
 
     public int getWeight() {

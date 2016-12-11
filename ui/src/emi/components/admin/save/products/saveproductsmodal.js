@@ -12,7 +12,7 @@ class SaveProductsModal extends React.Component {
     }
 
     onSave(event) {
-        this.props.saveModifications(this.props.modalId);
+        this.props.onSaveModifications(this.props.modalId);
     }
 
     render() {

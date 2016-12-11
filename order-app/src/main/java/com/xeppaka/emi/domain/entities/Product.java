@@ -26,7 +26,7 @@ public class Product extends BaseEntity {
                    String note,
                    UUID categoryId,
                    int weight,
-                   Collection<ProductFeature> productFeatures) {
+                   Collection<ProductFeature> features) {
         super(id);
 
         setName(name);
@@ -34,7 +34,11 @@ public class Product extends BaseEntity {
         this.note = note;
         this.categoryId = categoryId;
         this.weight = weight;
-        this.productFeatures = EnumSet.copyOf(productFeatures);
+        if (features.isEmpty()) {
+            this.productFeatures = EnumSet.noneOf(ProductFeature.class);
+        } else {
+            this.productFeatures = EnumSet.copyOf(features);
+        }
     }
 
     public String getName() {

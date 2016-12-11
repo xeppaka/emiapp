@@ -1,7 +1,7 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 import update from 'react-addons-update';
 
-import { categoriesTreeSelector } from './categoriestree';
+import { categoriesTreeSelector } from './categoriesselector';
 
 function isProductByIdEqual(val1, val2) {
     let val1Keys = 0;
@@ -224,27 +224,5 @@ export const posProductsWithLeftAmountSelector = createSelector(
 
             return { product: update(product, { piecesLeftToOrder: { $set: piecesLeftToOrder } }), anchor: anchorsById[id] }
         });
-    }
-);
-
-export const adminProductsSelector = createSelector(
-    [
-        productIdsSelector,
-        productAnchorsSelector,
-        (state) => state.warehouse.products.productById,
-        (state) => state.admin.modifiedProductById
-    ],
-    (productIds, anchorsById, productById, modifiedProductById) => {
-        let mainProducts = productIds.mainProductIds.map((id) => {
-            let product = (modifiedProductById.hasOwnProperty(id) && modifiedProductById[id] !== null) ? modifiedProductById[id] : productById[id];
-            return { product: product, anchor: anchorsById[id] }
-        });
-
-        let posProducts = productIds.posProductIds.map((id) => {
-            let product = (modifiedProductById.hasOwnProperty(id) && modifiedProductById[id] !== null) ? modifiedProductById[id] : productById[id];
-            return { product: product, anchor: anchorsById[id] }
-        });
-
-        return mainProducts.concat(posProducts);
     }
 );

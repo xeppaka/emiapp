@@ -11,18 +11,20 @@ class CustomerMain extends React.Component {
     }
 
     render() {
-        return (<div className="container-fluid">
-            <ProductsTotalContainer />
-            <div className="row">
-                <div className="col-sm-3 nopadding">
-                    <ProductsMenuContainer />
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-sm-3 nopadding">
+                        <ProductsMenuContainer />
+                    </div>
+                    <div className="col-sm-9">
+                        <ProductsContainer />
+                    </div>
                 </div>
-                <div className="col-sm-9">
-                    <ProductsContainer />
-                </div>
+                <ProductsTotalContainer />
+                <ModalsContainer />
             </div>
-            <ModalsContainer />
-        </div>)
+        )
     }
 }
 

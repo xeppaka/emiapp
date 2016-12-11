@@ -5,6 +5,11 @@ class NameValueSelector extends React.Component {
         super(props);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (this.props.currentValue !== nextProps.currentValue) ||
+            (this.props.nameValueList.length != nextProps.nameValueList.length)
+    }
+
     onValueSelected(value) {
         this.props.onValueSelected(value);
     }

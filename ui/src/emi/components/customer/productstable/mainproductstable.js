@@ -11,12 +11,12 @@ class MainProductsTable extends React.Component {
         if (this.props.products === nextProps.products)
             return false;
 
-        if (this.props.products.length != nextProps.products.length)
+        if (this.props.products.length !== nextProps.products.length)
             return true;
 
         let l = this.props.products.length;
         for (let i = 0; i < l; i++) {
-            if (this.props.products[i] != nextProps.products[i])
+            if (this.props.products[i] !== nextProps.products[i])
                 return true;
         }
 

@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import { UPDATE_PRODUCTS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET } from './productsactions';
+import { UPDATE_PRODUCTS, SET_PRODUCT_QUANTITY, PRODUCTS_RESET, REMOVE_PRODUCT } from './productsactions';
 import { SET_WAREHOUSE } from '../warehouse/warehouseactions';
 
 const initialProductsState = {
@@ -18,6 +18,15 @@ function setZeroQuantity(productById) {
     return productById;
 }
 
+function setZeroQuantityToList(products) {
+    for (let i = 0; i < products.length; i++) {
+        let product = products[i];
+        product.quantity = 0;
+    }
+
+    return products;
+}
+
 function products(state = initialProductsState, action) {
     switch (action.type) {
         case SET_WAREHOUSE:
@@ -25,7 +34,7 @@ function products(state = initialProductsState, action) {
                 productById: {$set: setZeroQuantity(action.warehouse.productById)}
             });
         case UPDATE_PRODUCTS:
-            let updatedProducts = setZeroQuantity(action.products);
+            let updatedProducts = setZeroQuantityToList(action.products);
             let updatedState = state;
 
             for (let i = 0; i < updatedProducts.length; i++) {
@@ -37,6 +46,17 @@ function products(state = initialProductsState, action) {
             }
 
             return updatedState;
+        case REMOVE_PRODUCT: {
+            let productId = action.productId;
+            let updatedState = update(state, {
+                productById: {
+                    [productId]: {$set: null}
+                }
+            });
+
+            delete updatedState[productId];
+            return updatedState;
+        }
         case SET_PRODUCT_QUANTITY: {
                 return update(state, {
                     productById: {

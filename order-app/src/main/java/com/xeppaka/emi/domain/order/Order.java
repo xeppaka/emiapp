@@ -67,9 +67,9 @@ public class Order {
         double total = 0;
 
         for (Product p : products) {
-            if (p.getType() == ProductFeature.MAIN) {
-                total += p.getPrice() / 2 * p.getQuantity();
-            }
+//            if (p.getType() == ProductFeature.MAIN) {
+//                total += p.getPrice() / 2 * p.getQuantity();
+//            }
         }
 
         return total;

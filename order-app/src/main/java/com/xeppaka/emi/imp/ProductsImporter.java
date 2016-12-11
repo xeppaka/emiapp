@@ -46,11 +46,11 @@ public class ProductsImporter {
             String[] cats = p.getCategory().split(":");
             JsonCategory category = rootCategory.getCategory(cats);
             Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
-            if (p.getType().equalsIgnoreCase("MAIN")) {
-                features.add(ProductFeature.MAIN);
-            } else if (p.getType().equalsIgnoreCase("POS")) {
-                features.add(ProductFeature.POS);
-            }
+//            if (p.getType().equalsIgnoreCase("MAIN")) {
+//                features.add(ProductFeature.MAIN);
+//            } else if (p.getType().equalsIgnoreCase("POS")) {
+//                features.add(ProductFeature.POS);
+//            }
             emiWarehouse.handle(new CreateProductCommand(UUID.randomUUID(), p.getName(), (int) (p.getPrice() * 100), p.getMultiplicity(), p.getNote(), category.getCategoryId(), features, 0));
         }
     }

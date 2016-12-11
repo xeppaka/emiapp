@@ -62,6 +62,6 @@ class MenuItem extends React.Component {
             return (<li><a className={active ? 'active' : ''} href={'#' + nodeId} onClick={() => this.menuItemClicked(nodeId)}>{text}</a></li>)
         }
     }
-};
+}
 
 export default MenuItem;
