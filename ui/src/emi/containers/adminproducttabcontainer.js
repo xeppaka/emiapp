@@ -5,7 +5,7 @@ import { categoriesListSelector } from '../state/selectors/categoriesselector';
 import { adminProductCountersSelector } from '../state/selectors/admin/adminproductsselector';
 import { setProductName, setProductPrice, setProductCategory,
          setProductMultiplicity, setProductNote, setProductWeight,
-         resetProducts, createProduct, deleteProduct } from '../state/admin/adminactions';
+         resetProducts, createProduct, deleteProduct, setProductFeature } from '../state/admin/adminactions';
 import { showSaveProductsModal } from '../state/modals/modalsactions';
 
 const mapStateToProps = (state) => {
@@ -30,16 +30,19 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(setProductPrice(productId, price));
         },
         onProductCategoryChanged: (productId, categoryId) => {
-            dispatch(setProductCategory(productId, categoryId))
+            dispatch(setProductCategory(productId, categoryId));
         },
         onProductMultiplicityChanged: (productId, multiplicity) => {
-            dispatch(setProductMultiplicity(productId, multiplicity))
+            dispatch(setProductMultiplicity(productId, multiplicity));
         },
         onProductNoteChanged: (productId, note) => {
-            dispatch(setProductNote(productId, note))
+            dispatch(setProductNote(productId, note));
         },
         onProductWeightChanged: (productId, weight) => {
-            dispatch(setProductWeight(productId, weight))
+            dispatch(setProductWeight(productId, weight));
+        },
+        onProductFeatureChanged: (productId, featureName, enabled) => {
+            dispatch(setProductFeature(productId, featureName, enabled));
         },
         onResetModifications: () => {
             dispatch(resetProducts());

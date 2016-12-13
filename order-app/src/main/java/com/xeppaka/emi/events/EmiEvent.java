@@ -10,12 +10,15 @@ import com.xeppaka.ddd.events.BaseEvent;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ProductCreated.class, name = "PRODUCT_CREATED"),
-        @JsonSubTypes.Type(value = ProductRemoved.class, name = "PRODUCT_REMOVED"),
+        @JsonSubTypes.Type(value = ProductDeleted.class, name = "PRODUCT_DELETED"),
         @JsonSubTypes.Type(value = ProductNameChanged.class, name = "PRODUCT_NAME_CHANGED"),
         @JsonSubTypes.Type(value = ProductPriceChanged.class, name = "PRODUCT_PRICE_CHANGED"),
         @JsonSubTypes.Type(value = ProductCategoryChanged.class, name = "PRODUCT_CATEGORY_CHANGED"),
         @JsonSubTypes.Type(value = ProductWeightChanged.class, name = "PRODUCT_WEIGHT_CHANGED"),
+        @JsonSubTypes.Type(value = ProductNoteChanged.class, name = "PRODUCT_NOTE_CHANGED"),
+        @JsonSubTypes.Type(value = ProductFeaturesChanged.class, name = "PRODUCT_FEATURES_CHANGED"),
         @JsonSubTypes.Type(value = CategoryCreated.class, name = "CATEGORY_CREATED"),
+        @JsonSubTypes.Type(value = CategoryDeleted.class, name = "CATEGORY_DELETED"),
         @JsonSubTypes.Type(value = CategoryNameChanged.class, name = "CATEGORY_NAME_CHANGED"),
         @JsonSubTypes.Type(value = CategoryParentChanged.class, name = "CATEGORY_PARENT_CHANGED"),
         @JsonSubTypes.Type(value = CategoryWeightChanged.class, name = "CATEGORY_WEIGHT_CHANGED")

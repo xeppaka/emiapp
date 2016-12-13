@@ -2,6 +2,7 @@ package com.xeppaka.emi.domain.entities;
 
 import com.xeppaka.ddd.domain.BaseEntity;
 import com.xeppaka.emi.domain.ProductFeature;
+
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
@@ -15,30 +16,22 @@ import java.util.UUID;
 public class Product extends BaseEntity {
     private String name;
     private int price;
-    private String note;
     private UUID categoryId;
+    private String note;
+    private int multiplicity;
     private int weight;
     private Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
 
-    public Product(UUID id,
-                   String name,
-                   int price,
-                   String note,
-                   UUID categoryId,
-                   int weight,
-                   Collection<ProductFeature> features) {
+    public Product(UUID id, String name, int price, int multiplicity,
+                   UUID categoryId, String note, int weight, Collection<ProductFeature> features) {
         super(id);
-
         setName(name);
         setPrice(price);
-        this.note = note;
-        this.categoryId = categoryId;
-        this.weight = weight;
-        if (features.isEmpty()) {
-            this.productFeatures = EnumSet.noneOf(ProductFeature.class);
-        } else {
-            this.productFeatures = EnumSet.copyOf(features);
-        }
+        setCategoryId(categoryId);
+        setNote(note);
+        setWeight(weight);
+        setFeatures(features);
+        setMultiplicity(multiplicity);
     }
 
     public String getName() {
@@ -59,6 +52,16 @@ public class Product extends BaseEntity {
         this.price = price;
     }
 
+    public int getMultiplicity() {
+        return multiplicity;
+    }
+
+    public void setMultiplicity(int multiplicity) {
+        Validate.inclusiveBetween(1, Integer.MAX_VALUE, multiplicity);
+
+        this.multiplicity = multiplicity;
+    }
+
     public String getNote() {
         return note;
     }
@@ -67,8 +70,12 @@ public class Product extends BaseEntity {
         return productFeatures;
     }
 
-    public void setProductFeatures(Collection<ProductFeature> productFeatures) {
-        this.productFeatures = EnumSet.copyOf(productFeatures);
+    public void setFeatures(Collection<ProductFeature> features) {
+        if (features.isEmpty()) {
+            this.productFeatures = EnumSet.noneOf(ProductFeature.class);
+        } else {
+            this.productFeatures = EnumSet.copyOf(features);
+        }
     }
 
     public void setNote(String note) {
@@ -88,6 +95,7 @@ public class Product extends BaseEntity {
     }
 
     public void setCategoryId(UUID categoryId) {
+        Validate.notNull(categoryId);
         this.categoryId = categoryId;
     }
 

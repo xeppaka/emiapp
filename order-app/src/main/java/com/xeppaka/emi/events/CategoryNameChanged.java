@@ -4,34 +4,32 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  */
 public class CategoryNameChanged extends EmiEvent {
     private final UUID categoryId;
-    private final String newName;
+    private final String name;
 
-    private CategoryNameChanged() {
-        super(EmiEventType.CATEGORY_NAME_CHANGED);
-
-        categoryId = null;
-        newName = null;
-    }
-
-    public CategoryNameChanged(UUID categoryId, String newName) {
+    @JsonCreator
+    public CategoryNameChanged(@JsonProperty("categoryId") UUID categoryId,
+                               @JsonProperty("name") String name) {
         super(EmiEventType.CATEGORY_NAME_CHANGED);
         Validate.notNull(categoryId);
-        Validate.notNull(newName);
+        Validate.notNull(name);
 
         this.categoryId = categoryId;
-        this.newName = newName;
+        this.name = name;
     }
 
     public UUID getCategoryId() {
         return categoryId;
     }
 
-    public String getNewName() {
-        return newName;
+    public String getName() {
+        return name;
     }
 }

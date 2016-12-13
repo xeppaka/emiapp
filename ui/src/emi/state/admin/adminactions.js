@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import {adminCategoriesTreeSelector} from '../selectors/admin/admincategoriesselector';
+import {adminCategoriesTreeSelector, modifiedCategoriesSaveSelector} from '../selectors/admin/admincategoriesselector';
 import {adminProductListSaveSelector} from '../selectors/admin/adminproductsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
@@ -12,27 +12,68 @@ export const REMOVE_MODIFIED_CATEGORY = 'REMOVE_MODIFIED_CATEGORY';
 export const ADD_NEW_PRODUCT = 'ADD_NEW_PRODUCT';
 export const ADD_NEW_CATEGORY = 'ADD_NEW_CATEGORY';
 export const SET_PRODUCT_DELETED = 'SET_PRODUCT_DELETED';
-export const RESET_PRODUCTS = 'RESET_PRODUCTS';
-export const RESET_CATEGORIES = 'RESET_CATEGORIES';
+export const REMOVE_PRODUCT_DELETED = 'REMOVE_PRODUCT_DELETED';
+export const SET_CATEGORY_DELETED = 'SET_CATEGORY_DELETED';
+export const REMOVE_CATEGORY_DELETED = 'REMOVE_CATEGORY_DELETED';
+export const ADMIN_PRODUCTS_RESET = 'ADMIN_PRODUCTS_RESET';
+export const ADMIN_CATEGORIES_RESET = 'ADMIN_CATEGORIES_RESET';
 export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
 export const SET_NOTIFICATION_TEXT = 'SET_NOTIFICATION_TEXT';
 export const SAVE_STARTED = 'SAVE_STARTED';
 export const SAVE_FINISHED = 'SAVE_FINISHED';
 
 export function resetProducts() {
-    return {type: RESET_PRODUCTS};
+    return {type: ADMIN_PRODUCTS_RESET};
 }
 
 export function resetCategories() {
-    return {type: RESET_CATEGORIES};
+    return {type: ADMIN_CATEGORIES_RESET};
 }
 
 export function setModifiedProduct(product) {
     return {type: SET_MODIFIED_PRODUCT, product: product};
 }
 
-export function deleteProduct(productId) {
+function setProductDeleted(productId) {
     return {type: SET_PRODUCT_DELETED, productId: productId};
+}
+
+function removeProductDeleted(productId) {
+    return {type: REMOVE_PRODUCT_DELETED, productId: productId};
+}
+
+export function deleteProduct(productId) {
+    return function(dispatch, getState) {
+        let state = getState();
+        let productById = state.warehouse.products.productById;
+
+        if (productById.hasOwnProperty(productId)) {
+            dispatch(setProductDeleted(productId));
+        } else {
+            dispatch(removeModifiedProduct(productId));
+        }
+    }
+}
+
+function setCategoryDeleted(categoryId) {
+    return {type: SET_CATEGORY_DELETED, categoryId: categoryId};
+}
+
+function removeCategoryDeleted(categoryId) {
+    return {type: REMOVE_CATEGORY_DELETED, categoryId: categoryId};
+}
+
+export function deleteCategory(categoryId) {
+    return function(dispatch, getState) {
+        let state = getState();
+        let categoryById = state.warehouse.categories.categoryById;
+
+        if (categoryById.hasOwnProperty(categoryId)) {
+            dispatch(setCategoryDeleted(categoryId));
+        } else {
+            dispatch(removeModifiedCategory(categoryId));
+        }
+    }
 }
 
 export function createProduct() {
@@ -43,6 +84,8 @@ export function createProduct() {
             productId: '',
             name: '',
             price: 0,
+            multiplicity: 1,
+            features: ['VISIBLE'],
             categoryId: rootCategoryId,
             weight: 0,
             note: ''
@@ -141,22 +184,26 @@ function createProducts(dispatch, products) {
 }
 
 function modifyProducts(dispatch, products) {
-    return fetch('api/products', {
-        method: 'PATCH',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(products)
-    }).then(response => {
-        if (response.status !== 200) {
-            return Promise.reject();
-        } else {
-            return response.json();
-        }
-    }).then(modifiedProductsData => {
-        dispatch(updateProducts(modifiedProductsData));
-    });
+    if (products.length > 0) {
+        return fetch('api/products', {
+            method: 'PATCH',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(products)
+        }).then(response => {
+            if (response.status !== 200) {
+                return Promise.reject();
+            } else {
+                return response.json();
+            }
+        }).then(modifiedProductsData => {
+            dispatch(updateProducts(modifiedProductsData));
+        });
+    } else {
+        return Promise.resolve();
+    }
 }
 
 export function saveProducts(saveModalId) {
@@ -285,6 +332,36 @@ export function setProductCategory(productId, categoryId) {
         modifiedProduct = update(modifiedProduct, {
             categoryId: {$set: categoryId}
         });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductFeature(productId, featureName, enabled) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.warehouse.products.productById;
+        let modifiedProductById = state.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+
+        if (enabled) {
+            let idx = modifiedProduct.features.indexOf(featureName);
+            if (idx < 0) {
+                modifiedProduct = update(modifiedProduct, {
+                    features: {$push: [featureName]}
+                })
+            }
+        } else {
+            let idx = modifiedProduct.features.indexOf(featureName);
+            if (idx >= 0) {
+                modifiedProduct = update(modifiedProduct, {
+                    features: {$splice: [[idx, 1]]}
+                })
+            }
+        }
 
         compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
     };

@@ -4,25 +4,20 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.UUID;
 
-/**
- *
- */
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CategoryCreated extends EmiEvent {
     private final UUID categoryId;
     private final String name;
     private final UUID parentCategoryId;
     private final int weight;
 
-    private CategoryCreated() {
-        super(EmiEventType.CATEGORY_CREATED);
-
-        this.categoryId = null;
-        this.name = null;
-        this.parentCategoryId = null;
-        this.weight = 0;
-    }
-
-    public CategoryCreated(UUID categoryId, String name, UUID parentCategoryId, int weight) {
+    @JsonCreator
+    public CategoryCreated(@JsonProperty("categoryId") UUID categoryId,
+                           @JsonProperty("name") String name,
+                           @JsonProperty("parentCategoryId") UUID parentCategoryId,
+                           @JsonProperty("weight") int weight) {
         super(EmiEventType.CATEGORY_CREATED);
         Validate.notNull(name);
         Validate.notNull(categoryId);

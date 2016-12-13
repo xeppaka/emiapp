@@ -2,6 +2,9 @@ package com.xeppaka.emi.events;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by nnm on 11/20/16.
  */
@@ -9,14 +12,9 @@ public class ProductCategoryChanged extends EmiEvent {
     private final UUID productId;
     private final UUID categoryId;
 
-    private ProductCategoryChanged() {
-        super(EmiEventType.PRODUCT_CATEGORY_CHANGED);
-
-        productId = null;
-        categoryId = null;
-    }
-
-    public ProductCategoryChanged(UUID productId, UUID categoryId) {
+    @JsonCreator
+    public ProductCategoryChanged(@JsonProperty("productId") UUID productId,
+                                  @JsonProperty("categoryId") UUID categoryId) {
         super(EmiEventType.PRODUCT_CATEGORY_CHANGED);
 
         this.productId = productId;

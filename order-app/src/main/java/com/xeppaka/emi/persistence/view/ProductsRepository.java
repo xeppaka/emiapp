@@ -128,6 +128,59 @@ public class ProductsRepository {
         });
     }
 
+    public void deleteProduct(UUID productId) {
+        Validate.notNull(productId);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+
+        jdbcTemplate.update("DELETE FROM PRODUCTS WHERE ID = :ID", sqlParameterSource);
+    }
+
+    public void updateProductMultiplicity(UUID productId, int multiplicity) {
+        Validate.notNull(productId);
+        Validate.inclusiveBetween(1, Integer.MAX_VALUE, multiplicity);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+        sqlParameterSource.addValue("MULTIPLICITY", multiplicity);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET MULTIPLICITY = :MULTIPLICITY WHERE ID = :ID", sqlParameterSource);
+    }
+
+    public void updateProductNote(UUID productId, String note) {
+        Validate.notNull(productId);
+        Validate.notNull(note);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+        sqlParameterSource.addValue("NOTE", note);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET NOTE = :NOTE WHERE ID = :ID", sqlParameterSource);
+    }
+
+    public void updateProductFeatures(UUID productId, Set<ProductFeature> features) {
+        Validate.notNull(productId);
+        Validate.notNull(features);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+        sqlParameterSource.addValue("FEATURES", productFeaturesToString(features));
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET FEATURES = :FEATURES WHERE ID = :ID", sqlParameterSource);
+    }
+
+    public void updateProductWeight(UUID productId, int weight) {
+        Validate.notNull(productId);
+        Validate.inclusiveBetween(0, Integer.MAX_VALUE, weight);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+        sqlParameterSource.addValue("WEIGHT", weight);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET WEIGHT = :WEIGHT WHERE ID = :ID", sqlParameterSource);
+    }
+
     private String productFeaturesToString(Set<ProductFeature> productFeatures) {
         if (productFeatures.isEmpty()) {
             return "";

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
+import com.xeppaka.emi.commands.DeleteCategoryCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
 import com.xeppaka.emi.commands.UpdateCategoryCommand;
 import com.xeppaka.emi.domain.value.UserName;
@@ -53,5 +54,13 @@ public class CategoriesService {
 
     public List<CategoryDto> getCategories() {
         return categoriesRepository.getCategories();
+    }
+
+    public void deleteCategory(UserName userName, UUID categoryId) throws EmiWarehouseException {
+        try {
+            emiCommandHandler.handle(userName, new DeleteCategoryCommand(categoryId));
+        } catch (CommandHandleException e) {
+            throw new EmiWarehouseException("Error occurred while deleting category.", e);
+        }
     }
 }

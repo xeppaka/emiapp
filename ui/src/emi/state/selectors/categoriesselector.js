@@ -61,7 +61,7 @@ function isProductByIdEqual(val1, val2) {
             continue;
 
         val1Keys++;
-        if (!val2.hasOwnProperty(key) || val1[key].categoryId !== val2[key].categoryId) {
+        if (!val2.hasOwnProperty(key) || (val1[key].categoryId !== val2[key].categoryId)) {
             return false;
         }
     }

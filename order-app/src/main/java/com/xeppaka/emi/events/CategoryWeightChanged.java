@@ -2,6 +2,9 @@ package com.xeppaka.emi.events;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  */
@@ -9,14 +12,9 @@ public class CategoryWeightChanged extends EmiEvent {
     private final UUID categoryId;
     private final int weight;
 
-    private CategoryWeightChanged() {
-        super(EmiEventType.CATEGORY_WEIGHT_CHANGED);
-
-        categoryId = null;
-        weight = 0;
-    }
-
-    public CategoryWeightChanged(UUID categoryId, int weight) {
+    @JsonCreator
+    public CategoryWeightChanged(@JsonProperty("categoryId") UUID categoryId,
+                                 @JsonProperty("weight") int weight) {
         super(EmiEventType.CATEGORY_WEIGHT_CHANGED);
 
         this.categoryId = categoryId;

@@ -48,14 +48,17 @@ class MainProductsTable extends React.Component {
         for (let i = 0; i < productsLength; i++) {
             let anchor = products[i].anchor;
             let product = products[i].product;
+            let features = product.features;
 
             if (anchor.hasOwnProperty('categoryAnchors')) {
                 productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'6'} />);
             }
 
-            productsItems.push(<MainProductItem
-                            key={product.productId} ref={'product' + i} idx={i + 1} product={product}
-                            setProductQuantity={this.props.setProductQuantity} />)
+            if (features.indexOf('VISIBLE') >= 0) {
+                productsItems.push(<MainProductItem
+                    key={product.productId} ref={'product' + i} idx={i + 1} product={product}
+                    setProductQuantity={this.props.setProductQuantity}/>)
+            }
         }
 
         return productsItems;

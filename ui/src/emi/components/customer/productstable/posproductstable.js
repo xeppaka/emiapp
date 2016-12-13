@@ -48,14 +48,17 @@ class PosProductsTable extends React.Component {
         for (let i = 0; i < products.length; i++) {
             let product = products[i].product;
             let anchor = products[i].anchor;
+            let features = product.features;
 
             if (anchor.hasOwnProperty('categoryAnchors')) {
                 productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'7'} />);
             }
 
-            productsItems.push(<PosProductItem
-                            key={product.productId} ref={'product' + i} idx={i+1}
-                            product={product} setProductQuantity={this.props.setProductQuantity} />)
+            if (features.indexOf('VISIBLE') >= 0) {
+                productsItems.push(<PosProductItem
+                    key={product.productId} ref={'product' + i} idx={i + 1}
+                    product={product} setProductQuantity={this.props.setProductQuantity}/>)
+            }
         }
 
         return productsItems;

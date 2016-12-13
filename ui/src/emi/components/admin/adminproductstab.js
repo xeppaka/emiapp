@@ -19,6 +19,7 @@ class AdminProductsTab extends React.Component {
                                     onProductMultiplicityChanged={this.props.onProductMultiplicityChanged}
                                     onProductNoteChanged={this.props.onProductNoteChanged}
                                     onProductWeightChanged={this.props.onProductWeightChanged}
+                                    onProductFeatureChanged={this.props.onProductFeatureChanged}
                                     onDeleteProduct={this.props.onDeleteProduct}
                 />
                 <AdminProductsTotal modifiedProducts={this.props.modifiedProducts}

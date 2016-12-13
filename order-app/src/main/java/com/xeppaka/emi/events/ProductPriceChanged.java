@@ -2,32 +2,27 @@ package com.xeppaka.emi.events;
 
 import java.util.UUID;
 
-/**
- * Created by nnm on 11/20/16.
- */
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ProductPriceChanged extends EmiEvent {
     private final UUID productId;
-    private final int newPrice;
+    private final int price;
 
-    private ProductPriceChanged() {
-        super(EmiEventType.PRODUCT_PRICE_CHANGED);
-
-        productId = null;
-        newPrice = 0;
-    }
-
-    public ProductPriceChanged(UUID productId, int newPrice) {
+    @JsonCreator
+    public ProductPriceChanged(@JsonProperty("productId") UUID productId,
+                               @JsonProperty("price") int price) {
         super(EmiEventType.PRODUCT_PRICE_CHANGED);
 
         this.productId = productId;
-        this.newPrice = newPrice;
+        this.price = price;
     }
 
     public UUID getProductId() {
         return productId;
     }
 
-    public int getNewPrice() {
-        return newPrice;
+    public int getPrice() {
+        return price;
     }
 }

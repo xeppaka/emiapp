@@ -80,15 +80,17 @@ export const adminProductListSaveSelector = createSelector(
         let smodifiedProducts = [];
         let sdeletedProductIds = [];
 
+        for (let i = 0; i < deletedProductIds.length; i++) {
+            if (productById.hasOwnProperty(deletedProductIds[i])) {
+                sdeletedProductIds.push(deletedProductIds[i]);
+            }
+        }
+
         for (let key in modifiedProductById) {
             if (!modifiedProductById.hasOwnProperty(key) || modifiedProductById[key] === null)
                 continue;
 
             if (deletedProductIds.indexOf(key) >= 0) {
-                if (productById.hasOwnProperty(key)) {
-                    sdeletedProductIds.push(key);
-                }
-
                 continue;
             }
 

@@ -5,6 +5,8 @@ import com.xeppaka.ddd.domain.BaseAggregate;
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
+import com.xeppaka.emi.commands.DeleteCategoryCommand;
+import com.xeppaka.emi.commands.DeleteProductCommand;
 import com.xeppaka.emi.commands.UpdateCategoryCommand;
 import com.xeppaka.emi.commands.UpdateProductCommand;
 import com.xeppaka.emi.domain.entities.Category;
@@ -14,6 +16,7 @@ import com.xeppaka.emi.events.*;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -39,11 +42,29 @@ public class EmiWarehouse extends BaseAggregate {
             case CATEGORY_CREATED:
                 applyCategoryCreated((CategoryCreated) emiEvent);
                 break;
+            case CATEGORY_DELETED:
+                applyCategoryDeleted((CategoryDeleted) emiEvent);
+                break;
+            case PRODUCT_DELETED:
+                applyProductDeleted((ProductDeleted) emiEvent);
+                break;
             case PRODUCT_NAME_CHANGED:
                 applyProductNameChanged((ProductNameChanged) emiEvent);
                 break;
             case PRODUCT_PRICE_CHANGED:
                 applyProductPriceChanged((ProductPriceChanged) emiEvent);
+                break;
+            case PRODUCT_MULTIPLICITY_CHANGED:
+                applyProductMultiplicityChanged((ProductMultiplicityChanged) emiEvent);
+                break;
+            case PRODUCT_FEATURES_CHANGED:
+                applyProductFeaturesChanged((ProductFeaturesChanged) emiEvent);
+                break;
+            case PRODUCT_NOTE_CHANGED:
+                applyProductNoteChanged((ProductNoteChanged) emiEvent);
+                break;
+            case PRODUCT_WEIGHT_CHANGED:
+                applyProductWeightChanged((ProductWeightChanged) emiEvent);
                 break;
             case PRODUCT_CATEGORY_CHANGED:
                 applyProductCategoryChanged((ProductCategoryChanged) emiEvent);
@@ -60,6 +81,34 @@ public class EmiWarehouse extends BaseAggregate {
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event: {0}.", event));
         }
+    }
+
+    private void applyProductWeightChanged(ProductWeightChanged productWeightChanged) {
+        final Product product = productsMap.get(productWeightChanged.getProductId());
+        product.setWeight(productWeightChanged.getWeight());
+    }
+
+    private void applyProductNoteChanged(ProductNoteChanged productNoteChanged) {
+        final Product product = productsMap.get(productNoteChanged.getProductId());
+        product.setNote(productNoteChanged.getNote());
+    }
+
+    private void applyProductFeaturesChanged(ProductFeaturesChanged productFeaturesChanged) {
+        final Product product = productsMap.get(productFeaturesChanged.getProductId());
+        product.setFeatures(productFeaturesChanged.getFeatures());
+    }
+
+    private void applyProductMultiplicityChanged(ProductMultiplicityChanged productMultiplicityChanged) {
+        final Product product = productsMap.get(productMultiplicityChanged.getProductId());
+        product.setMultiplicity(productMultiplicityChanged.getMultiplicity());
+    }
+
+    private void applyProductDeleted(ProductDeleted productDeleted) {
+        productsMap.remove(productDeleted.getProductId());
+    }
+
+    private void applyCategoryDeleted(CategoryDeleted categoryDeleted) {
+        categoryMap.remove(categoryDeleted.getCategoryId());
     }
 
     private void applyProductCategoryChanged(ProductCategoryChanged productCategoryChanged) {
@@ -79,7 +128,7 @@ public class EmiWarehouse extends BaseAggregate {
 
     private void applyCategoryNameChanged(CategoryNameChanged categoryNameChanged) {
         final Category category = categoryMap.get(categoryNameChanged.getCategoryId());
-        category.setName(categoryNameChanged.getNewName());
+        category.setName(categoryNameChanged.getName());
     }
 
     private void applyProductCreated(ProductCreated createProductEvent) {
@@ -87,8 +136,9 @@ public class EmiWarehouse extends BaseAggregate {
                 new Product(createProductEvent.getProductId(),
                         createProductEvent.getName(),
                         createProductEvent.getPrice(),
-                        createProductEvent.getNote(),
+                        createProductEvent.getMultiplicity(),
                         createProductEvent.getCategoryId(),
+                        createProductEvent.getNote(),
                         createProductEvent.getWeight(),
                         createProductEvent.getFeatures()));
     }
@@ -96,13 +146,13 @@ public class EmiWarehouse extends BaseAggregate {
     private void applyProductNameChanged(ProductNameChanged productNameChangedEvent) {
         final UUID productId = productNameChangedEvent.getProductId();
         final Product product = productsMap.get(productId);
-        product.setName(productNameChangedEvent.getNewName());
+        product.setName(productNameChangedEvent.getName());
     }
 
     private void applyProductPriceChanged(ProductPriceChanged productPriceChangedEvent) {
         final UUID productId = productPriceChangedEvent.getProductId();
         final Product product = productsMap.get(productId);
-        product.setPrice(productPriceChangedEvent.getNewPrice());
+        product.setPrice(productPriceChangedEvent.getPrice());
     }
 
     private void applyCategoryCreated(CategoryCreated categoryCreatedEvent) {
@@ -134,6 +184,16 @@ public class EmiWarehouse extends BaseAggregate {
             return;
         }
 
+        if (command instanceof DeleteCategoryCommand) {
+            handle((DeleteCategoryCommand) command);
+            return;
+        }
+
+        if (command instanceof DeleteProductCommand) {
+            handle((DeleteProductCommand) command);
+            return;
+        }
+
         throw new IllegalArgumentException(MessageFormat.format("Provided command {0} is not supported", command));
     }
 
@@ -161,11 +221,15 @@ public class EmiWarehouse extends BaseAggregate {
         addEvent(categoryCreated);
     }
 
-    public void handle(UpdateProductCommand command) {
-        final Product originalProduct = productsMap.get(command.getId());
+    private void handle(UpdateProductCommand command) {
+        final Product originalProduct = productsMap.get(command.getProductId());
         final String name = command.getName();
         final int price = command.getPrice();
+        final int multiplicity = command.getMultiplicity();
         final UUID categoryId = command.getCategoryId();
+        final String note = command.getNote();
+        final int weight = command.getWeight();
+        final Set<ProductFeature> features = command.getFeatures();
 
         if (!originalProduct.getName().equals(name)) {
             final ProductNameChanged productNameChanged =
@@ -187,9 +251,37 @@ public class EmiWarehouse extends BaseAggregate {
             apply(productCategoryChanged);
             addEvent(productCategoryChanged);
         }
+
+        if (originalProduct.getMultiplicity() != multiplicity) {
+            final ProductMultiplicityChanged productMultiplicityChanged =
+                    new ProductMultiplicityChanged(originalProduct.getId(), multiplicity);
+            apply(productMultiplicityChanged);
+            addEvent(productMultiplicityChanged);
+        }
+
+        if (!originalProduct.getNote().equals(note)) {
+            final ProductNoteChanged productNoteChanged =
+                    new ProductNoteChanged(originalProduct.getId(), note);
+            apply(productNoteChanged);
+            addEvent(productNoteChanged);
+        }
+
+        if (!originalProduct.getFeatures().equals(features)) {
+            final ProductFeaturesChanged productFeaturesChanged =
+                    new ProductFeaturesChanged(originalProduct.getId(), features);
+            apply(productFeaturesChanged);
+            addEvent(productFeaturesChanged);
+        }
+
+        if (originalProduct.getWeight() != weight) {
+            final ProductWeightChanged productWeightChanged =
+                    new ProductWeightChanged(originalProduct.getId(), weight);
+            apply(productWeightChanged);
+            addEvent(productWeightChanged);
+        }
     }
 
-    public void handle(UpdateCategoryCommand command) {
+    private void handle(UpdateCategoryCommand command) {
         final Category originalCategory = categoryMap.get(command.getCategoryId());
         final String name = command.getName();
         final UUID parentCategoryId = command.getParentCategoryId();
@@ -215,6 +307,18 @@ public class EmiWarehouse extends BaseAggregate {
             apply(categoryWeightChanged);
             addEvent(categoryWeightChanged);
         }
+    }
+
+    private void handle(DeleteCategoryCommand command) {
+        final CategoryDeleted categoryDeleted = new CategoryDeleted(command.getCategoryId());
+        apply(categoryDeleted);
+        addEvent(categoryDeleted);
+    }
+
+    private void handle(DeleteProductCommand command) {
+        final ProductDeleted productDeleted = new ProductDeleted(command.getProductId());
+        apply(productDeleted);
+        addEvent(productDeleted);
     }
 
     @Override

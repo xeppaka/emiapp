@@ -11,7 +11,7 @@ function isProductByIdEqual(val1, val2) {
             continue;
 
         val1Keys++;
-        if (!val2.hasOwnProperty(key) || val1[key].type !== val2[key].type) {
+        if (!val2.hasOwnProperty(key) || (val1[key].type !== val2[key].type)) {
             return false;
         }
     }
@@ -42,49 +42,39 @@ const createProductIdsSelector = createSelectorCreator(
     isEqualForProductIdsSelector
 );
 
-function getProductIds(categoriesTree, id, res) {
-    let currentCategory = categoriesTree[id];
-    Array.prototype.push.apply(res, currentCategory.productIds);
+function getProductIds(categoryById, id, productIds, pos) {
+    let currentCategory = categoryById[id];
+    if (pos) {
+        Array.prototype.push.apply(productIds.posProductIds, currentCategory.productIds);
+    } else {
+        Array.prototype.push.apply(productIds.mainProductIds, currentCategory.productIds);
+    }
 
     let childCategoryIds = currentCategory.childCategoryIds;
     let l = childCategoryIds.length;
 
     for (let i = 0; i < l; i++) {
-        getProductIds(categoriesTree, childCategoryIds[i], res);
+        let childCategoryId = childCategoryIds[i];
+        let nextPos = pos || ((currentCategory.categoryId === categoryById['root'].categoryId)
+            && (categoryById[childCategoryId].name === 'POS'));
+        getProductIds(categoryById, childCategoryId, productIds, nextPos);
     }
 }
 
 const productIdsSelector = createProductIdsSelector(
     [
-        (state) => { return { type: 'categoriesTree', value: categoriesTreeSelector(state) } },
-        (state) => { return { type: 'productById', value: state.warehouse.products.productById } }
+        (state) => { return { type: 'categoriesTree', value: categoriesTreeSelector(state) } }
     ],
-    (categoriesTreeVal, productByIdVal) => {
-        let categoriesTree = categoriesTreeVal.value;
-        let productById = productByIdVal.value;
+    (categoriesTreeVal) => {
+        let categoryById = categoriesTreeVal.value;
 
-        let allProductIds = [];
-        getProductIds(categoriesTree, 'root', allProductIds);
+        let productIds = {
+            mainProductIds: [],
+            posProductIds: []
+        };
+        getProductIds(categoryById, 'root', productIds, false);
 
-        let mainProductIds = [];
-        let posProductIds = [];
-
-        let l = allProductIds.length;
-
-        for (let i = 0; i < l; i++) {
-            let product = productById[allProductIds[i]];
-
-            if (product.productFeatures.indexOf('MAIN') !== -1) {
-                mainProductIds.push(allProductIds[i]);
-            } else if (product.productFeatures.indexOf('POS') !== -1) {
-                posProductIds.push(allProductIds[i]);
-            }
-        }
-
-        return {
-            mainProductIds: mainProductIds,
-            posProductIds: posProductIds
-        }
+        return productIds;
     }
 );
 

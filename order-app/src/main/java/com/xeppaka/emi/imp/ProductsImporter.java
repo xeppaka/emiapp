@@ -34,6 +34,9 @@ public class ProductsImporter {
         List<JsonProduct> products = readProducts(Paths.get("/home/nnm/development/emi-app/server/products.json"));
 
         for (JsonProduct p : products) {
+            if (p.getNote() == null) {
+                p.setNote("");
+            }
             String[] categoryNames = p.getCategory().split(":");
             JsonCategory childCategory = rootCategory.getCategory(categoryNames);
         }
@@ -45,7 +48,7 @@ public class ProductsImporter {
 
             String[] cats = p.getCategory().split(":");
             JsonCategory category = rootCategory.getCategory(cats);
-            Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
+            Set<ProductFeature> features = EnumSet.of(ProductFeature.VISIBLE);
 //            if (p.getType().equalsIgnoreCase("MAIN")) {
 //                features.add(ProductFeature.MAIN);
 //            } else if (p.getType().equalsIgnoreCase("POS")) {

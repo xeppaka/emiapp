@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import NameValueSelector from '../../common/namevalueselector';
+import ProductFeatures from './features/productfeatures';
 
 class AdminProductsTableRow extends React.Component {
     constructor(props) {
@@ -43,6 +44,9 @@ class AdminProductsTableRow extends React.Component {
                 />
             </td>
             <td>
+                <ProductFeatures features={product.features}
+                                 onProductFeatureChanged={(name, enabled) => this.props.onProductFeatureChanged(product.productId, name, enabled)}
+                />
             </td>
             <td>
                 <input type='text' className='form-control form-control-sm' value={product.note}

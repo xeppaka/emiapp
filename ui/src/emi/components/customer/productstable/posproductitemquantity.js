@@ -25,7 +25,7 @@ class PosProductItemQuantity extends React.Component {
         if (multiplicity > 1) {
             return (
                         <select className='form-control form-control-sm' value={quantity}
-                                onChange={(event) => this.setProductQuantity(productId, event.target.value)} style={{width: '65%'}}>
+                                onChange={(event) => this.props.setProductQuantity(productId, event.target.value)} style={{width: '65%'}}>
                             {
                                 this.renderQuantityOptions(multiplicity)
                             }

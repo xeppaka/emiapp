@@ -3,8 +3,7 @@ package com.xeppaka.emi.persistence.view;
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.ddd.events.EventListener;
 import com.xeppaka.emi.events.*;
-import com.xeppaka.emi.persistence.view.CategoriesRepository;
-import com.xeppaka.emi.persistence.view.ProductsRepository;
+
 import org.apache.commons.lang3.Validate;
 
 import java.text.MessageFormat;
@@ -35,6 +34,12 @@ public class EmiEventPersistenceListener implements EventListener {
             case CATEGORY_CREATED:
                 onCategoryCreatedEvent((CategoryCreated) emiEvent);
                 break;
+            case PRODUCT_DELETED:
+                onProductDeletedEvent((ProductDeleted) emiEvent);
+                break;
+            case CATEGORY_DELETED:
+                onCategoryDeletedEvent((CategoryDeleted) emiEvent);
+                break;
             case PRODUCT_NAME_CHANGED:
                 onProductNameChanged((ProductNameChanged) emiEvent);
                 break;
@@ -53,9 +58,43 @@ public class EmiEventPersistenceListener implements EventListener {
             case CATEGORY_WEIGHT_CHANGED:
                 onCategoryWeightChanged((CategoryWeightChanged) emiEvent);
                 break;
+            case PRODUCT_MULTIPLICITY_CHANGED:
+                onProductMultiplicityChanged((ProductMultiplicityChanged) emiEvent);
+                break;
+            case PRODUCT_WEIGHT_CHANGED:
+                onProductWeightChanged((ProductWeightChanged) emiEvent);
+                break;
+            case PRODUCT_FEATURES_CHANGED:
+                onProductFeaturesChanged((ProductFeaturesChanged) emiEvent);
+                break;
+            case PRODUCT_NOTE_CHANGED:
+                onProductNoteChanged((ProductNoteChanged) emiEvent);
+                break;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event {0}.", event));
         }
+    }
+
+    private void onProductNoteChanged(ProductNoteChanged productNoteChanged) {
+        productsRepository.updateProductNote(productNoteChanged.getProductId(), productNoteChanged.getNote());
+    }
+
+    private void onProductFeaturesChanged(ProductFeaturesChanged productFeaturesChanged) {
+        productsRepository.updateProductFeatures(productFeaturesChanged.getProductId(),
+                productFeaturesChanged.getFeatures());
+    }
+
+    private void onProductWeightChanged(ProductWeightChanged productWeightChanged) {
+        productsRepository.updateProductWeight(productWeightChanged.getProductId(), productWeightChanged.getWeight());
+    }
+
+    private void onProductMultiplicityChanged(ProductMultiplicityChanged productMultiplicityChanged) {
+        productsRepository.updateProductMultiplicity(productMultiplicityChanged.getProductId(),
+                productMultiplicityChanged.getMultiplicity());
+    }
+
+    private void onProductDeletedEvent(ProductDeleted productDeleted) {
+        productsRepository.deleteProduct(productDeleted.getProductId());
     }
 
     private void onCategoryWeightChanged(CategoryWeightChanged categoryWeightChanged) {
@@ -70,7 +109,7 @@ public class EmiEventPersistenceListener implements EventListener {
 
     private void onCategoryNameChanged(CategoryNameChanged categoryNameChanged) {
         categoriesRepository.updateCategoryName(categoryNameChanged.getCategoryId(),
-                categoryNameChanged.getNewName());
+                categoryNameChanged.getName());
     }
 
     private void onProductCreatedEvent(ProductCreated productCreated) {
@@ -82,6 +121,10 @@ public class EmiEventPersistenceListener implements EventListener {
                 productCreated.getCategoryId(),
                 productCreated.getFeatures(),
                 productCreated.getWeight());
+    }
+
+    private void onCategoryDeletedEvent(CategoryDeleted categoryDeleted) {
+        categoriesRepository.deleteCategory(categoryDeleted.getCategoryId());
     }
 
     private void onProductCategoryChanged(ProductCategoryChanged productCategoryChanged) {
@@ -96,10 +139,10 @@ public class EmiEventPersistenceListener implements EventListener {
     }
 
     private void onProductNameChanged(ProductNameChanged productNameChanged) {
-        productsRepository.updateProductName(productNameChanged.getProductId(), productNameChanged.getNewName());
+        productsRepository.updateProductName(productNameChanged.getProductId(), productNameChanged.getName());
     }
 
     private void onProductPriceChanged(ProductPriceChanged productPriceChanged) {
-        productsRepository.updateProductPrice(productPriceChanged.getProductId(), productPriceChanged.getNewPrice());
+        productsRepository.updateProductPrice(productPriceChanged.getProductId(), productPriceChanged.getPrice());
     }
 }

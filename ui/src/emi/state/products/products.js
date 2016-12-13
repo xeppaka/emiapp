@@ -54,7 +54,7 @@ function products(state = initialProductsState, action) {
                 }
             });
 
-            delete updatedState[productId];
+            delete updatedState.productById[productId];
             return updatedState;
         }
         case SET_PRODUCT_QUANTITY: {

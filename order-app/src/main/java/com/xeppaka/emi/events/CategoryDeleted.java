@@ -4,19 +4,18 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  */
-public class CategoryRemoved extends EmiEvent {
+public class CategoryDeleted extends EmiEvent {
     private final UUID categoryId;
 
-    private CategoryRemoved() {
-        super(EmiEventType.CATEGORY_REMOVED);
-        categoryId = null;
-    }
-
-    public CategoryRemoved(UUID categoryId) {
-        super(EmiEventType.CATEGORY_REMOVED);
+    @JsonCreator
+    public CategoryDeleted(@JsonProperty("categoryId") UUID categoryId) {
+        super(EmiEventType.CATEGORY_DELETED);
         Validate.notNull(categoryId);
 
         this.categoryId = categoryId;

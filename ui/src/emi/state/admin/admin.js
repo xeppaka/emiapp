@@ -2,15 +2,17 @@ import update from 'react-addons-update';
 import { SET_MODIFIED_PRODUCT, REMOVE_MODIFIED_PRODUCT,
          SET_MODIFIED_CATEGORY, REMOVE_MODIFIED_CATEGORY,
          SET_SEND_CUSTOMER_NOTIFICATION,
-         RESET_PRODUCTS, RESET_CATEGORIES,
+         ADMIN_PRODUCTS_RESET, ADMIN_CATEGORIES_RESET,
          SET_NOTIFICATION_TEXT, SAVE_STARTED, SAVE_FINISHED,
          ADD_NEW_PRODUCT, ADD_NEW_CATEGORY,
-         SET_PRODUCT_DELETED } from './adminactions';
+         SET_PRODUCT_DELETED, REMOVE_PRODUCT_DELETED,
+         SET_CATEGORY_DELETED, REMOVE_CATEGORY_DELETED } from './adminactions';
 
 const initialAdminState = {
     modifiedProductById: {},
     modifiedCategoryById: {},
     deletedProducts: [],
+    deletedCategories: [],
     sendNotificationToCustomers: false,
     notificationText: null,
     saving: false,
@@ -29,13 +31,13 @@ function getNextSurrogateUUID(nextId) {
 
 function admin(state = initialAdminState, action) {
     switch (action.type) {
-        case RESET_PRODUCTS:
+        case ADMIN_PRODUCTS_RESET:
             return update(state, {
                 modifiedProductById: {$set: {}},
                 deletedProducts: {$set: []},
                 nextProductId: {$set: 0}
             });
-        case RESET_CATEGORIES:
+        case ADMIN_CATEGORIES_RESET:
             return update(state, {
                 modifiedCategoryById: {$set: {}},
                 nextCategoryId: {$set: 0}
@@ -92,6 +94,24 @@ function admin(state = initialAdminState, action) {
             let productId = action.productId;
             return update(state, {
                 deletedProducts: {$push: [productId]}
+            });
+        }
+        case REMOVE_PRODUCT_DELETED: {
+            let productId = action.productId;
+            return update(state, {
+                deletedProducts: {$apply: ids => ids.filter(id => id !== productId)}
+            });
+        }
+        case SET_CATEGORY_DELETED: {
+            let categoryId = action.categoryId;
+            return update(state, {
+                deletedCategories: {$push: [categoryId]}
+            });
+        }
+        case REMOVE_CATEGORY_DELETED: {
+            let categoryId = action.categoryId;
+            return update(state, {
+                deletedCategories: {$apply: ids => ids.filter(id => id !== categoryId)}
             });
         }
         case SET_SEND_CUSTOMER_NOTIFICATION:

@@ -2,6 +2,7 @@ package com.xeppaka.emi.service;
 
 import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.emi.commands.CreateProductCommand;
+import com.xeppaka.emi.commands.DeleteProductCommand;
 import com.xeppaka.emi.commands.EmiCommandHandler;
 import com.xeppaka.emi.commands.UpdateProductCommand;
 import com.xeppaka.emi.domain.ProductFeature;
@@ -42,7 +43,9 @@ public class ProductsService {
         try {
             for (ProductDto product : products) {
                 emiCommandHandler.handle(userName,
-                        new UpdateProductCommand(product.getProductId(), product.getName(), product.getPrice(), product.getCategoryId()));
+                        new UpdateProductCommand(product.getProductId(), product.getName(), product.getPrice(),
+                                product.getMultiplicity(), product.getCategoryId(), product.getFeatures(),
+                                product.getNote(), product.getWeight()));
             }
 
             return productsRepository.getProducts(products.stream().map(ProductDto::getProductId).collect(Collectors.toList()));
@@ -53,5 +56,13 @@ public class ProductsService {
 
     public List<ProductDto> getProducts() {
         return productsRepository.getProducts();
+    }
+
+    public void deleteProduct(UserName userName, UUID productId) throws EmiWarehouseException {
+        try {
+            emiCommandHandler.handle(userName, new DeleteProductCommand(productId));
+        } catch (CommandHandleException e) {
+            throw new EmiWarehouseException("Error occurred while deleting product.", e);
+        }
     }
 }

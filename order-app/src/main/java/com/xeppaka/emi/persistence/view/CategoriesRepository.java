@@ -96,4 +96,13 @@ public class CategoriesRepository {
 
         jdbcTemplate.update("UPDATE CATEGORIES SET WEIGHT = :WEIGHT WHERE ID = :ID", sqlParameterSource);
     }
+
+    public void deleteCategory(UUID productId) {
+        Validate.notNull(productId);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+
+        jdbcTemplate.update("DELETE FROM CATEGORIES WHERE ID = :ID", sqlParameterSource);
+    }
 }

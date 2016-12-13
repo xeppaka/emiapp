@@ -37,6 +37,30 @@ public class JsonProduct {
         return note;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setMultiplicity(int multiplicity) {
+        this.multiplicity = multiplicity;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public String toString() {
         return "JsonProduct{" +
