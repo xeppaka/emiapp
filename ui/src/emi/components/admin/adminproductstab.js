@@ -23,7 +23,7 @@ class AdminProductsTab extends React.Component {
                                     onDeleteProduct={this.props.onDeleteProduct}
                 />
                 <AdminProductsTotal modifiedProducts={this.props.modifiedProducts}
-                                    newProducts={this.props.newProducts}
+                                    createdProducts={this.props.createdProducts}
                                     deletedProducts={this.props.deletedProducts}
                                     canSave={this.props.canSave}
                                     onResetModifications={this.props.onResetModifications}

@@ -46,7 +46,12 @@ class OrderModal extends React.Component {
                                     <form className='form-inline'>
                                       <div className={`form-group ${divFeedbackClass}`}>
                                         <label htmlFor='customerEmail'>Email:&nbsp;</label>
-                                        <input id='customerEmail' type='email' className={`form-control ${inputFeedbackClass}`} placeholder='email@mail.com' value={this.props.order.email} onChange={(event) => this.onEmailChanged(event)}></input>
+                                        <input id='customerEmail' type='email'
+                                               className={`form-control ${inputFeedbackClass}`}
+                                               placeholder='email@mail.com'
+                                               value={this.props.order.email}
+                                               onChange={(event) => this.onEmailChanged(event)}>
+                                        </input>
                                       </div>
                                       <div className='form-group'>
                                         <label htmlFor='customerCountry'>&nbsp;&nbsp;Country:&nbsp;</label>

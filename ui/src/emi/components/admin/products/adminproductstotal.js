@@ -17,7 +17,7 @@ class AdminProductsTotal extends React.Component {
         return (
             <nav className='navbar navbar-fixed-bottom navbar-dark bg-inverse'>
                 <ul className='nav navbar-nav float-lg-right'>
-                    <li className='nav-item'><a className='nav-link active'>New Products: <span style={{fontSize: '120%'}}>{this.props.newProducts}</span></a></li>
+                    <li className='nav-item'><a className='nav-link active'>Created Products: <span style={{fontSize: '120%'}}>{this.props.createdProducts}</span></a></li>
                     <li className='nav-item'><a className='nav-link active'>Deleted Products: <span style={{fontSize: '120%'}}>{this.props.deletedProducts}</span></a></li>
                     <li className='nav-item'><a className='nav-link active'>Modified Products: <span style={{fontSize: '120%'}}>{this.props.modifiedProducts}</span></a></li>
                     <li className='nav-item'><button type='button' className='btn btn-secondary' onClick={(event) => this.onResetProductModifications()}>Reset</button></li>

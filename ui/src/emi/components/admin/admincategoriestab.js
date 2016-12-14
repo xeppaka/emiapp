@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import AdminCategoriesContainer from '../../containers/admincategoriescontainer';
-import AdminCategoriesTotalContainer from '../../containers/admincategoriestotalcontainer';
+import AdminCategoriesTable from './categories/admincategoriestable';
+import AdminCategoriesTotal from './categories/admincategoriestotal';
 
 class AdminCategoriesTab extends React.Component {
     constructor(props) {
@@ -10,8 +10,20 @@ class AdminCategoriesTab extends React.Component {
     render() {
         return (
             <div>
-                <AdminCategoriesContainer />
-                <AdminCategoriesTotalContainer />
+                <button type='button' className='btn btn-primary' onClick={this.props.onCreateCategory}>New Category</button>
+                <AdminCategoriesTable categoriesList={this.props.categoriesList}
+                                      onCategoryNameChanged={this.props.onCategoryNameChanged}
+                                      onCategoryWeightChanged={this.props.onCategoryWeightChanged}
+                                      onParentCategoryChanged={this.props.onParentCategoryChanged}
+                                      onDeleteCategory={this.props.onDeleteCategory}
+                />
+                <AdminCategoriesTotal createdCategories={this.props.createdCategories}
+                                      modifiedCategories={this.props.modifiedCategories}
+                                      deletedCategories={this.props.deletedCategories}
+                                      canSave={this.props.canSave}
+                                      onResetCategories={this.props.onResetCategories}
+                                      onSaveCategories={this.props.onSaveCategories}
+                />
             </div>
         )
     }

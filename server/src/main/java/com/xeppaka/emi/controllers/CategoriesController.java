@@ -1,12 +1,9 @@
 package com.xeppaka.emi.controllers;
 
-import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.persistence.view.CategoriesRepository;
-import com.xeppaka.emi.persistence.view.dto.CategoryDto;
-import com.xeppaka.emi.persistence.view.dto.ProductDto;
-import com.xeppaka.emi.service.CategoriesService;
-import com.xeppaka.emi.service.EmiWarehouseException;
-import com.xeppaka.emi.service.EmiWarehouseService;
+import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import com.xeppaka.emi.domain.value.UserName;
+import com.xeppaka.emi.persistence.view.dto.CategoryDto;
+import com.xeppaka.emi.service.CategoriesService;
+import com.xeppaka.emi.service.EmiWarehouseException;
 
-/**
- *
- */
 @RestController
 @RequestMapping(CategoriesController.URI)
 public class CategoriesController {
@@ -51,5 +46,18 @@ public class CategoriesController {
 
         categoriesService.deleteCategory(UserName.SYSTEM_USER_NAME, categoryId);
         return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto category) throws EmiWarehouseException {
+        Validate.notNull(category);
+
+        final CategoryDto createdCategory = categoriesService.createCategory(UserName.SYSTEM_USER_NAME,
+                category.getName(),
+                category.getParentCategoryId(),
+                category.getWeight());
+
+        final URI uri = java.net.URI.create(URI + "/" + createdCategory.getCategoryId());
+        return ResponseEntity.created(uri).body(createdCategory);
     }
 }

@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 
 class MainProductItemQuantity extends React.Component {
     constructor(props) {
@@ -17,30 +17,33 @@ class MainProductItemQuantity extends React.Component {
     }
 
     render() {
-        let productId = this.props.product.productId;
-        let quantity = this.props.product.quantity;
-        let multiplicity = this.props.product.multiplicity;
+        let productId = this.props.productId;
+        let quantity = this.props.quantity;
+        let multiplicity = this.props.multiplicity;
+        let available = this.props.available;
 
         if (multiplicity > 1) {
             return (
-                        <select className='form-control form-control-sm' value={quantity}
-                                onChange={(event) => this.props.setProductQuantity(productId, event.target.value)} style={{width: '65%'}}>
-                            {
-                                this.renderQuantityOptions(multiplicity)
-                            }
-                        </select>
-                   )
+                <select className='form-control form-control-sm' value={quantity} disabled={!available}
+                        onChange={(event) => this.props.setProductQuantity(productId, event.target.value)}
+                        style={{width: '65%'}}>
+                    {
+                        this.renderQuantityOptions(multiplicity)
+                    }
+                </select>
+            )
         } else {
             return (
-                        <input type='number' className='form-control form-control-sm' min='0' value={quantity > 0 ? quantity : ''}
-                                onChange={(event) => {
-                                        let v = Number(event.target.value);
-                                        if (!isNaN(v) && v >= 0) {
-                                            this.props.setProductQuantity(productId, v);
-                                        }
-                                    }
-                                } style={{width: '65%'}}/>
-                   )
+                <input type='number' className='form-control form-control-sm' min='0'
+                       value={quantity > 0 ? quantity : ''} disabled={!available}
+                       onChange={(event) => {
+                           let v = Number(event.target.value);
+                           if (!isNaN(v) && v >= 0) {
+                               this.props.setProductQuantity(productId, v);
+                           }
+                       }
+                       } style={{width: '65%'}}/>
+            )
         }
     }
 }

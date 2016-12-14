@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 import SaveCategoriesModal from '../components/admin/save/categories/savecategoriesmodal';
 import { saveCategories } from '../state/admin/adminactions';
-import { modifiedCategoriesSelector } from '../state/selectors/admin/admincategoriesselector';
+import { modifiedCategoriesListSelector } from '../state/selectors/admin/admincategoriesselector';
 
 const mapStateToProps = (state) => {
     return {
-        categories: modifiedCategoriesSelector(state),
+        categories: modifiedCategoriesListSelector(state),
         saving: state.admin.saving
     }
 };

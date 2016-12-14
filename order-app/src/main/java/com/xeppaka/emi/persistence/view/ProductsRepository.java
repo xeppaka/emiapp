@@ -91,22 +91,7 @@ public class ProductsRepository {
     }
 
     public ProductDto getProduct(UUID id) {
-        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
-        sqlParameterSource.addValue("ID", id);
-
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE ID = :ID", sqlParameterSource, (rs, rowNum) -> {
-            final UUID productId = UUID.fromString(rs.getString("ID"));
-            final String name = rs.getString("NAME");
-            final int price = rs.getInt("PRICE");
-            final int multiplicity = rs.getInt("MULTIPLICITY");
-            final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
-            final String note = rs.getString("NOTE");
-            final String categoryIdStr = rs.getString("CATEGORY");
-            final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
-            final int weight = rs.getInt("WEIGHT");
-
-            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, weight);
-        }).get(0);
+        return getProducts(Collections.singletonList(id)).get(0);
     }
 
     public List<ProductDto> getProducts(Collection<UUID> ids) {

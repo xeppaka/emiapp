@@ -14,10 +14,10 @@ const mapStateToProps = (state) => {
     return {
         categoriesList: categoriesListSelector(state),
         productsList: adminProductListSelector(state),
-        newProducts: counters.newProducts,
+        createdProducts: counters.createdProducts,
         deletedProducts: counters.deletedProducts,
         modifiedProducts: counters.modifiedProducts,
-        canSave: (counters.newProducts + counters.deletedProducts + counters.modifiedProducts) > 0
+        canSave: (counters.createdProducts + counters.deletedProducts + counters.modifiedProducts) > 0
     }
 };
 

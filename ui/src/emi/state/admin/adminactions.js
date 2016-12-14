@@ -1,9 +1,12 @@
 import update from 'react-addons-update';
-import {adminCategoriesTreeSelector, modifiedCategoriesSaveSelector} from '../selectors/admin/admincategoriesselector';
+import {
+    adminCategoriesTreeSelector,
+    modifiedCategoriesListSaveSelector
+} from '../selectors/admin/admincategoriesselector';
 import {adminModifiedProductsSaveSelector} from '../selectors/admin/adminproductsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
-import {updateCategories} from '../categories/categoriesactions';
+import {updateCategories, removeCategory} from '../categories/categoriesactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
@@ -43,13 +46,14 @@ function removeProductDeleted(productId) {
 }
 
 export function deleteProduct(productId) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
         let productById = state.warehouse.products.productById;
 
         if (productById.hasOwnProperty(productId)) {
             dispatch(setProductDeleted(productId));
         } else {
+            dispatch(removeProductDeleted(productId));
             dispatch(removeModifiedProduct(productId));
         }
     }
@@ -64,13 +68,14 @@ function removeCategoryDeleted(categoryId) {
 }
 
 export function deleteCategory(categoryId) {
-    return function(dispatch, getState) {
+    return function (dispatch, getState) {
         let state = getState();
         let categoryById = state.warehouse.categories.categoryById;
 
         if (categoryById.hasOwnProperty(categoryId)) {
             dispatch(setCategoryDeleted(categoryId));
         } else {
+            dispatch(removeCategoryDeleted(categoryId));
             dispatch(removeModifiedCategory(categoryId));
         }
     }
@@ -93,12 +98,26 @@ export function createProduct() {
     }
 }
 
-export function addNewProduct(product) {
+function addNewProduct(product) {
     return {type: ADD_NEW_PRODUCT, product};
 }
 
-export function addNewCategory() {
-    return {type: ADD_NEW_CATEGORY};
+export function createCategory() {
+    return function (dispatch, getState) {
+        let categories = adminCategoriesTreeSelector(getState());
+        let rootCategoryId = categories['root'].categoryId;
+
+        dispatch(addNewCategory({
+            categoryId: '',
+            name: '',
+            parentCategoryId: rootCategoryId,
+            weight: 0
+        }));
+    }
+}
+
+export function addNewCategory(category) {
+    return {type: ADD_NEW_CATEGORY, category};
 }
 
 export function removeModifiedProduct(id) {
@@ -219,38 +238,105 @@ export function saveProducts(saveModalId) {
                     dispatch(hideModal(saveModalId));
                 }, () => {
                     dispatch(saveFinished());
-                    dispatch(showMessageBoxModal('Product(s) save failed.', 'Error occurred while saving products.'));
+                    dispatch(showMessageBoxModal('Product(s) save failed.', 'Error occurred while saving product(s).'));
                 }
             );
     };
 }
 
-export function saveCategories(saveModalId) {
-    return function (dispatch, getState) {
-        dispatch(saveStarted());
+function deleteCategories(dispatch, categoryIds) {
+    let promises = [];
+    for (let i = 0; i < categoryIds.length; i++) {
+        let categoryId = categoryIds[i];
+        let p = fetch('api/categories/' + categoryId, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.status !== 204) {
+                return Promise.reject();
+            } else {
+                dispatch(removeCategory(categoryId));
+            }
+        });
 
-        let modifiedCategories = modifiedCategoriesSaveSelector(getState());
-        fetch('api/categories', {
+        promises.push(p);
+    }
+
+    return Promise.all(promises);
+}
+
+function createCategories(dispatch, categories) {
+    let promises = [];
+    for (let key in categories) {
+        if (!categories.hasOwnProperty(key))
+            continue;
+
+        let category = categories[key];
+        let p = fetch('api/categories', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(category)
+        }).then(response => {
+            if (response.status !== 201) {
+                return Promise.reject();
+            } else {
+                return response.json();
+            }
+        }).then(createdCategory => {
+            dispatch(updateCategories([createdCategory]));
+        });
+
+        promises.push(p);
+    }
+
+    return Promise.all(promises);
+}
+
+function modifyCategories(dispatch, categories) {
+    if (categories.length > 0) {
+        return fetch('api/categories', {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(modifiedCategories)
+            body: JSON.stringify(categories)
         }).then(response => {
             if (response.status !== 200) {
-                dispatch(saveFinished());
-                dispatch(showMessageBoxModal('Save products failed.', 'Error occurred while saving products.'));
-                throw new Error('Save products failed.');
+                return Promise.reject();
             } else {
                 return response.json();
             }
         }).then(modifiedCategoriesData => {
-            dispatch(saveFinished());
             dispatch(updateCategories(modifiedCategoriesData));
-            dispatch(resetCategories());
-            dispatch(hideModal(saveModalId));
         });
+    } else {
+        return Promise.resolve();
+    }
+}
+
+export function saveCategories(saveModalId) {
+    return function (dispatch, getState) {
+        dispatch(saveStarted());
+        let categories = modifiedCategoriesListSaveSelector(getState());
+        deleteCategories(dispatch, categories.deletedCategories)
+            .then(() => createCategories(dispatch, categories.createdCategories))
+            .then(() => modifyCategories(dispatch, categories.modifiedCategories))
+            .then(() => {
+                    dispatch(saveFinished());
+                    dispatch(resetCategories());
+                    dispatch(hideModal(saveModalId));
+                }, () => {
+                    dispatch(saveFinished());
+                    dispatch(showMessageBoxModal('Category(s) save failed.', 'Error occurred while saving category(s).'));
+                }
+            );
     };
 }
 
@@ -328,7 +414,6 @@ export function setProductCategory(productId, categoryId) {
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
         modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
-
         modifiedProduct = update(modifiedProduct, {
             categoryId: {$set: categoryId}
         });
@@ -376,7 +461,6 @@ export function setProductMultiplicity(productId, multiplicity) {
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
         modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
-
         modifiedProduct = update(modifiedProduct, {
             multiplicity: {$set: multiplicity}
         });
@@ -394,7 +478,6 @@ export function setProductNote(productId, note) {
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
         modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
-
         modifiedProduct = update(modifiedProduct, {
             note: {$set: note}
         });
@@ -412,7 +495,6 @@ export function setProductWeight(productId, weight) {
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
         modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
-
         modifiedProduct = update(modifiedProduct, {
             weight: {$set: weight}
         });
@@ -421,65 +503,58 @@ export function setProductWeight(productId, weight) {
     };
 }
 
+function compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCategory) {
+    if (originalCategory !== null &&
+        modifiedCategory.name === originalCategory.name &&
+        modifiedCategory.parentCategoryId === originalCategory.parentCategoryId &&
+        modifiedCategory.weight === originalCategory.weight) {
+        dispatch(removeModifiedCategory(originalCategory.categoryId));
+    } else {
+        dispatch(setModifiedCategory(modifiedCategory));
+    }
+}
+
 export function setCategoryName(categoryId, name) {
     return function (dispatch, getState) {
         let state = getState();
-        let originalCategory = state.warehouse.categories.categoryById[categoryId];
+        let categoryById = state.warehouse.categories.categoryById;
+        let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
         let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
-        let modifyCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
-
-        let newCategory = update(modifyCategory, {
+        modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
+        modifiedCategory = update(modifiedCategory, {
             name: {$set: name}
         });
 
-        if (newCategory.name === originalCategory.name &&
-            newCategory.parentCategoryId === originalCategory.parentCategoryId &&
-            newCategory.weight === originalCategory.weight) {
-            dispatch(removeModifiedCategory(categoryId));
-        } else {
-            dispatch(setModifiedCategory(newCategory));
-        }
+        compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCategory);
     };
 }
 
 export function setCategoryParentId(categoryId, parentCategoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let originalCategory = state.warehouse.categories.categoryById[categoryId];
+        let categoryById = state.warehouse.categories.categoryById;
+        let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
         let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
-        let modifyCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
-
-        let newCategory = update(modifyCategory, {
+        modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
+        modifiedCategory = update(modifiedCategory, {
             parentCategoryId: {$set: parentCategoryId}
         });
 
-        if (newCategory.name === originalCategory.name &&
-            newCategory.parentCategoryId === originalCategory.parentCategoryId &&
-            newCategory.weight === originalCategory.weight) {
-            dispatch(removeModifiedCategory(categoryId));
-        } else {
-            dispatch(setModifiedCategory(newCategory));
-        }
+        compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCategory);
     };
 }
 
 export function setCategoryWeight(categoryId, weight) {
     return function (dispatch, getState) {
         let state = getState();
-        let originalCategory = state.warehouse.categories.categoryById[categoryId];
+        let categoryById = state.warehouse.categories.categoryById;
+        let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
         let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
-        let modifyCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
-
-        let newCategory = update(modifyCategory, {
+        modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
+        modifiedCategory = update(modifiedCategory, {
             weight: {$set: weight}
         });
 
-        if (newCategory.name === originalCategory.name &&
-            newCategory.parentCategoryId === originalCategory.parentCategoryId &&
-            newCategory.weight === originalCategory.weight) {
-            dispatch(removeModifiedCategory(categoryId));
-        } else {
-            dispatch(setModifiedCategory(newCategory));
-        }
+        compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCategory);
     };
 }

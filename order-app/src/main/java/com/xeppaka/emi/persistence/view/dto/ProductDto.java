@@ -1,14 +1,13 @@
 package com.xeppaka.emi.persistence.view.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.xeppaka.emi.domain.ProductFeature;
 
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Created by nnm on 10/18/16.
- */
 public class ProductDto {
     private final UUID productId;
     private final String name;
@@ -19,17 +18,15 @@ public class ProductDto {
     private final Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
     private final int weight;
 
-    private ProductDto() {
-        this.productId = null;
-        this.name = null;
-        this.price = 0;
-        this.multiplicity = 0;
-        this.note = null;
-        this.categoryId = null;
-        this.weight = 0;
-    }
-
-    public ProductDto(UUID productId, String name, int price, int multiplicity, String note, Set<ProductFeature> features, UUID categoryId, int weight) {
+    @JsonCreator
+    public ProductDto(@JsonProperty("productId") UUID productId,
+                      @JsonProperty("name") String name,
+                      @JsonProperty("price") int price,
+                      @JsonProperty("multiplicity") int multiplicity,
+                      @JsonProperty("note") String note,
+                      @JsonProperty("features") Set<ProductFeature> features,
+                      @JsonProperty("categoryId") UUID categoryId,
+                      @JsonProperty("weight") int weight) {
         this.productId = productId;
         this.name = name;
         this.price = price;

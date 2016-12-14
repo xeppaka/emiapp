@@ -1,16 +1,17 @@
 package com.xeppaka.emi.persistence.view;
 
-import com.xeppaka.emi.persistence.view.dto.CategoryDto;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import com.xeppaka.emi.persistence.view.dto.CategoryDto;
 
 /**
  * Created by Pavel K. on 10/16/16.
@@ -62,6 +63,10 @@ public class CategoriesRepository {
 
             return new CategoryDto(categoryId, name, parentCategoryId, weight);
         });
+    }
+
+    public CategoryDto getCategory(UUID id) {
+        return getCategories(Collections.singletonList(id)).get(0);
     }
 
     public void updateCategoryName(UUID categoryId, String name) {

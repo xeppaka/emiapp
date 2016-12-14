@@ -20,7 +20,7 @@ class PosProductItem extends React.Component {
     render() {
         let product = this.props.product;
         let setProductQuantity = this.props.setProductQuantity;
-        let calculatedPrice = Number(product.price * product.quantity).toFixed(2);
+        let calculatedPrice = Number(product.price / 100 * product.quantity).toFixed(2);
         let calculatedPriceStr = '';
         let calculatedPriceDiscountStr = '';
 
@@ -32,7 +32,7 @@ class PosProductItem extends React.Component {
         return (<tr>
             <th scope='row'>{this.props.idx}<div ref={'vis'}></div></th>
             <td>{product.name}</td>
-            <td>{product.price}</td>
+            <td>{Number((product.price / 100).toFixed(2))}</td>
             <td>{0}</td>
             <td>{product.piecesLeftToOrder}</td>
             <td>

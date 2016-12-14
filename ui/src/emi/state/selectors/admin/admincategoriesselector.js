@@ -51,9 +51,10 @@ export const adminCategoriesTreeSelector = createSelector(
         (state) => state.admin.modifiedCategoryById,
         (state) => state.warehouse.products.productById,
         (state) => state.admin.modifiedProductById,
-        (state) => state.admin.deletedProducts
+        (state) => state.admin.deletedProducts,
+        (state) => state.admin.deletedCategories
     ],
-    (categoryById, modifiedCategoryById, productById, modifiedProductById, deletedProductIds) => {
+    (categoryById, modifiedCategoryById, productById, modifiedProductById, deletedProductIds, deletedCategoryIds) => {
         let tcategoryById = {};
 
         // creating categories with childCategoryIds field from modifiedCategoryById
@@ -72,7 +73,7 @@ export const adminCategoriesTreeSelector = createSelector(
 
         // creating categories with childCategoryIds field from categoryById
         for (let key in categoryById) {
-            if (!categoryById.hasOwnProperty(key))
+            if (!categoryById.hasOwnProperty(key) || deletedCategoryIds.indexOf(key) >= 0)
                 continue;
 
             let category = categoryById[key];
@@ -91,6 +92,9 @@ export const adminCategoriesTreeSelector = createSelector(
                 continue;
 
             let category = tcategoryById[key];
+            if (category.parentCategoryId !== null && !tcategoryById.hasOwnProperty(category.parentCategoryId))
+                continue;
+
             if (category.parentCategoryId !== null) {
                 let parentKey = category.parentCategoryId;
                 let parentCategory = tcategoryById[parentKey];
@@ -117,7 +121,9 @@ export const adminCategoriesTreeSelector = createSelector(
             }
 
             let product = modifiedProductById[key];
-            tcategoryById[product.categoryId].productIds.push(product.productId);
+            if (tcategoryById.hasOwnProperty(product.categoryId)) {
+                tcategoryById[product.categoryId].productIds.push(product.productId);
+            }
         }
 
         for (let key in productById) {
@@ -132,7 +138,9 @@ export const adminCategoriesTreeSelector = createSelector(
                 continue;
 
             let product = productById[key];
-            tcategoryById[product.categoryId].productIds.push(product.productId);
+            if (tcategoryById.hasOwnProperty(product.categoryId)) {
+                tcategoryById[product.categoryId].productIds.push(product.productId);
+            }
         }
 
         sortCategoryTree(tcategoryById);
@@ -163,63 +171,116 @@ export const adminCategoriesListSelector = createSelector(
     }
 );
 
-export const modifiedCategoriesCountSelector = createSelector(
+export const adminCategoryCountersSelector = createSelector(
     [
-        (state) => state.admin.modifiedCategoryById
+        (state) => state.warehouse.categories.categoryById,
+        (state) => state.admin.modifiedCategoryById,
+        (state) => state.admin.deletedCategories
     ],
-    (modifiedCategoryById) => {
+    (categoryById, modifiedCategoryById, deletedCategoryIds) => {
+        let createdCategoryCount = 0;
         let modifiedCategoryCount = 0;
 
         for (let key in modifiedCategoryById) {
-            if (!modifiedCategoryById.hasOwnProperty(key))
+            if (!modifiedCategoryById.hasOwnProperty(key) || modifiedCategoryById[key] === null)
                 continue;
 
-            if (modifiedCategoryById[key] !== null) {
+            if (categoryById.hasOwnProperty(key)) {
                 modifiedCategoryCount++;
+            } else {
+                createdCategoryCount++;
             }
         }
 
-        return modifiedCategoryCount;
+        return {
+            createdCategories: createdCategoryCount,
+            modifiedCategories: modifiedCategoryCount,
+            deletedCategories: deletedCategoryIds.length
+        }
     }
 );
 
-export const modifiedCategoriesSelector = createSelector(
+function convertCategoryToViewCategory(category, categoryById) {
+    return update(category, {
+        parentCategoryName: {$set: category.parentCategoryId === null ?
+            '-----' : categoryById[category.parentCategoryId].name}
+    });
+}
+
+export const modifiedCategoriesListSelector = createSelector(
     [
+        adminCategoriesTreeSelector,
         (state) => state.admin.modifiedCategoryById,
-        adminCategoriesTreeSelector
+        (state) => state.admin.deletedCategories
     ],
-    (modifiedCategoryById, categoryTree) => {
-        let modifiedCategories = [];
+    (categoryById, modifiedCategoryById, deletedCategoryIds) => {
+        let screatedCategories = [];
+        let smodifiedCategories = [];
+        let sdeletedCategories = [];
 
-        for (let key in modifiedCategoryById) {
-            if (!modifiedCategoryById.hasOwnProperty(key))
+        for (let i = 0; i < deletedCategoryIds.length; i++) {
+            if (!categoryById.hasOwnProperty(deletedCategoryIds[i]))
                 continue;
 
-            if (modifiedCategoryById[key] !== null) {
-                modifiedCategories.push(categoryTree[key]);
+            let category = categoryById[deletedCategoryIds[i]];
+            sdeletedCategories.push(convertCategoryToViewCategory(category, categoryById));
+        }
+
+        for (let key in modifiedCategoryById) {
+            if (!modifiedCategoryById.hasOwnProperty(key) || modifiedCategoryById[key] === null)
+                continue;
+
+            let category = convertCategoryToViewCategory(modifiedCategoryById[key], categoryById);
+            if (categoryById.hasOwnProperty(key)) {
+                smodifiedCategories.push(category);
+            } else {
+                screatedCategories.push(category);
             }
         }
 
-        return modifiedCategories;
+        return {
+            createdCategories: screatedCategories,
+            modifiedCategories: smodifiedCategories,
+            deletedCategories: sdeletedCategories
+        };
     }
 );
 
-export const modifiedCategoriesSaveSelector = createSelector(
+export const modifiedCategoriesListSaveSelector = createSelector(
     [
-        (state) => state.admin.modifiedCategoryById
+        (state) => state.warehouse.categories.categoryById,
+        (state) => state.admin.modifiedCategoryById,
+        (state) => state.admin.deletedCategories
     ],
-    (modifiedCategoryById) => {
-        let modifiedCategories = [];
+    (categoryById, modifiedCategoryById, deletedCategoryIds) => {
+        let screatedCategories = [];
+        let smodifiedCategories = [];
+        let sdeletedCategories = [];
 
-        for (let key in modifiedCategoryById) {
-            if (!modifiedCategoryById.hasOwnProperty(key))
+        for (let i = 0; i < deletedCategoryIds.length; i++) {
+            if (!categoryById.hasOwnProperty(deletedCategoryIds[i]))
                 continue;
 
-            if (modifiedCategoryById[key] !== null) {
-                modifiedCategories.push(modifiedCategoryById[key]);
+            sdeletedCategories.push(deletedCategoryIds[i]);
+        }
+
+        for (let key in modifiedCategoryById) {
+            if (!modifiedCategoryById.hasOwnProperty(key) || modifiedCategoryById[key] === null)
+                continue;
+
+            let category = modifiedCategoryById[key];
+            if (categoryById.hasOwnProperty(key)) {
+                smodifiedCategories.push(category);
+            } else {
+                screatedCategories.push(category);
             }
         }
 
-        return modifiedCategories;
+        return {
+            createdCategories: screatedCategories,
+            modifiedCategories: smodifiedCategories,
+            deletedCategories: sdeletedCategories
+        };
     }
+
 );

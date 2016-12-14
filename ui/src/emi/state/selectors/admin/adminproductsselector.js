@@ -10,25 +10,23 @@ export const adminProductCountersSelector = createSelector(
     ],
     (categoryById, modifiedProductById, deletedProductIds) => {
         let modifiedProductsCount = 0;
-        let newProductsCount = 0;
+        let createdProductsCount = 0;
 
         for (let key in modifiedProductById) {
-            if (!modifiedProductById.hasOwnProperty(key))
+            if (!modifiedProductById.hasOwnProperty(key) || modifiedProductById[key] === null)
                 continue;
 
-            if (modifiedProductById[key] !== null) {
-                if (categoryById.hasOwnProperty(key)) {
-                    modifiedProductsCount++;
-                } else {
-                    newProductsCount++;
-                }
+            if (categoryById.hasOwnProperty(key)) {
+                modifiedProductsCount++;
+            } else {
+                createdProductsCount++;
             }
         }
 
         return {
-            newProducts: newProductsCount,
-            deletedProducts: deletedProductIds.length,
-            modifiedProducts: modifiedProductsCount
+            createdProducts: createdProductsCount,
+            modifiedProducts: modifiedProductsCount,
+            deletedProducts: deletedProductIds.length
         };
     }
 );
@@ -70,6 +68,17 @@ export const adminProductListSelector = createSelector(
     }
 );
 
+function convertProductToViewProduct(product, categoryById) {
+    return update(product, {
+        categoryName: {$set: categoryById[product.categoryId].name},
+        features: {$apply: features => features
+            .map(f => f.substring(0,1))
+            .reduce((acc, cval, idx, arr) =>
+                (idx + 1 === arr.length) ? (acc + cval) : (acc + cval + ':'), '')
+        }
+    });
+}
+
 export const adminModifiedProductsSelector = createSelector(
     [
         (state) => state.warehouse.categories.categoryById,
@@ -83,24 +92,18 @@ export const adminModifiedProductsSelector = createSelector(
         let sdeletedProducts = [];
 
         for (let i = 0; i < deletedProductIds.length; i++) {
-            if (productById.hasOwnProperty(deletedProductIds[i])) {
-                let product = productById[deletedProductIds[i]];
-                product = update(product, {
-                    categoryName: {$set: categoryById[product.categoryId].name}
-                });
-                sdeletedProducts.push(product);
-            }
+            if (!productById.hasOwnProperty(deletedProductIds[i]))
+                continue;
+
+            let product = productById[deletedProductIds[i]];
+            sdeletedProducts.push(convertProductToViewProduct(product, categoryById));
         }
 
         for (let key in modifiedProductById) {
             if (!modifiedProductById.hasOwnProperty(key) || modifiedProductById[key] === null)
                 continue;
 
-            let product = modifiedProductById[key];
-            product = update(product, {
-                categoryName: {$set: categoryById[product.categoryId].name}
-            });
-
+            let product = convertProductToViewProduct(modifiedProductById[key], categoryById);
             if (!productById.hasOwnProperty(key)) {
                 screatedProducts.push(product);
             } else {

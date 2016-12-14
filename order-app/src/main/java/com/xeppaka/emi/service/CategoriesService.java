@@ -24,13 +24,13 @@ public class CategoriesService {
     @Autowired
     private CategoriesRepository categoriesRepository;
 
-    public UUID createCategory(UserName userName, String name, UUID parentCategoryId, int weight) throws EmiWarehouseException {
+    public CategoryDto createCategory(UserName userName, String name, UUID parentCategoryId, int weight) throws EmiWarehouseException {
         try {
             final UUID categoryId = UUID.randomUUID();
             final CreateCategoryCommand createCategoryCommand = new CreateCategoryCommand(categoryId, name, parentCategoryId, weight);
             emiCommandHandler.handle(userName, createCategoryCommand);
 
-            return categoryId;
+            return categoriesRepository.getCategory(categoryId);
         } catch (CommandHandleException e) {
             throw new EmiWarehouseException("Error occurred while creating category.", e);
         }

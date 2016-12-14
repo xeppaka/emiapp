@@ -40,6 +40,7 @@ function admin(state = initialAdminState, action) {
         case ADMIN_CATEGORIES_RESET:
             return update(state, {
                 modifiedCategoryById: {$set: {}},
+                deletedCategories: {$set: []},
                 nextCategoryId: {$set: 0}
             });
         case SET_MODIFIED_PRODUCT: {
@@ -66,15 +67,19 @@ function admin(state = initialAdminState, action) {
             return update(state, {
                 modifiedCategoryById: {
                     [category.categoryId]: {$set: category}
-                }
+                },
+                nextCategoryId: {$apply: id => id + 1}
             });
         }
         case REMOVE_MODIFIED_PRODUCT: {
-            return update(state, {
+            let modifiedState = update(state, {
                 modifiedProductById: {
                     [action.id]: {$set: null}
                 }
             });
+
+            delete modifiedState.modifiedProductById[action.id];
+            return modifiedState;
         }
         case SET_MODIFIED_CATEGORY: {
             let modifiedCategory = action.category;
@@ -84,12 +89,15 @@ function admin(state = initialAdminState, action) {
                 }
             });
         }
-        case REMOVE_MODIFIED_CATEGORY:
-            return update(state, {
+        case REMOVE_MODIFIED_CATEGORY: {
+            let modifiedState = update(state, {
                 modifiedCategoryById: {
                     [action.id]: {$set: null}
                 }
             });
+            delete modifiedState.modifiedCategoryById[action.id];
+            return modifiedState;
+        }
         case SET_PRODUCT_DELETED: {
             let productId = action.productId;
             return update(state, {

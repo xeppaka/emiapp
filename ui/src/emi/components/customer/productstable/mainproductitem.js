@@ -21,15 +21,19 @@ class MainProductItem extends React.Component {
         let product = this.props.product;
         let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(2));
         let calculatedPriceWithDiscount = Number((product.price / 200 * product.quantity).toFixed(2));
+        let available = product.features.indexOf('AVAILABLE') >= 0;
 
         return (<tr>
             <th scope="row">{this.props.idx}<div ref={'vis'}></div></th>
-            <td style={{width: '300px'}}>{product.name}</td>
+            <td style={{width: '300px'}}>{(available ? '' : 'NOT AVAILABLE! - ') + product.name}</td>
             <td>{Number((product.price / 100).toFixed(2))}</td>
             <td>{Number((product.price / 200).toFixed(2))}</td>
             <td>
                 <MainProductItemQuantity
-                    product={product}
+                    productId={product.productId}
+                    quantity={product.quantity}
+                    multiplicity={product.multiplicity}
+                    available={available}
                     setProductQuantity={this.props.setProductQuantity} />
             </td>
             <td>{calculatedPrice > 0 ? calculatedPrice.toString() : ''}</td>

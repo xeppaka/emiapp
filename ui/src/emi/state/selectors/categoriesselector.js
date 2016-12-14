@@ -179,6 +179,9 @@ export const categoriesTreeSelector = createDeepEqualSelector(
                 continue;
 
             let category = tcategoryById[key];
+            if (category.parentCategoryId !== null && !tcategoryById.hasOwnProperty(category.parentCategoryId))
+                continue;
+
             if (category.parentCategoryId !== null) {
                 tcategoryById[category.parentCategoryId].childCategoryIds.push(category.categoryId);
             } else {
@@ -187,9 +190,9 @@ export const categoriesTreeSelector = createDeepEqualSelector(
         }
 
         if (rootCategoryId !== null) {
-            tcategoryById.root = tcategoryById[rootCategoryId];
+            tcategoryById['root'] = tcategoryById[rootCategoryId];
         } else {
-            tcategoryById.root = getDefaultRootCategory();
+            tcategoryById['root'] = getDefaultRootCategory();
         }
 
         for (let key in productById) {
@@ -197,7 +200,7 @@ export const categoriesTreeSelector = createDeepEqualSelector(
                 continue;
 
             let product = productById[key];
-            if (product.categoryId !== null) {
+            if (product.categoryId !== null && tcategoryById.hasOwnProperty(product.categoryId)) {
                 tcategoryById[product.categoryId].productIds.push(key);
             }
         }

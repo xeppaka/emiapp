@@ -55,8 +55,10 @@ class PosProductsTable extends React.Component {
             }
 
             if (features.indexOf('VISIBLE') >= 0) {
+                let available = features.indexOf('AVAILABLE') >= 0;
+
                 productsItems.push(<PosProductItem
-                    key={product.productId} ref={'product' + i} idx={i + 1}
+                    key={product.productId} ref={'product' + i} idx={i + 1} available={available}
                     product={product} setProductQuantity={this.props.setProductQuantity}/>)
             }
         }

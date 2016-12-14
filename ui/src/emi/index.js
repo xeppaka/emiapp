@@ -13,8 +13,8 @@ import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
 import CustomerMain from './components/customer/customermain';
 import AdminMain from './components/admin/adminmain';
-import AdminProductsTab from './containers/adminproducttabcontainer';
-import AdminCategoriesTab from './components/admin/admincategoriestab';
+import AdminProductsTabContainer from './containers/adminproducttabcontainer';
+import AdminCategoriesTabContainer from './containers/admincategorytabcontainer';
 
 import emiApp from './state/emiapp';
 import { loadWarehouse } from './state/warehouse/warehouseactions';
@@ -37,8 +37,8 @@ render(
         <Router>
             <Route path="/" component={CustomerMain} />
             <Route path="/admin" component={AdminMain}>
-                <Route path="products" component={AdminProductsTab}/>
-                <Route path="categories" component={AdminCategoriesTab}/>
+                <Route path="products" component={AdminProductsTabContainer}/>
+                <Route path="categories" component={AdminCategoriesTabContainer}/>
             </Route>
         </Router>
     </Provider>,
