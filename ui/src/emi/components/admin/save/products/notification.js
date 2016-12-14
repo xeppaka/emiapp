@@ -18,7 +18,7 @@ class Notification extends React.Component {
 
         return (
             <div>
-                <div className='form-group has-warning'>
+                <div className='form-group has-warning row'>
                     <label className='form-check-label'>
                         <input type='checkbox' className='form-check-input' checked={notification.sendNotification}
                                onChange={(event) => this.onSendNotificationChanged(event)} />Send notification to customers
@@ -26,7 +26,7 @@ class Notification extends React.Component {
                 </div>
                 {
                     notification.sendNotification ?
-                        (<div className='form-group'>
+                        (<div className='form-group row'>
                             <textarea className='form-control'
                                       value={notification.text}
                                       onChange={(event) => this.onNotificationChanged(event)}

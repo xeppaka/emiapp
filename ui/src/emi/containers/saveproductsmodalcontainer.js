@@ -1,11 +1,12 @@
 import { connect } from 'react-redux';
 import { setSendCustomerNotification, setNotificationText, saveProducts } from '../state/admin/adminactions';
-import { adminProductsSelector, notificationSelector } from '../state/selectors/admin/adminselector';
+import { notificationSelector } from '../state/selectors/admin/adminselector';
+import { adminModifiedProductsSelector } from '../state/selectors/admin/adminproductsselector';
 import SaveModificationsModal from '../components/admin/save/products/saveproductsmodal';
 
 const mapStateToProps = (state) => {
     return {
-        products: adminProductsSelector(state),
+        products: adminModifiedProductsSelector(state),
         notification: notificationSelector(state),
         saving: state.admin.saving
     }

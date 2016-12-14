@@ -1,3 +1,4 @@
+import update from 'react-addons-update';
 import { createSelector } from 'reselect';
 import { adminCategoriesTreeSelector } from './admincategoriesselector';
 
@@ -69,7 +70,53 @@ export const adminProductListSelector = createSelector(
     }
 );
 
-export const adminProductListSaveSelector = createSelector(
+export const adminModifiedProductsSelector = createSelector(
+    [
+        (state) => state.warehouse.categories.categoryById,
+        (state) => state.warehouse.products.productById,
+        (state) => state.admin.modifiedProductById,
+        (state) => state.admin.deletedProducts
+    ],
+    (categoryById, productById, modifiedProductById, deletedProductIds) => {
+        let screatedProducts = [];
+        let smodifiedProducts = [];
+        let sdeletedProducts = [];
+
+        for (let i = 0; i < deletedProductIds.length; i++) {
+            if (productById.hasOwnProperty(deletedProductIds[i])) {
+                let product = productById[deletedProductIds[i]];
+                product = update(product, {
+                    categoryName: {$set: categoryById[product.categoryId].name}
+                });
+                sdeletedProducts.push(product);
+            }
+        }
+
+        for (let key in modifiedProductById) {
+            if (!modifiedProductById.hasOwnProperty(key) || modifiedProductById[key] === null)
+                continue;
+
+            let product = modifiedProductById[key];
+            product = update(product, {
+                categoryName: {$set: categoryById[product.categoryId].name}
+            });
+
+            if (!productById.hasOwnProperty(key)) {
+                screatedProducts.push(product);
+            } else {
+                smodifiedProducts.push(product);
+            }
+        }
+
+        return {
+            createdProducts: screatedProducts,
+            modifiedProducts: smodifiedProducts,
+            deletedProducts: sdeletedProducts
+        };
+    }
+);
+
+export const adminModifiedProductsSaveSelector = createSelector(
     [
         (state) => state.warehouse.products.productById,
         (state) => state.admin.modifiedProductById,

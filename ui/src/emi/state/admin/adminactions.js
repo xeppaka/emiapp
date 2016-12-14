@@ -1,6 +1,6 @@
 import update from 'react-addons-update';
 import {adminCategoriesTreeSelector, modifiedCategoriesSaveSelector} from '../selectors/admin/admincategoriesselector';
-import {adminProductListSaveSelector} from '../selectors/admin/adminproductsselector';
+import {adminModifiedProductsSaveSelector} from '../selectors/admin/adminproductsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
 import {updateCategories} from '../categories/categoriesactions';
@@ -209,7 +209,7 @@ function modifyProducts(dispatch, products) {
 export function saveProducts(saveModalId) {
     return function (dispatch, getState) {
         dispatch(saveStarted());
-        let products = adminProductListSaveSelector(getState());
+        let products = adminModifiedProductsSaveSelector(getState());
         deleteProducts(dispatch, products.deletedProducts)
             .then(() => createProducts(dispatch, products.createdProducts))
             .then(() => modifyProducts(dispatch, products.modifiedProducts))

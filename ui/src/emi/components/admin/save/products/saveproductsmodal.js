@@ -15,6 +15,45 @@ class SaveProductsModal extends React.Component {
         this.props.onSaveModifications(this.props.modalId);
     }
 
+    renderCreatedProducts() {
+        if (this.props.products.createdProducts.length > 0) {
+            return (
+                <div>
+                    <h5>Created Products:</h5>
+                    <SaveProductsTable products={this.props.products.createdProducts}/>
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
+    renderModifiedProducts() {
+        if (this.props.products.modifiedProducts.length > 0) {
+            return (
+                <div>
+                    <h5>Modified Products:</h5>
+                    <SaveProductsTable products={this.props.products.modifiedProducts} />
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
+    renderDeletedProducts() {
+        if (this.props.products.deletedProducts.length > 0) {
+            return (
+                <div>
+                    <h5>Deleted Products:</h5>
+                    <SaveProductsTable products={this.props.products.deletedProducts} />
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
     render() {
         let style = {display: 'block', zIndex: this.props.zIndex + 1};
         let modalHeight = $(window).height() * 0.55;
@@ -34,16 +73,22 @@ class SaveProductsModal extends React.Component {
                                 <h4 className='modal-title'>Save products</h4>
                             </div>
                             <div className='modal-body'>
-                                <div className='container-fluid'>
-                                    <div className='row'>
+                                <div className='container'>
+                                    <form>
                                         <Notification notification={this.props.notification}
                                                       setSendNotification={this.props.setSendNotification}
                                                       setNotificationText={this.props.setNotificationText}
                                         />
-                                    </div>
-                                    <div className='row'>
-                                        <SaveProductsTable products={this.props.products} />
-                                    </div>
+                                        <div className='form-group row'>
+                                            { this.renderCreatedProducts() }
+                                        </div>
+                                        <div className='form-group row'>
+                                            { this.renderModifiedProducts() }
+                                        </div>
+                                        <div className='form-group row'>
+                                            { this.renderDeletedProducts() }
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             <div className='modal-footer'>

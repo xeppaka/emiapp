@@ -12,6 +12,10 @@ class SaveProductsTableRow extends React.Component {
             <th scope='row'>{this.props.idx}</th>
             <td style={{width: '300px'}}>{product.name}</td>
             <td>{product.price}</td>
+            <td>{product.multiplicity}</td>
+            <td>{product.categoryName}</td>
+            <td>{product.features}</td>
+            <td>{product.note}</td>
             <td>{product.weight}</td>
         </tr>)
     }
