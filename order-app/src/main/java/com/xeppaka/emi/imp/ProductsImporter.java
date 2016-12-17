@@ -5,6 +5,8 @@ import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.domain.EmiWarehouse;
 import com.xeppaka.emi.domain.ProductFeature;
+import com.xeppaka.emi.domain.entities.Category;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,7 @@ import java.util.UUID;
  */
 public class ProductsImporter {
     private static final Logger log = LoggerFactory.getLogger(ProductsImporter.class);
-    private JsonCategory rootCategory = new JsonCategory(UUID.randomUUID(), "Product Categories");
+    private JsonCategory rootCategory = new JsonCategory(Category.ROOT_CATEGORY_ID, Category.ROOT_CATEGORY_NAME);
 
     private List<JsonProduct> readProducts(Path jsonFile) throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();

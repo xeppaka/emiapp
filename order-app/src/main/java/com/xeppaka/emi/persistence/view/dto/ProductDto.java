@@ -68,4 +68,34 @@ public class ProductDto {
     public int getWeight() {
         return weight;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductDto that = (ProductDto) o;
+
+        if (price != that.price) return false;
+        if (multiplicity != that.multiplicity) return false;
+        if (weight != that.weight) return false;
+        if (!productId.equals(that.productId)) return false;
+        if (!name.equals(that.name)) return false;
+        if (!note.equals(that.note)) return false;
+        if (!categoryId.equals(that.categoryId)) return false;
+        return features.equals(that.features);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = productId.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + price;
+        result = 31 * result + multiplicity;
+        result = 31 * result + note.hashCode();
+        result = 31 * result + categoryId.hashCode();
+        result = 31 * result + features.hashCode();
+        result = 31 * result + weight;
+        return result;
+    }
 }

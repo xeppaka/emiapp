@@ -13,6 +13,9 @@ import java.util.UUID;
  *
  */
 public class Category extends BaseEntity {
+    public static final UUID ROOT_CATEGORY_ID = UUID.fromString("249e2189-8e76-4cb8-a682-662c8ae44392");
+    public static final String ROOT_CATEGORY_NAME = "Product Categories";
+
     private String name;
     private UUID parentCategoryId;
     private int weight;

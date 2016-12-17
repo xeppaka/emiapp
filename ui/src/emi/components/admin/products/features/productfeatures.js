@@ -23,14 +23,17 @@ class ProductFeatures extends React.Component {
                     name='F' enabled={isFlammable}
                     onChange={(enabled) => this.props.onProductFeatureChanged('FLAMMABLE', enabled)}
                 />
+                &nbsp;&nbsp;
                 <ProductFeature
                     name='N' enabled={isNew}
                     onChange={(enabled) => this.props.onProductFeatureChanged('NEW', enabled)}
                 />
+                &nbsp;&nbsp;
                 <ProductFeature
                     name='V' enabled={isVisible}
                     onChange={(enabled) => this.props.onProductFeatureChanged('VISIBLE', enabled)}
                 />
+                &nbsp;&nbsp;
                 <ProductFeature
                     name='A' enabled={isAvailable}
                     onChange={(enabled) => this.props.onProductFeatureChanged('AVAILABLE', enabled)}

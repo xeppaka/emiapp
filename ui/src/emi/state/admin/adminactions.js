@@ -6,7 +6,7 @@ import {
 import {adminModifiedProductsSaveSelector} from '../selectors/admin/adminproductsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
-import {updateCategories, removeCategory} from '../categories/categoriesactions';
+import {updateCategories, removeCategories} from '../categories/categoriesactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
@@ -255,11 +255,14 @@ function deleteCategories(dispatch, categoryIds) {
                 'Content-Type': 'application/json'
             }
         }).then(response => {
-            if (response.status !== 204) {
+            if (response.status !== 200) {
                 return Promise.reject();
             } else {
-                dispatch(removeCategory(categoryId));
+                return response.json();
             }
+        }).then(deleteCategoryResult => {
+            dispatch(removeCategories(deleteCategoryResult.deletedCategories));
+            dispatch(updateProducts(deleteCategoryResult.updatedProducts));
         });
 
         promises.push(p);

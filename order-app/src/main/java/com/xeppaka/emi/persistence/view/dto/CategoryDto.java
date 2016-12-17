@@ -37,4 +37,26 @@ public class CategoryDto {
     public int getWeight() {
         return weight;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CategoryDto that = (CategoryDto) o;
+
+        if (weight != that.weight) return false;
+        if (!categoryId.equals(that.categoryId)) return false;
+        if (!name.equals(that.name)) return false;
+        return parentCategoryId.equals(that.parentCategoryId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = categoryId.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + parentCategoryId.hashCode();
+        result = 31 * result + weight;
+        return result;
+    }
 }

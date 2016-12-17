@@ -21,11 +21,19 @@ class PosProductItemQuantity extends React.Component {
         let quantity = this.props.product.quantity;
         let multiplicity = this.props.product.multiplicity;
         let piecesLeftToOrder = this.props.product.piecesLeftToOrder;
+        let isAvailable = this.props.isAvailable;
 
         if (multiplicity > 1) {
             return (
-                        <select className='form-control form-control-sm' value={quantity}
-                                onChange={(event) => this.props.setProductQuantity(productId, event.target.value)} style={{width: '65%'}}>
+                        <select className='form-control form-control-sm' value={quantity} disabled={!isAvailable}
+                                onChange={(event) => {
+                                    let v = Number(event.target.value);
+                                    if (!isNaN(v) && v >= 0 &&
+                                        ( (v <= quantity + piecesLeftToOrder) || ((v > quantity + piecesLeftToOrder) && v < quantity) )) {
+                                        this.props.setProductQuantity(productId, v);
+                                    }
+                                }}
+                                style={{width: '65%'}}>
                             {
                                 this.renderQuantityOptions(multiplicity)
                             }
@@ -41,7 +49,7 @@ class PosProductItemQuantity extends React.Component {
                                             this.props.setProductQuantity(productId, v);
                                         }
                                     }
-                                } style={{width: '65%'}} />
+                                } style={{width: '65%'}} disabled={!isAvailable} />
                    )
         }
     }

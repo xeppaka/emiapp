@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import { SET_CATEGORIES, UPDATE_CATEGORIES, REMOVE_CATEGORY } from './categoriesactions';
+import { SET_CATEGORIES, UPDATE_CATEGORIES, REMOVE_CATEGORIES } from './categoriesactions';
 import { SET_WAREHOUSE } from '../warehouse/warehouseactions';
 
 const initialCategoriesState = {
@@ -16,14 +16,20 @@ function categories(state = initialCategoriesState, action) {
             return update(state, {
                 categoryById: {$set: action.categoryById}
             });
-        case REMOVE_CATEGORY: {
-            let updatedState = update(state, {
-                categoryById: {
-                    [action.categoryId]: {$set: null}
-                }
-            });
+        case REMOVE_CATEGORIES: {
+            let categoryIds = action.categoryIds;
+            let updatedState = state;
 
-            delete updatedState.categoryById[action.categoryId];
+            for (let i = 0; i < categoryIds.length; i++) {
+                updatedState = update(updatedState, {
+                    categoryById: {
+                        [categoryIds[i]]: {$set: null}
+                    }
+                });
+
+                delete updatedState.categoryById[categoryIds[i]];
+            }
+
             return updatedState;
         }
         case UPDATE_CATEGORIES: {

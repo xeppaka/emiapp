@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.xeppaka.emi.domain.value.UserName;
 import com.xeppaka.emi.persistence.view.dto.CategoryDto;
 import com.xeppaka.emi.service.CategoriesService;
+import com.xeppaka.emi.service.DeleteCategoryResult;
 import com.xeppaka.emi.service.EmiWarehouseException;
 
 @RestController
@@ -41,11 +42,11 @@ public class CategoriesController {
     }
 
     @RequestMapping(value = "{categoryId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID categoryId) throws EmiWarehouseException {
+    public ResponseEntity<DeleteCategoryResult> deleteCategory(@PathVariable UUID categoryId) throws EmiWarehouseException {
         Validate.notNull(categoryId);
 
-        categoriesService.deleteCategory(UserName.SYSTEM_USER_NAME, categoryId);
-        return ResponseEntity.noContent().build();
+        final DeleteCategoryResult deleteCategoryResult = categoriesService.deleteCategory(UserName.SYSTEM_USER_NAME, categoryId);
+        return ResponseEntity.ok(deleteCategoryResult);
     }
 
     @RequestMapping(method = RequestMethod.POST)

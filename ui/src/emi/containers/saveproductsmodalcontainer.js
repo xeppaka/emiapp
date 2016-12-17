@@ -14,8 +14,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setSendNotification: (value) => dispatch(setSendCustomerNotification(value)),
-        setNotificationText: (text) => dispatch(setNotificationText(text)),
+        onSetSendNotification: (value) => dispatch(setSendCustomerNotification(value)),
+        onSetNotificationText: (text) => dispatch(setNotificationText(text)),
         onSaveModifications: (saveModalId) => dispatch(saveProducts(saveModalId))
     }
 };

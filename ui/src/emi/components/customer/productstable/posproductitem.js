@@ -29,15 +29,25 @@ class PosProductItem extends React.Component {
             calculatedPriceDiscountStr = '0';
         }
 
+        let isAvailable = product.features.indexOf('AVAILABLE') >= 0;
+        let isNew = product.features.indexOf('NEW') >= 0;
+        let isFlammable = product.features.indexOf('FLAMMABLE') >= 0;
+
         return (<tr>
             <th scope='row'>{this.props.idx}<div ref={'vis'}></div></th>
-            <td>{product.name}</td>
+            <td>
+                {isNew ? <span style={{color: '#e72626'}}>NEW!&nbsp;</span> : null}
+                {!isAvailable ? <span style={{fontWeight: 'bold'}}>NOT AVAILABLE!&nbsp;</span> : null}
+                {product.name}
+                {isFlammable ? <span>&nbsp;&nbsp;<SvgFlame width={20} height={20} /></span> : null}
+            </td>
             <td>{Number((product.price / 100).toFixed(2))}</td>
             <td>{0}</td>
-            <td>{product.piecesLeftToOrder}</td>
+            <td>{isAvailable ? product.piecesLeftToOrder : 0}</td>
             <td>
                 <PosProductItemQuantity
                     product={product}
+                    isAvailable={isAvailable}
                     setProductQuantity={setProductQuantity} />
             </td>
             <td>{calculatedPriceStr}</td>

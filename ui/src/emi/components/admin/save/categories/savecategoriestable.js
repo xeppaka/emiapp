@@ -24,12 +24,12 @@ class SaveCategoriesTable extends React.Component {
 
     render() {
         return (
-            <table className="table table-striped table-sm">
+            <table className='table table-striped table-sm'>
                 <thead>
                 <tr>
-                    <th style={{width:'46%'}}>Category Name</th>
-                    <th style={{width:'22%'}}>Parent Category Name</th>
-                    <th style={{width:'22%'}}>Weight</th>
+                    <th scope='row' style={{width:'46%'}}>Category Name</th>
+                    <th style={{width:'27%'}}>Parent Category Name</th>
+                    <th style={{width:'27%'}}>Weight</th>
                 </tr>
                 </thead>
                 <tbody>

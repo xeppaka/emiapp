@@ -6,11 +6,11 @@ class Notification extends React.Component {
     }
 
     onSendNotificationChanged(event) {
-        this.props.setSendNotification(event.target.checked);
+        this.props.onSetSendNotification(event.target.checked);
     }
 
     onNotificationChanged(event) {
-        this.props.setNotificationText(event.target.value);
+        this.props.onSetNotificationText(event.target.value);
     }
 
     render() {

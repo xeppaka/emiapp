@@ -5,10 +5,13 @@ import com.xeppaka.emi.persistence.view.dto.ProductDto;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +20,8 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class ProductsRepository {
+    private static final ProductDtoRowMapper PRODUCT_DTO_ROW_MAPPER = new ProductDtoRowMapper();
+
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -75,19 +80,7 @@ public class ProductsRepository {
     }
 
     public List<ProductDto> getProducts() {
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS", (rs, rowNum) -> {
-            final UUID productId = UUID.fromString(rs.getString("ID"));
-            final String name = rs.getString("NAME");
-            final int price = rs.getInt("PRICE");
-            final int multiplicity = rs.getInt("MULTIPLICITY");
-            final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
-            final String note = rs.getString("NOTE");
-            final String categoryIdStr = rs.getString("CATEGORY");
-            final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
-            final int weight = rs.getInt("WEIGHT");
-
-            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, weight);
-        });
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS", PRODUCT_DTO_ROW_MAPPER);
     }
 
     public ProductDto getProduct(UUID id) {
@@ -98,19 +91,16 @@ public class ProductsRepository {
         final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         sqlParameterSource.addValue("IDS", ids);
 
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE ID IN (:IDS) ", sqlParameterSource, (rs, rowNum) -> {
-            final UUID productId = UUID.fromString(rs.getString("ID"));
-            final String name = rs.getString("NAME");
-            final int price = rs.getInt("PRICE");
-            final int multiplicity = rs.getInt("MULTIPLICITY");
-            final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
-            final String note = rs.getString("NOTE");
-            final String categoryIdStr = rs.getString("CATEGORY");
-            final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
-            final int weight = rs.getInt("WEIGHT");
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE ID IN (:IDS) ",
+                sqlParameterSource, PRODUCT_DTO_ROW_MAPPER);
+    }
 
-            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, weight);
-        });
+    public List<ProductDto> getProductsForCategories(Collection<UUID> categoryIds) {
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("CATEGORY_IDS", categoryIds);
+
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE CATEGORY IN (:CATEGORY_IDS) ",
+                sqlParameterSource, PRODUCT_DTO_ROW_MAPPER);
     }
 
     public void deleteProduct(UUID productId) {
@@ -166,7 +156,7 @@ public class ProductsRepository {
         jdbcTemplate.update("UPDATE PRODUCTS SET WEIGHT = :WEIGHT WHERE ID = :ID", sqlParameterSource);
     }
 
-    private String productFeaturesToString(Set<ProductFeature> productFeatures) {
+    private static String productFeaturesToString(Set<ProductFeature> productFeatures) {
         if (productFeatures.isEmpty()) {
             return "";
         } else {
@@ -174,7 +164,7 @@ public class ProductsRepository {
         }
     }
 
-    private Set<ProductFeature> productFeaturesFromString(String productFeatures) {
+    private static Set<ProductFeature> productFeaturesFromString(String productFeatures) {
         final Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
 
         if (productFeatures.isEmpty()) {
@@ -187,5 +177,22 @@ public class ProductsRepository {
         }
 
         return features;
+    }
+
+    private static class ProductDtoRowMapper implements RowMapper<ProductDto> {
+        @Override
+        public ProductDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+            final UUID productId = UUID.fromString(rs.getString("ID"));
+            final String name = rs.getString("NAME");
+            final int price = rs.getInt("PRICE");
+            final int multiplicity = rs.getInt("MULTIPLICITY");
+            final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
+            final String note = rs.getString("NOTE");
+            final String categoryIdStr = rs.getString("CATEGORY");
+            final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
+            final int weight = rs.getInt("WEIGHT");
+
+            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, categoryId, weight);
+        }
     }
 }

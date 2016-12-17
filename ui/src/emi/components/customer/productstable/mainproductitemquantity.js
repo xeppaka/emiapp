@@ -20,11 +20,11 @@ class MainProductItemQuantity extends React.Component {
         let productId = this.props.productId;
         let quantity = this.props.quantity;
         let multiplicity = this.props.multiplicity;
-        let available = this.props.available;
+        let isAvailable = this.props.isAvailable;
 
         if (multiplicity > 1) {
             return (
-                <select className='form-control form-control-sm' value={quantity} disabled={!available}
+                <select className='form-control form-control-sm' value={quantity} disabled={!isAvailable}
                         onChange={(event) => this.props.setProductQuantity(productId, event.target.value)}
                         style={{width: '65%'}}>
                     {
@@ -35,7 +35,7 @@ class MainProductItemQuantity extends React.Component {
         } else {
             return (
                 <input type='number' className='form-control form-control-sm' min='0'
-                       value={quantity > 0 ? quantity : ''} disabled={!available}
+                       value={quantity > 0 ? quantity : ''} disabled={!isAvailable}
                        onChange={(event) => {
                            let v = Number(event.target.value);
                            if (!isNaN(v) && v >= 0) {

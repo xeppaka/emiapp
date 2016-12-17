@@ -1,8 +1,11 @@
 package com.xeppaka.emi.persistence.view;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
@@ -48,6 +51,10 @@ public class CategoriesRepository {
 
             return new CategoryDto(categoryId, name, parentCategoryId, weight);
         });
+    }
+
+    public List<UUID> getCategoryIds() {
+        return jdbcTemplate.query("SELECT ID FROM CATEGORIES", (rs, rowNum) -> UUID.fromString(rs.getString("ID")));
     }
 
     public List<CategoryDto> getCategories(Collection<UUID> ids) {

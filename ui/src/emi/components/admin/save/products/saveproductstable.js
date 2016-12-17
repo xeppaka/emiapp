@@ -21,7 +21,7 @@ class SaveProductsTable extends React.Component {
 
     render() {
         return (
-            <table className="table table-striped table-sm">
+            <table className='table table-striped table-sm'>
                 <thead>
                 <tr>
                     <th scope='row' style={{width:'2%'}}>#</th>

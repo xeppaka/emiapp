@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 import update from 'react-addons-update';
 
 function getDefaultRootCategory() {
@@ -151,23 +151,33 @@ export const adminCategoriesTreeSelector = createSelector(
 
 export const adminCategoriesListSelector = createSelector(
     [
+        (state) => state.warehouse.categories.categoryById,
         adminCategoriesTreeSelector
     ],
-    (categoryTree) => {
+    (originalCategoryById, allCategoriesById) => {
         let idsQueue = ['root'];
-        let categoriesList = [];
+        let rootCategory = null;
+        let newCategoryList = [];
+        let categoryList = [];
 
         while (idsQueue.length > 0) {
             let catId = idsQueue.pop();
-            let category = categoryTree[catId];
-            categoriesList.push(category);
+            let category = allCategoriesById[catId];
+
+            if (catId === 'root') {
+                rootCategory = category;
+            } else if (originalCategoryById.hasOwnProperty(category.categoryId)) {
+                categoryList.push(category);
+            } else {
+                newCategoryList.push(category);
+            }
 
             for (let i = category.childCategoryIds.length; i > 0; i--) {
                 idsQueue.push(category.childCategoryIds[i - 1]);
             }
         }
 
-        return categoriesList;
+        return [rootCategory].concat(newCategoryList).concat(categoryList);
     }
 );
 
@@ -200,16 +210,19 @@ export const adminCategoryCountersSelector = createSelector(
     }
 );
 
-function convertCategoryToViewCategory(category, categoryById) {
+function convertCategoryToViewCategory(category, categoryById, modifiedCategoryById) {
     return update(category, {
-        parentCategoryName: {$set: category.parentCategoryId === null ?
-            '-----' : categoryById[category.parentCategoryId].name}
+        parentCategoryName: {
+            $set: category.parentCategoryId === null ? '-----'
+                : categoryById.hasOwnProperty(category.parentCategoryId) ? categoryById[category.parentCategoryId].name
+                    : modifiedCategoryById[category.parentCategoryId].name
+        }
     });
 }
 
 export const modifiedCategoriesListSelector = createSelector(
     [
-        adminCategoriesTreeSelector,
+        (state) => state.warehouse.categories.categoryById,
         (state) => state.admin.modifiedCategoryById,
         (state) => state.admin.deletedCategories
     ],
@@ -230,7 +243,7 @@ export const modifiedCategoriesListSelector = createSelector(
             if (!modifiedCategoryById.hasOwnProperty(key) || modifiedCategoryById[key] === null)
                 continue;
 
-            let category = convertCategoryToViewCategory(modifiedCategoryById[key], categoryById);
+            let category = convertCategoryToViewCategory(modifiedCategoryById[key], categoryById, modifiedCategoryById);
             if (categoryById.hasOwnProperty(key)) {
                 smodifiedCategories.push(category);
             } else {
@@ -282,5 +295,4 @@ export const modifiedCategoriesListSaveSelector = createSelector(
             deletedCategories: sdeletedCategories
         };
     }
-
 );
