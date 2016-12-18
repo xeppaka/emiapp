@@ -44,12 +44,12 @@ const createProductIdsSelector = createSelectorCreator(
 );
 
 function isPos(prevPos, category, rootCategoryId) {
-    return prevPos || (category.parentCategoryId === rootCategoryId && category.name === 'POS');
+    return prevPos || ((category.parentCategoryId === rootCategoryId) && (category.name === 'POS'));
 }
 
 function getProductIds(categoryById, id, productIds, isPos, prevPos = false) {
     let currentCategory = categoryById[id];
-    let pos = isPos(prevPos, currentCategory, categoryById);
+    let pos = isPos(prevPos, currentCategory, categoryById['root'].categoryId);
     if (pos) {
         Array.prototype.push.apply(productIds.posProductIds, currentCategory.productIds);
     } else {
@@ -225,21 +225,23 @@ export const adminProductCountersSelector = createSelector(
     [
         adminProductsSelector
     ],
-    (productById) => {
+    (adminProducts) => {
+        let modificationTypeById = adminProducts.modificationTypeById;
+
         let createdProductsCount = 0;
         let modifiedProductsCount = 0;
         let deletedProductsCount = 0;
 
-        for (let key in productById) {
-            if (!productById.hasOwnProperty(key))
+        for (let key in modificationTypeById) {
+            if (!modificationTypeById.hasOwnProperty(key))
                 continue;
 
-            let product = productById[key];
-            if (product.type === 'CREATED') {
+            let modificationType = modificationTypeById[key];
+            if (modificationType === 'CREATED') {
                 createdProductsCount++;
-            } else if (product.type === 'MODIFIED') {
+            } else if (modificationType === 'MODIFIED') {
                 modifiedProductsCount++;
-            } else if (product.type === 'DELETED') {
+            } else if (modificationType === 'DELETED') {
                 deletedProductsCount++;
             }
         }
@@ -258,11 +260,9 @@ function isAdminPos(arg1, arg2, arg3) {
 
 const adminProductIdsSelector = createProductIdsSelector(
     [
-        (state) => { return { type: 'categoriesTree', value: adminCategoriesTreeSelector(state) } }
+        adminCategoriesTreeSelector
     ],
-    (categoriesTreeVal) => {
-        let categoryById = categoriesTreeVal.value;
-
+    (categoryById) => {
         let productIds = {
             mainProductIds: [],
             posProductIds: []
@@ -278,9 +278,11 @@ export const adminProductListSelector = createSelector(
         adminProductIdsSelector,
         adminProductsSelector
     ],
-    (adminProductIds, adminProductById) => {
-        return adminProductIds.mainProductIds.map(id => {
-            return { product: adminProductById[id] };
+    (adminProductIds, adminProducts) => {
+        return adminProductIds.mainProductIds
+            .filter(id => adminProducts.modificationTypeById[id] !== 'DELETED')
+            .map(id => {
+            return { product: adminProducts.productById[id] };
         });
     }
 );
@@ -301,7 +303,10 @@ export const adminModifiedProductsSelector = createSelector(
         adminCategoriesTreeSelector,
         adminProductsSelector
     ],
-    (categoryById, productById) => {
+    (categoryById, adminProducts) => {
+        let productById = adminProducts.productById;
+        let modificationTypeById = adminProducts.modificationTypeById;
+
         let createdProducts = [];
         let modifiedProducts = [];
         let deletedProducts = [];
@@ -311,11 +316,12 @@ export const adminModifiedProductsSelector = createSelector(
                 continue;
 
             let product = convertProductToViewProduct(productById[key], categoryById);
-            if (product.type === 'CREATED') {
+            let modificationType = modificationTypeById[key];
+            if (modificationType === 'CREATED') {
                 createdProducts.push(product);
-            } else if (product.type === 'MODIFIED') {
+            } else if (modificationType === 'MODIFIED') {
                 modifiedProducts.push(product);
-            } else if (product.type === 'DELETED') {
+            } else if (modificationType === 'DELETED') {
                 deletedProducts.push(product);
             }
         }
@@ -330,10 +336,12 @@ export const adminModifiedProductsSelector = createSelector(
 
 export const adminModifiedProductsSaveSelector = createSelector(
     [
-        adminCategoriesTreeSelector,
         adminProductsSelector
     ],
-    (categoryById, productById) => {
+    (adminProducts) => {
+        let productById = adminProducts.productById;
+        let modificationTypeById = adminProducts.modificationTypeById;
+
         let createdProducts = [];
         let modifiedProducts = [];
         let deletedProducts = [];
@@ -343,11 +351,12 @@ export const adminModifiedProductsSaveSelector = createSelector(
                 continue;
 
             let product = productById[key];
-            if (product.type === 'CREATED') {
+            let modificationType = modificationTypeById[key];
+            if (modificationType === 'CREATED') {
                 createdProducts.push(product);
-            } else if (product.type === 'MODIFIED') {
+            } else if (modificationType === 'MODIFIED') {
                 modifiedProducts.push(product);
-            } else if (product.type === 'DELETED') {
+            } else if (modificationType === 'DELETED') {
                 deletedProducts.push(product);
             }
         }

@@ -127,26 +127,19 @@ export const adminCategoriesSelector = createSelector(
     }
 );
 
-export const adminCategoriesTreeSelector = createDeepEqualSelector(
+export const adminCategoriesTreeSelector = createSelector(
     [
-        (state) => { return { type: 'categoryById', value: adminCategoriesSelector(state) } },
-        (state) => { return { type: 'productById', value: adminProductsSelector(state) } }
+        adminCategoriesSelector,
+        adminProductsSelector
     ],
-    (categoryByIdVal, productByIdVal) => {
-        let categoryById = categoryByIdVal.value;
-        let productById = productByIdVal.value;
-
-        return createCategoriesTree(categoryById, productById);
-    }
+    (categoryById, adminProducts) => createCategoriesTree(categoryById, adminProducts.productById)
 );
 
 export const adminCategoriesListSelector = createSelector(
     [
         adminCategoriesTreeSelector
     ],
-    (categoryTree) => {
-        return createAdminCategoriesList(categoryTree);
-    }
+    (categoryTree) => createAdminCategoriesList(categoryTree)
 );
 
 export const adminCategoryCountersSelector = createSelector(

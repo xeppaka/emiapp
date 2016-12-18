@@ -27,10 +27,10 @@ export function createAdminCategoriesList(categoryTree) {
 
         if (catId === 'root') {
             rootCategory = category;
-        } else if (category.type === 'MODIFIED') {
-            categoryList.push(category);
         } else if (category.type === 'CREATED') {
             newCategoryList.push(category);
+        } else if (category.type !== 'DELETED') {
+            categoryList.push(category);
         }
 
         for (let i = category.childCategoryIds.length; i > 0; i--) {

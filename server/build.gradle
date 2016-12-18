@@ -30,6 +30,7 @@ dependencies {
 
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'org.flywaydb:flyway-core:4.0.3'
 
     compile project(':ddd')
     compile project(':order-app')

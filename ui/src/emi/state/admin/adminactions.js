@@ -90,7 +90,7 @@ export function createProduct() {
             name: '',
             price: 0,
             multiplicity: 1,
-            features: ['VISIBLE'],
+            features: ['VISIBLE', 'AVAILABLE'],
             categoryId: rootCategoryId,
             weight: 0,
             note: ''
@@ -148,10 +148,10 @@ export function saveFinished() {
     return {type: SAVE_FINISHED};
 }
 
-function deleteProducts(dispatch, productIds) {
+function deleteProducts(dispatch, products) {
     let promises = [];
-    for (let i = 0; i < productIds.length; i++) {
-        let productId = productIds[i];
+    for (let i = 0; i < products.length; i++) {
+        let productId = products[i].productId;
         let p = fetch('api/products/' + productId, {
             method: 'DELETE',
             headers: {
@@ -244,10 +244,10 @@ export function saveProducts(saveModalId) {
     };
 }
 
-function deleteCategories(dispatch, categoryIds) {
+function deleteCategories(dispatch, categories) {
     let promises = [];
-    for (let i = 0; i < categoryIds.length; i++) {
-        let categoryId = categoryIds[i];
+    for (let i = 0; i < categories.length; i++) {
+        let categoryId = categories[i].categoryId;
         let p = fetch('api/categories/' + categoryId, {
             method: 'DELETE',
             headers: {

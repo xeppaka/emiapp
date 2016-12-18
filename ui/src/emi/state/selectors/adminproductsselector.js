@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import update from 'react-addons-update';
 
 export const adminProductsSelector = createSelector(
     [
@@ -8,18 +7,18 @@ export const adminProductsSelector = createSelector(
         (state) => state.admin.deletedProducts
     ],
     (productById, modifiedProductById, deletedProductIds) => {
-        let resultProductById = {};
+        let adminProductById = {};
+        let adminModificationTypeById = {};
 
         for (let key in modifiedProductById) {
             if (!modifiedProductById.hasOwnProperty(key))
                 continue;
 
-            if (!resultProductById.hasOwnProperty(key)) {
+            if (!adminProductById.hasOwnProperty(key)) {
                 let type = productById.hasOwnProperty(key) ? 'MODIFIED' : 'CREATED';
 
-                resultProductById[key] = update(modifiedProductById[key], {
-                    type: {$set: type}
-                });
+                adminProductById[key] = modifiedProductById[key];
+                adminModificationTypeById[key] = type;
             }
         }
 
@@ -27,15 +26,17 @@ export const adminProductsSelector = createSelector(
             if (!productById.hasOwnProperty(key))
                 continue;
 
-            if (!resultProductById.hasOwnProperty(key)) {
+            if (!adminProductById.hasOwnProperty(key)) {
                 let type = deletedProductIds.indexOf(key) >= 0 ? 'DELETED' : 'UNCHANGED';
 
-                resultProductById[key] = update(productById[key], {
-                    type: {$set: type}
-                });
+                adminProductById[key] = productById[key];
+                adminModificationTypeById[key] = type;
             }
         }
 
-        return resultProductById;
+        return {
+            productById: adminProductById,
+            modificationTypeById: adminModificationTypeById
+        };
     }
 );

@@ -10,7 +10,7 @@ class AdminCategoriesTable extends React.Component {
     renderCategories(categoriesList) {
         let catList = [];
 
-        catList.push(<RootCategoryTableRow category={categoriesList[0]}/>);
+        catList.push(<RootCategoryTableRow key={categoriesList[0].categoryId} category={categoriesList[0]}/>);
         for (let i = 1; i < categoriesList.length; i++) {
             catList.push(<AdminCategoriesTableRow key={categoriesList[i].categoryId}
                                                   category={categoriesList[i]}
