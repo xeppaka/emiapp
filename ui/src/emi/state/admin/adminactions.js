@@ -2,8 +2,8 @@ import update from 'react-addons-update';
 import {
     adminCategoriesTreeSelector,
     modifiedCategoriesListSaveSelector
-} from '../selectors/admin/admincategoriesselector';
-import {adminModifiedProductsSaveSelector} from '../selectors/admin/adminproductsselector';
+} from '../selectors/categoriesselector';
+import {adminModifiedProductsSaveSelector} from '../selectors/productsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
 import {updateCategories, removeCategories} from '../categories/categoriesactions';

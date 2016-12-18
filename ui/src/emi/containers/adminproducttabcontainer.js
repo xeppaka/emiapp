@@ -1,8 +1,7 @@
 import { connect } from 'react-redux';
 import AdminProductsTab from '../components/admin/adminproductstab';
-import { adminProductListSelector } from '../state/selectors/admin/adminproductsselector';
+import { adminProductListSelector, adminProductCountersSelector } from '../state/selectors/productsselector';
 import { categoriesListSelector } from '../state/selectors/categoriesselector';
-import { adminProductCountersSelector } from '../state/selectors/admin/adminproductsselector';
 import { setProductName, setProductPrice, setProductCategory,
          setProductMultiplicity, setProductNote, setProductWeight,
          resetProducts, createProduct, deleteProduct, setProductFeature } from '../state/admin/adminactions';

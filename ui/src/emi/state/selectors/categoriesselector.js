@@ -1,57 +1,8 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
-
-function createProductsComparator(productById) {
-    return function compareProducts(prodId1, prodId2) {
-        let prod1 = productById[prodId1];
-        let prod2 = productById[prodId2];
-
-        if (prod1.weight < prod2.weight) {
-            return -1;
-        }
-
-        if (prod1.weight > prod2.weight) {
-            return 1;
-        }
-
-        return prod1.name.localeCompare(prod2.name);
-    }
-}
-
-function createCategoriesComparator(categoryById) {
-    return function compareCategories(categoryId1, categoryId2) {
-        let category1 = categoryById[categoryId1];
-        let category2 = categoryById[categoryId2];
-
-        if (category1.weight < category2.weight) {
-            return -1;
-        }
-
-        if (category1.weight > category2.weight) {
-            return 1;
-        }
-
-        return category1.name.localeCompare(category2.name);
-    }
-}
-
-function sortCategoryTree(categoryById, productById) {
-    sortCategoryTreeWithComparators('root',
-        categoryById,
-        createCategoriesComparator(categoryById),
-        createProductsComparator(productById));
-}
-
-function sortCategoryTreeWithComparators(catId, categoryById, categoriesComparator, productsComparator) {
-    let category = categoryById[catId];
-    category.childCategoryIds = category.childCategoryIds.sort(categoriesComparator);
-    category.productIds = category.productIds.sort(productsComparator);
-
-    let l = category.childCategoryIds.length;
-    for (let i = 0; i < l; i++) {
-        sortCategoryTreeWithComparators(category.childCategoryIds[i], categoryById,
-            categoriesComparator, productsComparator);
-    }
-}
+import update from 'react-addons-update';
+import { createCategoriesTree } from './categoriestreecreator';
+import { createCategoriesList, createAdminCategoriesList } from './categorieslistcreator';
+import { adminProductsSelector } from './adminproductsselector';
 
 function isProductByIdEqual(val1, val2) {
     let val1Keys = 0;
@@ -115,34 +66,6 @@ const createDeepEqualSelector = createSelectorCreator(
     isEqual
 );
 
-function setAnchors(categoriesTree) {
-    setAnchorsRecursively(categoriesTree, 'root', '#');
-}
-
-function setAnchorsRecursively(categoriesTree, id, anchor) {
-    let currentCategory = categoriesTree[id];
-    currentCategory.anchor = anchor;
-
-    let childCategoryIds = currentCategory.childCategoryIds;
-    let childCategoryIdsLength = childCategoryIds.length;
-
-    for (let i = 0; i < childCategoryIdsLength; i++) {
-        setAnchorsRecursively(categoriesTree, childCategoryIds[i], anchor + '.' + i);
-    }
-}
-
-function getDefaultRootCategory() {
-    return {
-        categoryId: 'root',
-        name: '',
-        anchor: '',
-        childCategoryIds: [],
-        parentCategoryId: null,
-        productIds: [],
-        weight: 0
-    }
-}
-
 export const categoriesTreeSelector = createDeepEqualSelector(
     [
         (state) => { return { type: 'categoryById', value: state.warehouse.categories.categoryById } },
@@ -151,64 +74,8 @@ export const categoriesTreeSelector = createDeepEqualSelector(
     (categoryByIdVal, productByIdVal) => {
         let categoryById = categoryByIdVal.value;
         let productById = productByIdVal.value;
-        let tcategoryById = {};
 
-        // first walk -> creating categories with childCategoryIds field
-        for (let key in categoryById) {
-            if (!categoryById.hasOwnProperty(key))
-                continue;
-
-            let category = categoryById[key];
-            if (!tcategoryById.hasOwnProperty(key)) {
-                tcategoryById[key] = {
-                    categoryId: category.categoryId,
-                    name: category.name,
-                    anchor: '',
-                    childCategoryIds: [],
-                    parentCategoryId: category.parentCategoryId,
-                    productIds: [],
-                    weight: category.weight
-                };
-            }
-        }
-
-        let rootCategoryId = null;
-        // second walk -> fill childCategoryIds field
-        for (let key in tcategoryById) {
-            if (!tcategoryById.hasOwnProperty(key))
-                continue;
-
-            let category = tcategoryById[key];
-            if (category.parentCategoryId !== null && !tcategoryById.hasOwnProperty(category.parentCategoryId))
-                continue;
-
-            if (category.parentCategoryId !== null) {
-                tcategoryById[category.parentCategoryId].childCategoryIds.push(category.categoryId);
-            } else {
-                rootCategoryId = category.categoryId;
-            }
-        }
-
-        if (rootCategoryId !== null) {
-            tcategoryById['root'] = tcategoryById[rootCategoryId];
-        } else {
-            tcategoryById['root'] = getDefaultRootCategory();
-        }
-
-        for (let key in productById) {
-            if (!productById.hasOwnProperty(key))
-                continue;
-
-            let product = productById[key];
-            if (product.categoryId !== null && tcategoryById.hasOwnProperty(product.categoryId)) {
-                tcategoryById[product.categoryId].productIds.push(key);
-            }
-        }
-
-        sortCategoryTree(tcategoryById, productById);
-        setAnchors(tcategoryById);
-
-        return tcategoryById;
+        return createCategoriesTree(categoryById, productById);
     }
 );
 
@@ -217,19 +84,169 @@ export const categoriesListSelector = createSelector(
         categoriesTreeSelector
     ],
     (categoryTree) => {
-        let idsQueue = ['root'];
-        let categoriesList = [];
+        return createCategoriesList(categoryTree);
+    }
+);
 
-        while (idsQueue.length > 0) {
-            let catId = idsQueue.pop();
-            let category = categoryTree[catId];
-            categoriesList.push(category);
+export const adminCategoriesSelector = createSelector(
+    [
+        (state) => state.warehouse.categories.categoryById,
+        (state) => state.admin.modifiedCategoryById,
+        (state) => state.admin.deletedCategories
+    ],
+    (categoryById, modifiedCategoryById, deletedCategoryIds) => {
+        let resultCategoryById = {};
 
-            for (let i = category.childCategoryIds.length; i > 0; i--) {
-                idsQueue.push(category.childCategoryIds[i - 1]);
+        for (let key in modifiedCategoryById) {
+            if (!modifiedCategoryById.hasOwnProperty(key))
+                continue;
+
+            if (!resultCategoryById.hasOwnProperty(key)) {
+                let type = categoryById.hasOwnProperty(key) ? 'MODIFIED' : 'CREATED';
+
+                resultCategoryById[key] = update(modifiedCategoryById[key], {
+                    type: {$set: type}
+                });
             }
         }
 
-        return categoriesList;
+        for (let key in categoryById) {
+            if (!categoryById.hasOwnProperty(key))
+                continue;
+
+            if (!resultCategoryById.hasOwnProperty(key)) {
+                let type = deletedCategoryIds.indexOf(key) >= 0 ? 'DELETED' : 'UNCHANGED';
+
+                resultCategoryById[key] = update(categoryById[key], {
+                    type: {$set: type}
+                });
+            }
+        }
+
+        return resultCategoryById;
+    }
+);
+
+export const adminCategoriesTreeSelector = createDeepEqualSelector(
+    [
+        (state) => { return { type: 'categoryById', value: adminCategoriesSelector(state) } },
+        (state) => { return { type: 'productById', value: adminProductsSelector(state) } }
+    ],
+    (categoryByIdVal, productByIdVal) => {
+        let categoryById = categoryByIdVal.value;
+        let productById = productByIdVal.value;
+
+        return createCategoriesTree(categoryById, productById);
+    }
+);
+
+export const adminCategoriesListSelector = createSelector(
+    [
+        adminCategoriesTreeSelector
+    ],
+    (categoryTree) => {
+        return createAdminCategoriesList(categoryTree);
+    }
+);
+
+export const adminCategoryCountersSelector = createSelector(
+    [
+        adminCategoriesSelector
+    ],
+    (categoryById) => {
+        let createdCategoryCount = 0;
+        let modifiedCategoryCount = 0;
+        let deletedCategoryCount = 0;
+
+        for (let key in categoryById) {
+            if (!categoryById.hasOwnProperty(key))
+                continue;
+
+            let category = categoryById[key];
+
+            if (category.type === 'CREATED') {
+                createdCategoryCount++;
+            } else if (category.type === 'MODIFIED') {
+                modifiedCategoryCount++;
+            } else if (category.type === 'DELETED') {
+                deletedCategoryCount++;
+            }
+        }
+
+        return {
+            createdCategories: createdCategoryCount,
+            modifiedCategories: modifiedCategoryCount,
+            deletedCategories: deletedCategoryCount
+        }
+    }
+);
+
+function convertCategoryToViewCategory(category, categoryById) {
+    return update(category, {
+        parentCategoryName: {
+            $set: category.parentCategoryId === null ? '-----' : categoryById[category.parentCategoryId].name
+        }
+    });
+}
+
+export const modifiedCategoriesListSelector = createSelector(
+    [
+        adminCategoriesSelector
+    ],
+    (categoryById) => {
+        let createdCategories = [];
+        let modifiedCategories = [];
+        let deletedCategories = [];
+
+        for (let key in categoryById) {
+            if (!categoryById.hasOwnProperty(key))
+                continue;
+
+            let category = convertCategoryToViewCategory(categoryById[key], categoryById);
+            if (category.type === 'CREATED') {
+                createdCategories.push(category);
+            } else if (category.type === 'MODIFIED') {
+                modifiedCategories.push(category);
+            } else if (category.type === 'DELETED') {
+                deletedCategories.push(category);
+            }
+        }
+
+        return {
+            createdCategories: createdCategories,
+            modifiedCategories: modifiedCategories,
+            deletedCategories: deletedCategories
+        };
+    }
+);
+
+export const modifiedCategoriesListSaveSelector = createSelector(
+    [
+        adminCategoriesSelector
+    ],
+    (categoryById) => {
+        let createdCategories = [];
+        let modifiedCategories = [];
+        let deletedCategories = [];
+
+        for (let key in categoryById) {
+            if (!categoryById.hasOwnProperty(key))
+                continue;
+
+            let category = categoryById[key];
+            if (category.type === 'CREATED') {
+                createdCategories.push(category);
+            } else if (category.type === 'MODIFIED') {
+                modifiedCategories.push(category);
+            } else if (category.type === 'DELETED') {
+                deletedCategories.push(category);
+            }
+        }
+
+        return {
+            createdCategories: createdCategories,
+            modifiedCategories: modifiedCategories,
+            deletedCategories: deletedCategories
+        };
     }
 );

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-export const adminProductsSelector = createSelector(
+export const adminProductsSelector1 = createSelector(
     [
         (state) => state.admin.modifiedProductById,
         (state) => state.admin.newProductById
@@ -49,7 +49,7 @@ export const notificationSelector = createSelector(
     [
         (state) => state.admin.sendNotificationToCustomers,
         (state) => state.admin.notificationText,
-        adminProductsSelector
+        adminProductsSelector1
     ],
     (sendNotification, notificationText, modifiedProducts) => {
         if (!sendNotification) {

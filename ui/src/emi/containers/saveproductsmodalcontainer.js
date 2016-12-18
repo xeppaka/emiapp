@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { setSendCustomerNotification, setNotificationText, saveProducts } from '../state/admin/adminactions';
 import { notificationSelector } from '../state/selectors/admin/adminselector';
-import { adminModifiedProductsSelector } from '../state/selectors/admin/adminproductsselector';
+import { adminModifiedProductsSelector } from '../state/selectors/productsselector';
 import SaveModificationsModal from '../components/admin/save/products/saveproductsmodal';
 
 const mapStateToProps = (state) => {

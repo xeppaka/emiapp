@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import CategoriesTable from '../components/admin/admincategoriestab';
-import { adminCategoriesListSelector, adminCategoryCountersSelector } from '../state/selectors/admin/admincategoriesselector';
+import { adminCategoriesListSelector, adminCategoryCountersSelector } from '../state/selectors/categoriesselector';
 import { setCategoryName, setCategoryWeight, setCategoryParentId } from '../state/admin/adminactions';
 import { showSaveCategoriesModal } from '../state/modals/modalsactions';
 import { resetCategories, createCategory, deleteCategory } from '../state/admin/adminactions';

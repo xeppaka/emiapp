@@ -1,7 +1,8 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 import update from 'react-addons-update';
-
+import { adminProductsSelector } from './adminproductsselector';
 import { categoriesTreeSelector } from './categoriesselector';
+import { adminCategoriesTreeSelector } from './categoriesselector';
 
 function isProductByIdEqual(val1, val2) {
     let val1Keys = 0;
@@ -42,8 +43,13 @@ const createProductIdsSelector = createSelectorCreator(
     isEqualForProductIdsSelector
 );
 
-function getProductIds(categoryById, id, productIds, pos) {
+function isPos(prevPos, category, rootCategoryId) {
+    return prevPos || (category.parentCategoryId === rootCategoryId && category.name === 'POS');
+}
+
+function getProductIds(categoryById, id, productIds, isPos, prevPos = false) {
     let currentCategory = categoryById[id];
+    let pos = isPos(prevPos, currentCategory, categoryById);
     if (pos) {
         Array.prototype.push.apply(productIds.posProductIds, currentCategory.productIds);
     } else {
@@ -55,9 +61,7 @@ function getProductIds(categoryById, id, productIds, pos) {
 
     for (let i = 0; i < l; i++) {
         let childCategoryId = childCategoryIds[i];
-        let nextPos = pos || ((currentCategory.categoryId === categoryById['root'].categoryId)
-            && (categoryById[childCategoryId].name === 'POS'));
-        getProductIds(categoryById, childCategoryId, productIds, nextPos);
+        getProductIds(categoryById, childCategoryId, productIds, isPos, pos);
     }
 }
 
@@ -72,7 +76,7 @@ const productIdsSelector = createProductIdsSelector(
             mainProductIds: [],
             posProductIds: []
         };
-        getProductIds(categoryById, 'root', productIds, false);
+        getProductIds(categoryById, 'root', productIds, isPos);
 
         return productIds;
     }
@@ -214,5 +218,144 @@ export const posProductsWithLeftAmountSelector = createSelector(
 
             return { product: update(product, { piecesLeftToOrder: { $set: piecesLeftToOrder } }), anchor: anchorsById[id] }
         });
+    }
+);
+
+export const adminProductCountersSelector = createSelector(
+    [
+        adminProductsSelector
+    ],
+    (productById) => {
+        let createdProductsCount = 0;
+        let modifiedProductsCount = 0;
+        let deletedProductsCount = 0;
+
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
+                continue;
+
+            let product = productById[key];
+            if (product.type === 'CREATED') {
+                createdProductsCount++;
+            } else if (product.type === 'MODIFIED') {
+                modifiedProductsCount++;
+            } else if (product.type === 'DELETED') {
+                deletedProductsCount++;
+            }
+        }
+
+        return {
+            createdProducts: createdProductsCount,
+            modifiedProducts: modifiedProductsCount,
+            deletedProducts: deletedProductsCount
+        };
+    }
+);
+
+function isAdminPos(arg1, arg2, arg3) {
+    return false;
+}
+
+const adminProductIdsSelector = createProductIdsSelector(
+    [
+        (state) => { return { type: 'categoriesTree', value: adminCategoriesTreeSelector(state) } }
+    ],
+    (categoriesTreeVal) => {
+        let categoryById = categoriesTreeVal.value;
+
+        let productIds = {
+            mainProductIds: [],
+            posProductIds: []
+        };
+        getProductIds(categoryById, 'root', productIds, isAdminPos);
+
+        return productIds;
+    }
+);
+
+export const adminProductListSelector = createSelector(
+    [
+        adminProductIdsSelector,
+        adminProductsSelector
+    ],
+    (adminProductIds, adminProductById) => {
+        return adminProductIds.mainProductIds.map(id => {
+            return { product: adminProductById[id] };
+        });
+    }
+);
+
+function convertProductToViewProduct(product, categoryById) {
+    return update(product, {
+        categoryName: {$set: categoryById[product.categoryId].name},
+        features: {$apply: features => features
+            .map(f => f.substring(0,1))
+            .reduce((acc, cval, idx, arr) =>
+                (idx + 1 === arr.length) ? (acc + cval) : (acc + cval + ':'), '')
+        }
+    });
+}
+
+export const adminModifiedProductsSelector = createSelector(
+    [
+        adminCategoriesTreeSelector,
+        adminProductsSelector
+    ],
+    (categoryById, productById) => {
+        let createdProducts = [];
+        let modifiedProducts = [];
+        let deletedProducts = [];
+
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
+                continue;
+
+            let product = convertProductToViewProduct(productById[key], categoryById);
+            if (product.type === 'CREATED') {
+                createdProducts.push(product);
+            } else if (product.type === 'MODIFIED') {
+                modifiedProducts.push(product);
+            } else if (product.type === 'DELETED') {
+                deletedProducts.push(product);
+            }
+        }
+
+        return {
+            createdProducts: createdProducts,
+            modifiedProducts: modifiedProducts,
+            deletedProducts: deletedProducts
+        };
+    }
+);
+
+export const adminModifiedProductsSaveSelector = createSelector(
+    [
+        adminCategoriesTreeSelector,
+        adminProductsSelector
+    ],
+    (categoryById, productById) => {
+        let createdProducts = [];
+        let modifiedProducts = [];
+        let deletedProducts = [];
+
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
+                continue;
+
+            let product = productById[key];
+            if (product.type === 'CREATED') {
+                createdProducts.push(product);
+            } else if (product.type === 'MODIFIED') {
+                modifiedProducts.push(product);
+            } else if (product.type === 'DELETED') {
+                deletedProducts.push(product);
+            }
+        }
+
+        return {
+            createdProducts: createdProducts,
+            modifiedProducts: modifiedProducts,
+            deletedProducts: deletedProducts
+        };
     }
 );
