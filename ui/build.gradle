@@ -10,10 +10,14 @@ task installDependencies(type: Exec) {
 }
 
 task compileUiProduction(type: Exec) {
+    inputs.files(fileTree("$projectDir/src/emi"))
+    outputs.dir file("$projectDir/build/resources/main")
     commandLine './node_modules/.bin/webpack', '--config', 'webpack.config.production.js'
 }
 
 task compileUiDevelopment(type: Exec) {
+    inputs.files(fileTree("$projectDir/src/emi"))
+    outputs.dir file("$projectDir/build/resources/main")
     commandLine './node_modules/.bin/webpack', '--config', 'webpack.config.development.js'
 }
 

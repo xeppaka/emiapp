@@ -271,34 +271,39 @@ function deleteCategories(dispatch, categories) {
     return Promise.all(promises);
 }
 
-function createCategories(dispatch, categories) {
-    let promises = [];
-    for (let key in categories) {
-        if (!categories.hasOwnProperty(key))
-            continue;
+function updateParentCategoryIds(oldCategoryId, newCategoryId, categories) {
+    for (let i = 0; i < categories.length; i++) {
+        let category = categories[i];
+        if (category.parentCategoryId === oldCategoryId)
+            category.parentCategoryId = newCategoryId;
+    }
+}
 
-        let category = categories[key];
-        let p = fetch('api/categories', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(category)
-        }).then(response => {
+function createCategories(dispatch, categories) {
+    let currPromise = Promise.resolve();
+    for (let i = 0; i < categories.length; i++) {
+        let category = categories[i];
+        currPromise = currPromise.then(
+            () => fetch('api/categories', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(category)})
+        ).then(response => {
             if (response.status !== 201) {
                 return Promise.reject();
             } else {
                 return response.json();
             }
         }).then(createdCategory => {
+            updateParentCategoryIds(category.categoryId, createdCategory.categoryId, categories);
             dispatch(updateCategories([createdCategory]));
         });
-
-        promises.push(p);
     }
 
-    return Promise.all(promises);
+    return currPromise;
 }
 
 function modifyCategories(dispatch, categories) {
@@ -324,12 +329,19 @@ function modifyCategories(dispatch, categories) {
     }
 }
 
+function createOrderComparator(category1, category2) {
+    let id1 = category1.categoryId.substring(24);
+    let id2 = category2.categoryId.substring(24);
+
+    return Number(id1) - Number(id2);
+}
+
 export function saveCategories(saveModalId) {
     return function (dispatch, getState) {
         dispatch(saveStarted());
         let categories = modifiedCategoriesListSaveSelector(getState());
         deleteCategories(dispatch, categories.deletedCategories)
-            .then(() => createCategories(dispatch, categories.createdCategories))
+            .then(() => createCategories(dispatch, categories.createdCategories.slice().sort(createOrderComparator)))
             .then(() => modifyCategories(dispatch, categories.modifiedCategories))
             .then(() => {
                     dispatch(saveFinished());
