@@ -189,7 +189,9 @@ export const mainProductsSelector = createSelector(
         (state) => state.warehouse.products.productById
     ],
     (productIds, anchorsById, productById) => {
-        return productIds.mainProductIds.map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
+        return productIds.mainProductIds
+            .filter((id) => productById[id].features.indexOf('VISIBLE') >= 0)
+            .map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
     }
 );
 
@@ -200,7 +202,9 @@ export const posProductsSelector = createSelector(
         (state) => state.warehouse.products.productById,
     ],
     (productIds, anchorsById, productById) => {
-        return productIds.posProductIds.map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
+        return productIds.posProductIds
+            .filter((id) => productById[id].features.indexOf('VISIBLE') >= 0)
+            .map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
     }
 );
 
