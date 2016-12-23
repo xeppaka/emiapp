@@ -12,11 +12,15 @@ buildscript {
 plugins {
     id 'java'
 }
-
 apply plugin: 'spring-boot'
 
 repositories {
     jcenter()
+}
+
+jar {
+    version '0.0.1'
+    baseName 'emiapp'
 }
 
 dependencies {

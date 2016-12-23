@@ -1,0 +1,38 @@
+repositories {
+    jcenter()
+}
+
+configurations {
+    h2
+}
+
+dependencies {
+    h2 'com.h2database:h2:1.4.193'
+}
+
+task copyDockerFile(type: Copy) {
+    from projectDir include 'Dockerfile'
+    into "$buildDir/docker"
+}
+
+task copyEmiApp(type: Copy) {
+    from "${project(':server').buildDir}/libs"
+    include 'emiapp-*.jar'
+    into "$buildDir/docker/emiapp"
+}
+
+task copyH2Jar(type: Copy) {
+    from configurations.h2
+    into "$buildDir/docker/h2"
+}
+
+task copySupervisordConf(type: Copy) {
+    from "$projectDir"
+    include 'emiapp.ini'
+    into "$buildDir/docker"
+}
+
+task buildDockerImage(type: Exec, dependsOn: [copyDockerFile, copyEmiApp, copyH2Jar, copySupervisordConf]) {
+    workingDir "$buildDir/docker"
+    commandLine 'docker', 'build', '-t', 'xeppaka/emiapp', '.'
+}
