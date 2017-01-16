@@ -10,14 +10,17 @@ class AdminMain extends React.Component {
     render() {
         return (
             <div>
-                <ul className='nav nav-tabs'>
-                    <li className='nav-item'>
-                        <Link className={'nav-link'} to={'/admin/products'}>Products</Link>
-                    </li>
-                    <li className='nav-item'>
-                        <Link className={'nav-link'} to={'/admin/categories'}>Categories</Link>
-                    </li>
-                </ul>
+                <nav className='navbar navbar-light bg-faded'>
+                    <ul className='nav navbar-nav'>
+                        <li className='nav-item'>
+                            <Link className={'nav-link'} to={'/admin/products'}>Products</Link>
+                        </li>
+                        <li className='nav-item'>
+                            <Link className={'nav-link'} to={'/admin/categories'}>Categories</Link>
+                        </li>
+                        <button className='btn btn-primary float-xs-right' onClick={this.props.onLogout}>Logout</button>
+                    </ul>
+                </nav>
                 <ModalsContainer />
                 { this.props.children }
             </div>

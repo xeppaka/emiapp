@@ -2,8 +2,6 @@ plugins {
     id 'java'
 }
 
-apply from: 'default-properties.gradle'
-
 task installDependencies(type: Exec) {
     commandLine 'npm', 'install'
     inputs.files file('package.json')
@@ -11,87 +9,18 @@ task installDependencies(type: Exec) {
 
 task compileUiProduction(type: Exec) {
     inputs.files(fileTree("$projectDir/src/emi"))
-    outputs.dir(file("$buildDir/tmp/emi-app-ui"))
+    outputs.dir(file("${sourceSets.main.output.resourcesDir}/static"))
     commandLine './node_modules/.bin/webpack', '--config', 'webpack.config.production.js'
 }
 
 task compileUiDevelopment(type: Exec) {
     inputs.files(fileTree("$projectDir/src/emi"))
-    outputs.dir(file("$buildDir/tmp/emi-app-ui"))
+    outputs.dir(file("${sourceSets.main.output.resourcesDir}/static"))
     commandLine './node_modules/.bin/webpack', '--config', 'webpack.config.development.js'
 }
 
 task runDevServer(type: Exec) {
-    commandLine './node_modules/.bin/webpack-dev-server', '--content-base', 'build/tmp/emi-app-ui', '--config', 'webpack.config.development.js'
-}
-
-import groovy.text.SimpleTemplateEngine
-task createNginxConfig(group: 'proxy') {
-    inputs.files files("$projectDir/nginx-template.conf", "$rootDir/gradle.properties")
-    outputs.file file("$buildDir/tmp/nginx/nginx.conf")
-    outputs.file file("$buildDir/tmp/nginx/temp/proxy_temp")
-    outputs.file file("$buildDir/tmp/nginx/logs")
-
-    doLast {
-        def nginxDir = "$buildDir/tmp/nginx".replace("\\", "/")
-
-        def binding = [
-                nginxDir:          nginxDir,
-                proxyListenPort:   project.ext.proxyListenPort,
-                proxyRemotePort:   project.ext.proxyRemotePort,
-                proxyRemoteServer: project.ext.proxyRemoteServer
-        ]
-
-        def engine = new SimpleTemplateEngine()
-        def templateText = new File("$projectDir/nginx-template.conf").text
-        def configText = engine.createTemplate(templateText).make(binding)
-        def nginxFile = new File(nginxDir)
-
-        nginxFile.mkdirs()
-        if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-            def proxyTempDirFile = new File("$buildDir/tmp/nginx/temp/proxy_temp")
-            def logsDirFile = new File("$buildDir/tmp/nginx/logs")
-
-            proxyTempDirFile.mkdirs()
-            logsDirFile.mkdirs()
-        }
-
-        new File(nginxFile, 'nginx.conf').write(configText.toString())
-    }
-}
-
-task startNginxProxy(type: Exec, group: 'proxy', dependsOn: createNginxConfig) {
-    def escapedBuildDir = "$buildDir".replace("\\", "/")
-    commandLine 'nginx', '-g', "pid '$escapedBuildDir/tmp/nginx.pid';", '-p', "$escapedBuildDir/tmp/nginx", '-c', "$escapedBuildDir/tmp/nginx/nginx.conf"
-
-    doLast {
-        println 'Started nginx server...'
-    }
-}
-
-task reloadNginxConfigLive(type: Exec, group: 'proxy', dependsOn: createNginxConfig) {
-    def escapedBuildDir = "$buildDir".replace("\\", "/")
-    commandLine 'nginx', '-g', "pid '$escapedBuildDir/tmp/nginx.pid';", '-p', "$escapedBuildDir/tmp/nginx", '-c', "$escapedBuildDir/tmp/nginx/nginx.conf", '-s', 'reload'
-
-    doLast {
-        println 'Reloaded configuration for nginx'
-    }
-}
-
-task stopNginxProxy(type: Exec, group: 'proxy') {
-    def escapedBuildDir = "$buildDir".replace("\\", "/")
-    commandLine 'nginx', '-g', "pid '$escapedBuildDir/tmp/nginx.pid';", '-p', "$escapedBuildDir/tmp/nginx", '-c', "$escapedBuildDir/tmp/nginx/nginx.conf", '-s', 'quit'
-
-    doLast {
-        println 'Stopping nginx server...'
-    }
-}
-
-processResources {
-    from ("$buildDir/tmp/emi-app-ui") {
-        include '**'
-        into 'public'
-    }
+    commandLine './node_modules/.bin/webpack-dev-server', '--content-base', 'build/resources/main/static', '--config', 'webpack.config.development.js'
 }
 
 processResources.dependsOn compileUiProduction

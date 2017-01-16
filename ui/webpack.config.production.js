@@ -1,14 +1,15 @@
-var webpack = require('webpack');
+let webpack = require('webpack');
 // this plugin generates index.html file from configuration
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
 // this plugin allows to extract all compiled CSS into one or several files
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry:  ['babel-polyfill', './src/emi/index.js'],
     output: {
-        path:     'build/tmp/emi-app-ui',
-        filename: 'app.js'
+        path:     'build/resources/main/static',
+        filename: 'app.js',
+        publicPath: '/'
     },
     plugins: [
         new HtmlWebpackPlugin({

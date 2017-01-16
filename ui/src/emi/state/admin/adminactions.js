@@ -1,4 +1,5 @@
 import update from 'react-addons-update';
+import {replace} from 'react-router-redux';
 import {
     adminCategoriesTreeSelector,
     modifiedCategoriesListSaveSelector
@@ -7,6 +8,8 @@ import {adminModifiedProductsSaveSelector} from '../selectors/productsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
 import {updateCategories, removeCategories} from '../categories/categoriesactions';
+import {loadWarehouse} from '../warehouse/warehouseactions';
+import {checkLoggedIn} from '../security/securityactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
@@ -571,5 +574,31 @@ export function setCategoryWeight(categoryId, weight) {
         });
 
         compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCategory);
+    };
+}
+
+export function bootstrapAdmin() {
+    return function (dispatch, getState) {
+        let loggedInPromise = getState().security.loggedInAuthToken !== null ?
+            Promise.resolve() :
+            dispatch(checkLoggedIn());
+
+        return loggedInPromise.then(
+            () => dispatch(loadWarehouse()),
+            () => {
+                dispatch(replace('/login'));
+                return Promise.resolve();
+            }
+        )
+    };
+}
+
+export function relocateIfLoggedIn() {
+    return function (dispatch, getState) {
+        let loggedIn = getState().security.loggedInAuthToken !== null;
+
+        if (loggedIn) {
+            dispatch(replace('/admin'));
+        }
     };
 }

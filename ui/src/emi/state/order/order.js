@@ -5,7 +5,7 @@ const initialOrderState = {
     email: '',
     country: 'CZ',
     submitting: false
-}
+};
 
 function order(state = initialOrderState, action) {
     switch (action.type) {
