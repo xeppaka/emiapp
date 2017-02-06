@@ -18,6 +18,7 @@ import com.xeppaka.ddd.events.BaseEvent;
         @JsonSubTypes.Type(value = ProductNoteChanged.class, name = "PRODUCT_NOTE_CHANGED"),
         @JsonSubTypes.Type(value = ProductFeaturesChanged.class, name = "PRODUCT_FEATURES_CHANGED"),
         @JsonSubTypes.Type(value = ProductMultiplicityChanged.class, name = "PRODUCT_MULTIPLICITY_CHANGED"),
+        @JsonSubTypes.Type(value = ProductImageChanged.class, name = "PRODUCT_IMAGE_CHANGED"),
         @JsonSubTypes.Type(value = CategoryCreated.class, name = "CATEGORY_CREATED"),
         @JsonSubTypes.Type(value = CategoryDeleted.class, name = "CATEGORY_DELETED"),
         @JsonSubTypes.Type(value = CategoryNameChanged.class, name = "CATEGORY_NAME_CHANGED"),

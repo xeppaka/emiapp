@@ -153,13 +153,15 @@ export function saveFinished() {
 
 function deleteProducts(dispatch, products) {
     let promises = [];
+    let authToken = localStorage.getItem('auth-token');
     for (let i = 0; i < products.length; i++) {
         let productId = products[i].productId;
-        let p = fetch('api/products/' + productId, {
+        let p = fetch('/api/products/' + productId, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             }
         }).then(response => {
             if (response.status !== 204) {
@@ -177,16 +179,18 @@ function deleteProducts(dispatch, products) {
 
 function createProducts(dispatch, products) {
     let promises = [];
+    let authToken = localStorage.getItem('auth-token');
     for (let key in products) {
         if (!products.hasOwnProperty(key))
             continue;
 
         let product = products[key];
-        let p = fetch('api/products', {
+        let p = fetch('/api/products', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             },
             body: JSON.stringify(product)
         }).then(response => {
@@ -207,11 +211,13 @@ function createProducts(dispatch, products) {
 
 function modifyProducts(dispatch, products) {
     if (products.length > 0) {
-        return fetch('api/products', {
+        let authToken = localStorage.getItem('auth-token');
+        return fetch('/api/products', {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             },
             body: JSON.stringify(products)
         }).then(response => {
@@ -249,13 +255,15 @@ export function saveProducts(saveModalId) {
 
 function deleteCategories(dispatch, categories) {
     let promises = [];
+    let authToken = localStorage.getItem('auth-token');
     for (let i = 0; i < categories.length; i++) {
         let categoryId = categories[i].categoryId;
-        let p = fetch('api/categories/' + categoryId, {
+        let p = fetch('/api/categories/' + categoryId, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             }
         }).then(response => {
             if (response.status !== 200) {
@@ -284,14 +292,16 @@ function updateParentCategoryIds(oldCategoryId, newCategoryId, categories) {
 
 function createCategories(dispatch, categories) {
     let currPromise = Promise.resolve();
+    let authToken = localStorage.getItem('auth-token');
     for (let i = 0; i < categories.length; i++) {
         let category = categories[i];
         currPromise = currPromise.then(
-            () => fetch('api/categories', {
+            () => fetch('/api/categories', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-auth-token': authToken
                 },
                 body: JSON.stringify(category)})
         ).then(response => {
@@ -311,11 +321,13 @@ function createCategories(dispatch, categories) {
 
 function modifyCategories(dispatch, categories) {
     if (categories.length > 0) {
-        return fetch('api/categories', {
+        let authToken = localStorage.getItem('auth-token');
+        return fetch('/api/categories', {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             },
             body: JSON.stringify(categories)
         }).then(response => {

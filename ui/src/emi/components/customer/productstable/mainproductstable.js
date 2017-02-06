@@ -68,7 +68,8 @@ class MainProductsTable extends React.Component {
                     <thead>
                         <tr>
                             <th scope='row' style={{width:'2%'}}>#</th>
-                            <th style={{width:'33%'}}>Product Name</th>
+                            <th style={{width:'10%'}}>Image</th>
+                            <th style={{width:'23%'}}>Product Name</th>
                             <th style={{width:'13%'}}>Retail price<br />(without VAT, in &#8364;)</th>
                             <th style={{width:'13%'}}>Discount price<br />(-50%, without VAT, in &#8364;)</th>
                             <th style={{width:'13%'}}>Quantity</th>

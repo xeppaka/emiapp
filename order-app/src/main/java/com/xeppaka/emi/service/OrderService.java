@@ -1,7 +1,6 @@
 package com.xeppaka.emi.service;
 
-import com.xeppaka.emi.domain.order.Order;
-import org.springframework.stereotype.Service;
+import com.xeppaka.emi.domain.value.Order;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -13,11 +12,11 @@ import javax.mail.internet.MimeMessage;
 import java.text.MessageFormat;
 import java.util.Properties;
 
-/**
- *
- */
+import org.springframework.stereotype.Service;
+
+@Service
 public class OrderService {
-    public void createOrder(Order order) throws MessagingException {
+    public void sendOrder(Order order) throws MessagingException {
         final Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.yandex.com");
         properties.put("mail.smtp.auth", "true");

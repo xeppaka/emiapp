@@ -11,7 +11,7 @@ class OrderModal extends React.Component {
     }
 
     onSubmit(event) {
-        this.props.onSubmitOrder();
+        this.props.onSubmitOrder(this.props.modalId);
     }
 
     onEmailChanged(event) {

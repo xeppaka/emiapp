@@ -1,5 +1,7 @@
 package com.xeppaka.emi.service;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.DeleteProductCommand;
@@ -27,10 +29,11 @@ public class ProductsService {
 
     public ProductDto createProduct(UserName userName, String name, int price, int multiplicity,
                               String note, UUID categoryId, Collection<ProductFeature> features,
-                              int weight) throws EmiWarehouseException {
+                              String image, int weight) throws EmiWarehouseException {
         try {
             final UUID productId = UUID.randomUUID();
-            final CreateProductCommand createProductCommand = new CreateProductCommand(productId, name, price, multiplicity, note, categoryId, features, weight);
+            final CreateProductCommand createProductCommand = new CreateProductCommand(productId, name, price, multiplicity,
+                    note, categoryId, features, image, weight);
             emiCommandHandler.handle(userName, createProductCommand);
 
             return productsRepository.getProduct(productId);
@@ -45,7 +48,7 @@ public class ProductsService {
                 emiCommandHandler.handle(userName,
                         new UpdateProductCommand(product.getProductId(), product.getName(), product.getPrice(),
                                 product.getMultiplicity(), product.getCategoryId(), product.getFeatures(),
-                                product.getNote(), product.getWeight()));
+                                product.getImage(), product.getNote(), product.getWeight()));
             }
 
             return productsRepository.getProducts(products.stream().map(ProductDto::getProductId).collect(Collectors.toList()));
@@ -56,6 +59,10 @@ public class ProductsService {
 
     public List<ProductDto> getProducts() {
         return productsRepository.getProducts();
+    }
+
+    public ProductDto getProduct(UUID id) {
+        return productsRepository.getProduct(id);
     }
 
     public void deleteProduct(UserName userName, UUID productId) throws EmiWarehouseException {

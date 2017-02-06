@@ -21,9 +21,11 @@ public class Product extends BaseEntity {
     private int multiplicity;
     private int weight;
     private Set<ProductFeature> productFeatures = EnumSet.noneOf(ProductFeature.class);
+    private String image;
 
     public Product(UUID id, String name, int price, int multiplicity,
-                   UUID categoryId, String note, int weight, Collection<ProductFeature> features) {
+                   UUID categoryId, String note, int weight, Collection<ProductFeature> features,
+                   String image) {
         super(id);
         setName(name);
         setPrice(price);
@@ -31,6 +33,7 @@ public class Product extends BaseEntity {
         setNote(note);
         setWeight(weight);
         setFeatures(features);
+        setImage(image);
         setMultiplicity(multiplicity);
     }
 
@@ -80,6 +83,14 @@ public class Product extends BaseEntity {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getWeight() {

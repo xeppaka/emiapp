@@ -28,6 +28,7 @@ class MainProductItem extends React.Component {
 
         return (<tr>
             <th scope="row">{this.props.idx}<div ref={'vis'}></div></th>
+            <td><img height='64' width='64' src="http://emischool.com/upload/iblock/be8/be8d8ab711c9f8ad15180351b3fd6696.jpeg" /></td>
             <td style={{width: '300px'}}>
                 {isNew ? <span style={{color: '#e72626'}}>NEW!&nbsp;</span> : null}
                 {!isAvailable ? <span style={{fontWeight: 'bold'}}>NOT AVAILABLE!&nbsp;</span> : null}

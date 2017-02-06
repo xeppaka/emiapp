@@ -70,9 +70,16 @@ public class EmiEventPersistenceListener implements EventListener {
             case PRODUCT_NOTE_CHANGED:
                 onProductNoteChanged((ProductNoteChanged) emiEvent);
                 break;
+            case PRODUCT_IMAGE_CHANGED:
+                onProductImageChanged((ProductImageChanged) emiEvent);
+                break;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event {0}.", event));
         }
+    }
+
+    private void onProductImageChanged(ProductImageChanged productImageChanged) {
+        productsRepository.updateProductImage(productImageChanged.getProductId(), productImageChanged.getImage());
     }
 
     private void onProductNoteChanged(ProductNoteChanged productNoteChanged) {
@@ -120,6 +127,7 @@ public class EmiEventPersistenceListener implements EventListener {
                 productCreated.getNote(),
                 productCreated.getCategoryId(),
                 productCreated.getFeatures(),
+                productCreated.getImage(),
                 productCreated.getWeight());
     }
 

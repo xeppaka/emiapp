@@ -62,6 +62,21 @@ public class CategoriesService {
         return categoriesRepository.getCategories();
     }
 
+    public CategoryDto getCategory(UUID id) {
+        return categoriesRepository.getCategory(id);
+    }
+
+    public boolean isCategoryUnderPos(UUID id) {
+        if (id.equals(Category.ROOT_CATEGORY_ID)) {
+            return false;
+        }
+
+        final CategoryDto categoryDto = getCategory(id);
+        final UUID parentCategoryId = categoryDto.getParentCategoryId();
+
+        return (categoryDto.getName().equals("POS") && parentCategoryId.equals(Category.ROOT_CATEGORY_ID)) || isCategoryUnderPos(parentCategoryId);
+    }
+
     public DeleteCategoryResult deleteCategory(UserName userName, UUID categoryId) throws EmiWarehouseException {
         try {
             final List<UUID> categoryIdsBefore = categoriesRepository.getCategoryIds();

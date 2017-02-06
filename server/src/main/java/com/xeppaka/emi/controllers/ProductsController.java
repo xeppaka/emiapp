@@ -52,6 +52,7 @@ public class ProductsController {
                 product.getNote(),
                 product.getCategoryId(),
                 product.getFeatures(),
+                product.getImage(),
                 product.getWeight());
 
         final URI uri = java.net.URI.create(URI + "/" + createdProduct.getProductId());

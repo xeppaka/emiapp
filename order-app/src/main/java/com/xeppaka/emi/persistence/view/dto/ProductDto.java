@@ -1,12 +1,12 @@
 package com.xeppaka.emi.persistence.view.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.xeppaka.emi.domain.ProductFeature;
-
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.xeppaka.emi.domain.ProductFeature;
 
 public class ProductDto {
     private final UUID productId;
@@ -16,6 +16,7 @@ public class ProductDto {
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features = EnumSet.noneOf(ProductFeature.class);
+    private final String image;
     private final int weight;
 
     @JsonCreator
@@ -25,6 +26,7 @@ public class ProductDto {
                       @JsonProperty("multiplicity") int multiplicity,
                       @JsonProperty("note") String note,
                       @JsonProperty("features") Set<ProductFeature> features,
+                      @JsonProperty("image") String image,
                       @JsonProperty("categoryId") UUID categoryId,
                       @JsonProperty("weight") int weight) {
         this.productId = productId;
@@ -33,6 +35,7 @@ public class ProductDto {
         this.multiplicity = multiplicity;
         this.note = note;
         this.features.addAll(features);
+        this.image = image;
         this.categoryId = categoryId;
         this.weight = weight;
     }
@@ -65,6 +68,10 @@ public class ProductDto {
         return features;
     }
 
+    public String getImage() {
+        return image;
+    }
+
     public int getWeight() {
         return weight;
     }
@@ -81,9 +88,10 @@ public class ProductDto {
         if (weight != that.weight) return false;
         if (!productId.equals(that.productId)) return false;
         if (!name.equals(that.name)) return false;
-        if (!note.equals(that.note)) return false;
-        if (!categoryId.equals(that.categoryId)) return false;
-        return features.equals(that.features);
+        if (note != null ? !note.equals(that.note) : that.note != null) return false;
+        if (categoryId != null ? !categoryId.equals(that.categoryId) : that.categoryId != null) return false;
+        if (!features.equals(that.features)) return false;
+        return image != null ? image.equals(that.image) : that.image == null;
     }
 
     @Override
@@ -92,9 +100,10 @@ public class ProductDto {
         result = 31 * result + name.hashCode();
         result = 31 * result + price;
         result = 31 * result + multiplicity;
-        result = 31 * result + note.hashCode();
-        result = 31 * result + categoryId.hashCode();
+        result = 31 * result + (note != null ? note.hashCode() : 0);
+        result = 31 * result + (categoryId != null ? categoryId.hashCode() : 0);
         result = 31 * result + features.hashCode();
+        result = 31 * result + (image != null ? image.hashCode() : 0);
         result = 31 * result + weight;
         return result;
     }

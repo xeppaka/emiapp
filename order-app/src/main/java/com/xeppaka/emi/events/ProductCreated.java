@@ -1,6 +1,7 @@
 package com.xeppaka.emi.events;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.xeppaka.emi.domain.ProductFeature;
 import org.apache.commons.lang3.Validate;
@@ -10,6 +11,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductCreated extends EmiEvent {
     private final UUID productId;
     private final String name;
@@ -18,6 +20,7 @@ public class ProductCreated extends EmiEvent {
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
+    private final String image;
     private final int weight;
 
     @JsonCreator
@@ -28,6 +31,7 @@ public class ProductCreated extends EmiEvent {
                           @JsonProperty("note") String note,
                           @JsonProperty("categoryId") UUID categoryId,
                           @JsonProperty("features") Collection<ProductFeature> features,
+                          @JsonProperty("image") String image,
                           @JsonProperty("weight") int weight) {
         super(EmiEventType.PRODUCT_CREATED);
         Validate.notNull(productId);
@@ -47,6 +51,7 @@ public class ProductCreated extends EmiEvent {
         } else {
             this.features = EnumSet.copyOf(features);
         }
+        this.image = image == null ? "" : image;
         this.weight = weight;
     }
 
@@ -76,6 +81,10 @@ public class ProductCreated extends EmiEvent {
 
     public Set<ProductFeature> getFeatures() {
         return features;
+    }
+
+    public String getImage() {
+        return image;
     }
 
     public int getWeight() {
