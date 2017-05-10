@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import AdminProductsTableRow from './adminproductstablerow';
+import AdminProductsTableModifiedRow from './adminproductstablemodifiedrow';
 
 class AdminProductsTable extends React.Component {
     constructor(props) {
@@ -8,25 +9,43 @@ class AdminProductsTable extends React.Component {
 
     renderProducts() {
         let productsItems = [];
+        let currentModifyingProductId = this.props.currentModifyingProductId;
         let products = this.props.productsList;
         let productsLength = products.length;
 
         for (let i = 0; i < productsLength; i++) {
             let product = products[i].product;
 
-            productsItems.push(<AdminProductsTableRow
-                key={product.productId} idx={i + 1}
-                product={product}
-                categoriesList={this.props.categoriesList}
-                onProductNameChanged={this.props.onProductNameChanged}
-                onProductPriceChanged={this.props.onProductPriceChanged}
-                onProductCategoryChanged={this.props.onProductCategoryChanged}
-                onProductMultiplicityChanged={this.props.onProductMultiplicityChanged}
-                onProductNoteChanged={this.props.onProductNoteChanged}
-                onProductWeightChanged={this.props.onProductWeightChanged}
-                onProductFeatureChanged={this.props.onProductFeatureChanged}
-                onDeleteProduct={this.props.onDeleteProduct}
-            />)
+            if (currentModifyingProductId !== null && product.productId === currentModifyingProductId) {
+                productsItems.push(<AdminProductsTableModifiedRow
+                    key={product.productId} idx={i + 1}
+                    product={product}
+                    categoriesList={this.props.categoriesList}
+                    onProductNameChanged={this.props.onProductNameChanged}
+                    onProductPriceChanged={this.props.onProductPriceChanged}
+                    onProductCategoryChanged={this.props.onProductCategoryChanged}
+                    onProductMultiplicityChanged={this.props.onProductMultiplicityChanged}
+                    onProductNoteChanged={this.props.onProductNoteChanged}
+                    onProductWeightChanged={this.props.onProductWeightChanged}
+                    onProductFeatureChanged={this.props.onProductFeatureChanged}
+                    onDeleteProduct={this.props.onDeleteProduct}
+                />)
+            } else {
+                productsItems.push(<AdminProductsTableRow
+                    key={product.productId} idx={i + 1}
+                    product={product}
+                    categoriesList={this.props.categoriesList}
+                    onProductNameChanged={this.props.onProductNameChanged}
+                    onProductPriceChanged={this.props.onProductPriceChanged}
+                    onProductCategoryChanged={this.props.onProductCategoryChanged}
+                    onProductMultiplicityChanged={this.props.onProductMultiplicityChanged}
+                    onProductNoteChanged={this.props.onProductNoteChanged}
+                    onProductWeightChanged={this.props.onProductWeightChanged}
+                    onProductFeatureChanged={this.props.onProductFeatureChanged}
+                    onDeleteProduct={this.props.onDeleteProduct}
+                    onSetCurrentModifyingProduct={this.props.onSetCurrentModifyingProduct}
+                />)
+            }
         }
 
         return productsItems;

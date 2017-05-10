@@ -6,7 +6,7 @@ import { createProduct } from '../state/admin/adminactions';
 const mapStateToProps = (state) => {
     return {
         categoriesList: categoriesListSelector(state),
-        saving: state.admin.saving
+        saving: state.emiapp.admin.saving
     }
 };
 

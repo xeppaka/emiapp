@@ -27,6 +27,8 @@ export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
 export const SET_NOTIFICATION_TEXT = 'SET_NOTIFICATION_TEXT';
 export const SAVE_STARTED = 'SAVE_STARTED';
 export const SAVE_FINISHED = 'SAVE_FINISHED';
+export const SET_CURRENT_MODIFYING_PRODUCT_ID = "SET_CURRENT_MODIFYING_PRODUCT_ID";
+export const CLEAR_CURRENT_MODIFYING_PRODUCT_ID = "CLEAR_CURRENT_MODIFYING_PRODUCT_ID";
 
 export function resetProducts() {
     return {type: ADMIN_PRODUCTS_RESET};
@@ -51,7 +53,7 @@ function removeProductDeleted(productId) {
 export function deleteProduct(productId) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
+        let productById = state.emiapp.warehouse.products.productById;
 
         if (productById.hasOwnProperty(productId)) {
             dispatch(setProductDeleted(productId));
@@ -73,7 +75,7 @@ function removeCategoryDeleted(categoryId) {
 export function deleteCategory(categoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
 
         if (categoryById.hasOwnProperty(categoryId)) {
             dispatch(setCategoryDeleted(categoryId));
@@ -402,8 +404,8 @@ function compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct) 
 export function setProductName(productId, name) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -420,8 +422,8 @@ export function setProductName(productId, name) {
 export function setProductPrice(productId, price) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -438,8 +440,8 @@ export function setProductPrice(productId, price) {
 export function setProductCategory(productId, categoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -455,8 +457,8 @@ export function setProductCategory(productId, categoryId) {
 export function setProductFeature(productId, featureName, enabled) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -485,8 +487,8 @@ export function setProductFeature(productId, featureName, enabled) {
 export function setProductMultiplicity(productId, multiplicity) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -502,8 +504,8 @@ export function setProductMultiplicity(productId, multiplicity) {
 export function setProductNote(productId, note) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -519,8 +521,8 @@ export function setProductNote(productId, note) {
 export function setProductWeight(productId, weight) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -547,9 +549,9 @@ function compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCatego
 export function setCategoryName(categoryId, name) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
         let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
-        let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
+        let modifiedCategory = state.emiapp.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.emiapp.admin.modifiedCategoryById[categoryId] : null;
         modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
         modifiedCategory = update(modifiedCategory, {
             name: {$set: name}
@@ -562,9 +564,9 @@ export function setCategoryName(categoryId, name) {
 export function setCategoryParentId(categoryId, parentCategoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
         let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
-        let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
+        let modifiedCategory = state.emiapp.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.emiapp.admin.modifiedCategoryById[categoryId] : null;
         modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
         modifiedCategory = update(modifiedCategory, {
             parentCategoryId: {$set: parentCategoryId}
@@ -577,9 +579,9 @@ export function setCategoryParentId(categoryId, parentCategoryId) {
 export function setCategoryWeight(categoryId, weight) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
         let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
-        let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
+        let modifiedCategory = state.emiapp.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.emiapp.admin.modifiedCategoryById[categoryId] : null;
         modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
         modifiedCategory = update(modifiedCategory, {
             weight: {$set: weight}
@@ -590,27 +592,15 @@ export function setCategoryWeight(categoryId, weight) {
 }
 
 export function bootstrapAdmin() {
-    return function (dispatch, getState) {
-        let loggedInPromise = getState().security.loggedInAuthToken !== null ?
-            Promise.resolve() :
-            dispatch(checkLoggedIn());
-
-        return loggedInPromise.then(
-            () => dispatch(loadWarehouse()),
-            () => {
-                dispatch(replace('/login'));
-                return Promise.resolve();
-            }
-        )
-    };
+    return function(dispatch) {
+        return dispatch(loadWarehouse());
+    }
 }
 
-export function relocateIfLoggedIn() {
-    return function (dispatch, getState) {
-        let loggedIn = getState().security.loggedInAuthToken !== null;
+export function setCurrentModifyingProduct(productId) {
+    return {type: SET_CURRENT_MODIFYING_PRODUCT_ID, productId: productId};
+}
 
-        if (loggedIn) {
-            dispatch(replace('/admin'));
-        }
-    };
+export function clearCurrentModifyingProduct(productId) {
+    return {type: CLEAR_CURRENT_MODIFYING_PRODUCT_ID};
 }

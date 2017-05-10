@@ -6,7 +6,7 @@ import ProductsMenu from '../components/customer/productsmenu/productsmenu';
 const mapStateToProps = (state) => {
     return {
         menu: menuSelector(state),
-        selectedNodeId: state.menu.selectedNodeId.split('.')
+        selectedNodeId: state.emiapp.menu.selectedNodeId.split('.')
     }
 };
 

@@ -3,61 +3,52 @@ import React from 'react';
 
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route, browserHistory, hashHistory } from 'react-router';
-import { createStore, applyMiddleware } from 'redux';
+import { Route } from 'react-router';
+import PrivateRouteContainer from './containers/privateroutecontainer';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { routerMiddleware } from 'react-router-redux';
-import createLogger from 'redux-logger';
+import createHistory from 'history/createBrowserHistory';
+import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux';
+import { HashRouter } from 'react-router-dom';
+import { createLogger } from 'redux-logger';
 
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-import CustomerMain from './components/customer/customermain';
+import CustomerMainContainer from './containers/customermaincontainer';
 import AdminMainContainer from './containers/adminmaincontainer';
 import LoginContainer from './containers/logincontainer';
-import AdminProductsTabContainer from './containers/adminproducttabcontainer';
-import AdminCategoriesTabContainer from './containers/admincategorytabcontainer';
 
 import emiApp from './state/emiapp';
-import { bootstrapCustomer } from './state/warehouse/warehouseactions';
-import { bootstrapAdmin, relocateIfLoggedIn } from './state/admin/adminactions';
 
 import './index.scss';
 
 const loggerMiddleware = createLogger();
-const reduxRouterMiddleware = routerMiddleware(browserHistory);
 
-let store = createStore(
-    emiApp,
+const history = createHistory();
+const roterMiddleware = routerMiddleware(history);
+
+const store = createStore(
+    combineReducers({
+        emiapp: emiApp,
+        router: routerReducer
+    }),
     applyMiddleware(
         thunkMiddleware,
         loggerMiddleware,
-        reduxRouterMiddleware
+        roterMiddleware
     )
 );
 
-function enterCustomer() {
-    store.dispatch(bootstrapCustomer());
-}
-
-function enterAdmin(nextState, replace) {
-    store.dispatch(bootstrapAdmin());
-}
-
-function enterLogin() {
-    store.dispatch(relocateIfLoggedIn());
-}
-
 render(
     <Provider store={store}>
-        <Router history={browserHistory}>
-            <Route path="/" component={CustomerMain} onEnter={enterCustomer}/>
-            <Route path="admin" component={AdminMainContainer} onEnter={enterAdmin}>
-                <Route path="products" component={AdminProductsTabContainer}/>
-                <Route path="categories" component={AdminCategoriesTabContainer}/>
-            </Route>
-            <Route path="login" component={LoginContainer} onEnter={enterLogin}/>
-        </Router>
+        <HashRouter history={history}>
+            <div>
+                <Route exact path="/" component={CustomerMainContainer} />
+                <PrivateRouteContainer path="/admin" component={AdminMainContainer} />
+                <Route path="/login" component={LoginContainer} />
+            </div>
+        </HashRouter>
     </Provider>,
     document.getElementById('applicationContainer')
 );

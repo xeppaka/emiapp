@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import {replace} from 'react-router-redux';
+import { replace } from 'react-router-redux';
 
 export const SET_FORM_USERNAME = 'SET_FORM_USERNAME';
 export const SET_FORM_PASSWORD = 'SET_FORM_PASSWORD';
@@ -19,14 +19,10 @@ export function setFormPassword(password) {
 export function formLogin() {
     return function (dispatch, getState) {
         let state = getState();
-        let userName = state.security.form.userName;
-        let password = state.security.form.password;
+        let userName = state.emiapp.security.form.userName;
+        let password = state.emiapp.security.form.password;
 
-        dispatch(login(userName, password))
-            .then(
-                () => dispatch(replace('/admin')),
-                () => dispatch(replace('/login'))
-            );
+        dispatch(login(userName, password));
     }
 }
 
@@ -66,10 +62,9 @@ export function login(userName, password) {
                     localStorage.setItem('auth-token', authToken);
                     dispatch(loggedIn(userName, authToken));
                     dispatch(loginLogoutFinished());
-                    return Promise.resolve();
+                    dispatch(replace('#admin'));
                 } else {
                     dispatch(loginLogoutFinished());
-                    return Promise.reject();
                 }
             }
         );
@@ -81,7 +76,7 @@ export function logout() {
         dispatch(loginLogoutStarted());
         localStorage.removeItem('auth-token');
         let state = getState();
-        let authToken = state.security.loggedInAuthToken;
+        let authToken = state.emiapp.security.loggedInAuthToken;
 
         if (authToken !== null) {
             fetch('/api/security/logout', {
@@ -94,13 +89,11 @@ export function logout() {
                 response => {
                     dispatch(loggedOut());
                     dispatch(loginLogoutFinished());
-                    dispatch(replace('/login'));
                 }
             );
         } else {
             dispatch(loggedOut());
             dispatch(loginLogoutFinished());
-            dispatch(replace('/login'));
         }
     }
 }
@@ -122,13 +115,13 @@ export function checkLoggedIn() {
         }).then(
             response => {
                 if (response.status === 200) {
-                    return response.text();
+                    return Promise.resolve(response.text());
                 } else {
                     dispatch(loggedOut());
                     return Promise.reject();
                 }
         }).then(
-            (userName) => {
+            userName => {
                 dispatch(loggedIn(userName, authToken));
                 return Promise.resolve();
             }

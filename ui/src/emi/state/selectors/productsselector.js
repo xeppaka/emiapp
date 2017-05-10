@@ -142,7 +142,7 @@ export const productAnchorsSelector = createSelector(
 export const mainTotalWithoutDiscountSelector = createSelector(
     [
         productIdsSelector,
-        (state) => state.warehouse.products.productById
+        (state) => state.emiapp.warehouse.products.productById
     ],
     (productIds, productById) => {
         return productIds.mainProductIds.reduce((prev, id) => { return prev + (productById[id].price * productById[id].quantity); }, 0);
@@ -152,7 +152,7 @@ export const mainTotalWithoutDiscountSelector = createSelector(
 export const posTotalWithoutDiscountSelector = createSelector(
     [
         productIdsSelector,
-        (state) => state.warehouse.products.productById
+        (state) => state.emiapp.warehouse.products.productById
     ],
     (productIds, productById) => {
         return productIds.posProductIds.reduce((prev, id) => { return prev + (productById[id].price * productById[id].quantity); }, 0);
@@ -186,7 +186,7 @@ export const mainProductsSelector = createSelector(
     [
         productIdsSelector,
         productAnchorsSelector,
-        (state) => state.warehouse.products.productById
+        (state) => state.emiapp.warehouse.products.productById
     ],
     (productIds, anchorsById, productById) => {
         return productIds.mainProductIds
@@ -199,7 +199,7 @@ export const posProductsSelector = createSelector(
     [
         productIdsSelector,
         productAnchorsSelector,
-        (state) => state.warehouse.products.productById,
+        (state) => state.emiapp.warehouse.products.productById,
     ],
     (productIds, anchorsById, productById) => {
         return productIds.posProductIds
@@ -212,7 +212,7 @@ export const posProductsWithLeftAmountSelector = createSelector(
     [
         productIdsSelector,
         productAnchorsSelector,
-        (state) => state.warehouse.products.productById,
+        (state) => state.emiapp.warehouse.products.productById,
         posAmountToOrderSelector
     ],
     (productIds, anchorsById, productById, posAmount) => {

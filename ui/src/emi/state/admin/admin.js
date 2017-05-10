@@ -7,10 +7,12 @@ import {
     SET_NOTIFICATION_TEXT, SAVE_STARTED, SAVE_FINISHED,
     ADD_NEW_PRODUCT, ADD_NEW_CATEGORY,
     SET_PRODUCT_DELETED, REMOVE_PRODUCT_DELETED,
-    SET_CATEGORY_DELETED, REMOVE_CATEGORY_DELETED
+    SET_CATEGORY_DELETED, REMOVE_CATEGORY_DELETED,
+    SET_CURRENT_MODIFYING_PRODUCT_ID, CLEAR_CURRENT_MODIFYING_PRODUCT_ID
 } from './adminactions';
 
 const initialAdminState = {
+    currentModifyingProductId: null,
     modifiedProductById: {},
     modifiedCategoryById: {},
     deletedProducts: [],
@@ -45,14 +47,6 @@ function admin(state = initialAdminState, action) {
                 deletedCategories: {$set: []},
                 nextCategoryId: {$set: 0}
             });
-        case SET_MODIFIED_PRODUCT: {
-            let modifiedProduct = action.product;
-            return update(state, {
-                modifiedProductById: {
-                    [modifiedProduct.productId]: {$set: modifiedProduct}
-                }
-            });
-        }
         case ADD_NEW_PRODUCT: {
             let product = action.product;
             product.productId = getNextSurrogateUUID(state.nextProductId);
@@ -71,6 +65,14 @@ function admin(state = initialAdminState, action) {
                     [category.categoryId]: {$set: category}
                 },
                 nextCategoryId: {$apply: id => id + 1}
+            });
+        }
+        case SET_MODIFIED_PRODUCT: {
+            let modifiedProduct = action.product;
+            return update(state, {
+                modifiedProductById: {
+                    [modifiedProduct.productId]: {$set: modifiedProduct}
+                }
             });
         }
         case REMOVE_MODIFIED_PRODUCT: {
@@ -139,6 +141,14 @@ function admin(state = initialAdminState, action) {
         case SAVE_FINISHED:
             return update(state, {
                 saving: {$set: false}
+            });
+        case SET_CURRENT_MODIFYING_PRODUCT_ID:
+            return update(state, {
+                currentModifyingProductId: {$set: action.productId}
+            });
+        case CLEAR_CURRENT_MODIFYING_PRODUCT_ID:
+            return update(state, {
+                currentModifyingProductId: {$set: null}
             });
         default:
             return state;

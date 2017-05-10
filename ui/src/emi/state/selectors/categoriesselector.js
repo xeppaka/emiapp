@@ -68,8 +68,8 @@ const createDeepEqualSelector = createSelectorCreator(
 
 export const categoriesTreeSelector = createDeepEqualSelector(
     [
-        (state) => { return { type: 'categoryById', value: state.warehouse.categories.categoryById } },
-        (state) => { return { type: 'productById', value: state.warehouse.products.productById } }
+        (state) => { return { type: 'categoryById', value: state.emiapp.warehouse.categories.categoryById } },
+        (state) => { return { type: 'productById', value: state.emiapp.warehouse.products.productById } }
     ],
     (categoryByIdVal, productByIdVal) => {
         let categoryById = categoryByIdVal.value;
@@ -90,9 +90,9 @@ export const categoriesListSelector = createSelector(
 
 export const adminCategoriesSelector = createSelector(
     [
-        (state) => state.warehouse.categories.categoryById,
-        (state) => state.admin.modifiedCategoryById,
-        (state) => state.admin.deletedCategories
+        (state) => state.emiapp.warehouse.categories.categoryById,
+        (state) => state.emiapp.admin.modifiedCategoryById,
+        (state) => state.emiapp.admin.deletedCategories
     ],
     (categoryById, modifiedCategoryById, deletedCategoryIds) => {
         let resultCategoryById = {};

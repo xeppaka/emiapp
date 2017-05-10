@@ -1,10 +1,15 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import ModalsContainer from '../../containers/modalscontainer';
+import { Route, Link } from 'react-router-dom';
+import AdminProductsTabContainer from '../../containers/adminproducttabcontainer';
+import AdminCategoriesTabContainer from '../../containers/admincategorytabcontainer';
 
 class AdminMain extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        this.props.bootstrapAdmin();
     }
 
     render() {
@@ -21,8 +26,8 @@ class AdminMain extends React.Component {
                         <button className='btn btn-primary float-xs-right' onClick={this.props.onLogout}>Logout</button>
                     </ul>
                 </nav>
-                <ModalsContainer />
-                { this.props.children }
+                <Route path="/admin/products" component={AdminProductsTabContainer}/>
+                <Route path="/admin/categories" component={AdminCategoriesTabContainer}/>
             </div>
         )
     }

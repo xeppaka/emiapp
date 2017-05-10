@@ -10,7 +10,8 @@ class AdminProductsTableRow extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
         return (this.props.categoriesList.length !== nextProps.categoriesList.length) ||
             (this.props.product !== nextProps.product) ||
-            (this.props.idx !== nextProps.idx)
+            (this.props.idx !== nextProps.idx) ||
+            (this.props.currentModifyingProductId !== nextProps.currentModifyingProductId);
     }
 
     render() {
@@ -18,48 +19,28 @@ class AdminProductsTableRow extends React.Component {
         let categoryNameIdList = this.props.categoriesList
             .map(cat => { return { name: cat.name, value: cat.categoryId } });
 
-        return (<tr>
+        return (<tr onClick={() => this.props.onSetCurrentModifyingProduct(product.productId)}>
             <th scope='row'>{this.props.idx}</th>
             <td>
-                <input type='text' className='form-control form-control-sm' value={product.name}
-                       onChange={(event) => this.props.onProductNameChanged(product.productId, event.target.value)} />
+                {product.name}
             </td>
             <td>
-                <input type='number' className='form-control form-control-sm' value={product.price}
-                       onChange={(event) => this.props.onProductPriceChanged(product.productId, Number(event.target.value))} />
+                {product.price}
             </td>
             <td>
-                <input type='number' className='form-control form-control-sm' value={product.multiplicity} min={1}
-                       onChange={(event) => {
-                           let val = Number(event.target.value);
-                           if (val >= 1) {
-                               this.props.onProductMultiplicityChanged(product.productId, val);
-                           }
-                       }} />
+                {product.multiplicity}
             </td>
             <td>
-                <NameValueSelector currentValue={product.categoryId}
-                                   nameValueList={categoryNameIdList}
-                                   onValueSelected={(categoryId) => this.props.onProductCategoryChanged(product.productId, categoryId)}
-                />
+                {product.categoryId}
             </td>
             <td>
-                <ProductFeatures features={product.features}
-                                 onProductFeatureChanged={(name, enabled) => this.props.onProductFeatureChanged(product.productId, name, enabled)}
-                />
+                {product.features}
             </td>
             <td>
-                <input type='text' className='form-control form-control-sm' value={product.note}
-                       onChange={(event) => this.props.onProductNoteChanged(product.productId, event.target.value)} />
+                {product.note}
             </td>
             <td>
-                <input type='number' className='form-control form-control-sm' value={product.weight} min='0'
-                       onChange={(event) => {
-                           let val = Number(event.target.value);
-                           if (val >= 0) {
-                               this.props.onProductWeightChanged(product.productId, val);
-                           }
-                       }} />
+                {product.weight}
             </td>
             <td>
                 <button type='button' className='btn btn-sm btn-secondary' onClick={() => this.props.onDeleteProduct(product.productId)}>Delete</button>

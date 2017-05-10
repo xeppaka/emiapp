@@ -1,8 +1,13 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
+import {Redirect} from "react-router-dom";
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        this.props.checkLoggedIn();
     }
 
     onUserNameChanged(event) {
@@ -14,8 +19,13 @@ class Login extends React.Component {
     }
 
     render() {
-        return (
-            <form>
+        if (this.props.loggedIn) {
+            return <Redirect to={{
+                pathname: '/admin',
+                state: {test: 123}
+            }}/>;
+        } else {
+            return <form>
                 <div className='container'>
                     <div className='form-group row flex-items-xs-center'>
                         <div className='col-xs-4'>
@@ -37,12 +47,13 @@ class Login extends React.Component {
                         <div className='col-xs-4'>
                             <button type='button' className='btn btn-primary float-xs-right'
                                     disabled={!this.props.canLogin}
-                                    onClick={this.props.onLogin}>Login</button>
+                                    onClick={this.props.onLogin}>Login
+                            </button>
                         </div>
                     </div>
                 </div>
             </form>
-        )
+        }
     }
 }
 

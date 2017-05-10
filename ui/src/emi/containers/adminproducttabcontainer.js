@@ -4,13 +4,16 @@ import { adminProductListSelector, adminProductCountersSelector } from '../state
 import { categoriesListSelector } from '../state/selectors/categoriesselector';
 import { setProductName, setProductPrice, setProductCategory,
          setProductMultiplicity, setProductNote, setProductWeight,
-         resetProducts, createProduct, deleteProduct, setProductFeature } from '../state/admin/adminactions';
+         resetProducts, createProduct, deleteProduct, setProductFeature,
+         setCurrentModifyingProduct, clearCurrentModifyingProduct
+       } from '../state/admin/adminactions';
 import { showSaveProductsModal } from '../state/modals/modalsactions';
 
 const mapStateToProps = (state) => {
     let counters = adminProductCountersSelector(state);
 
     return {
+        currentModifyingProductId: state.emiapp.admin.currentModifyingProductId,
         categoriesList: categoriesListSelector(state),
         productsList: adminProductListSelector(state),
         createdProducts: counters.createdProducts,
@@ -54,6 +57,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onDeleteProduct: (productId) => {
             dispatch(deleteProduct(productId));
+        },
+        onSetCurrentModifyingProduct: (productId) => {
+            dispatch(setCurrentModifyingProduct(productId));
+        },
+        onClearCurrentModifyingProduct: () => {
+            dispatch(clearCurrentModifyingProduct());
         }
     }
 };

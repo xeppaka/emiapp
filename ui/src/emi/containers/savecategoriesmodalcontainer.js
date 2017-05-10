@@ -6,7 +6,7 @@ import { modifiedCategoriesListSelector } from '../state/selectors/categoriessel
 const mapStateToProps = (state) => {
     return {
         categories: modifiedCategoriesListSelector(state),
-        saving: state.admin.saving
+        saving: state.emiapp.admin.saving
     }
 };
 

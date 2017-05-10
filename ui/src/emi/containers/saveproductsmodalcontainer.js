@@ -8,7 +8,7 @@ const mapStateToProps = (state) => {
     return {
         products: adminModifiedProductsSelector(state),
         notification: notificationSelector(state),
-        saving: state.admin.saving
+        saving: state.emiapp.admin.saving
     }
 };
 

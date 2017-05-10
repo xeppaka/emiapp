@@ -2,9 +2,9 @@ import { createSelector } from 'reselect';
 
 export const adminProductsSelector = createSelector(
     [
-        (state) => state.warehouse.products.productById,
-        (state) => state.admin.modifiedProductById,
-        (state) => state.admin.deletedProducts
+        (state) => state.emiapp.warehouse.products.productById,
+        (state) => state.emiapp.admin.modifiedProductById,
+        (state) => state.emiapp.admin.deletedProducts
     ],
     (productById, modifiedProductById, deletedProductIds) => {
         let adminProductById = {};

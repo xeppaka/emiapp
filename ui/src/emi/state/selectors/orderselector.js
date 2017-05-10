@@ -25,7 +25,7 @@ function isEmailValid(email) {
 
 export const modalOrderSelector = createSelector(
     [
-        (state) => state.order,
+        (state) => state.emiapp.order,
         orderProductsSelector,
         totalWithoutDiscountSelector,
         totalWithDiscountSelector
@@ -50,7 +50,7 @@ export const modalOrderSelector = createSelector(
 
 export const sendOrderSelector = createSelector(
     [
-        (state) => state.order,
+        (state) => state.emiapp.order,
         orderProductsSelector,
         totalWithoutDiscountSelector,
         totalWithDiscountSelector
