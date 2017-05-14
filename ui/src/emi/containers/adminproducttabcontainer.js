@@ -1,21 +1,22 @@
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import AdminProductsTab from '../components/admin/adminproductstab';
-import { adminProductListSelector, adminProductCountersSelector } from '../state/selectors/productsselector';
-import { categoriesListSelector } from '../state/selectors/categoriesselector';
-import { setProductName, setProductPrice, setProductCategory,
-         setProductMultiplicity, setProductNote, setProductWeight,
-         resetProducts, createProduct, deleteProduct, setProductFeature,
-         setCurrentModifyingProduct, clearCurrentModifyingProduct
-       } from '../state/admin/adminactions';
-import { showSaveProductsModal } from '../state/modals/modalsactions';
+import {adminProductListSelector, adminProductCountersSelector} from '../state/selectors/productsselector';
+import {categoryListSelector} from '../state/selectors/categoriesselector';
+import {
+    setProductName, setProductPrice, setProductCategory,
+    setProductMultiplicity, setProductNote, setProductWeight,
+    resetProducts, createProduct, deleteProduct, setProductFeature,
+    setCurrentModifyProduct, resetProduct
+} from '../state/admin/adminactions';
+import {showSaveProductsModal} from '../state/modals/modalsactions';
 
 const mapStateToProps = (state) => {
     let counters = adminProductCountersSelector(state);
 
     return {
-        currentModifyingProductId: state.emiapp.admin.currentModifyingProductId,
-        categoriesList: categoriesListSelector(state),
-        productsList: adminProductListSelector(state),
+        currentModifyProductId: state.emiapp.admin.currentModifyProductId,
+        categories: categoryListSelector(state),
+        products: adminProductListSelector(state),
         createdProducts: counters.createdProducts,
         deletedProducts: counters.deletedProducts,
         modifiedProducts: counters.modifiedProducts,
@@ -58,11 +59,11 @@ const mapDispatchToProps = (dispatch) => {
         onDeleteProduct: (productId) => {
             dispatch(deleteProduct(productId));
         },
-        onSetCurrentModifyingProduct: (productId) => {
-            dispatch(setCurrentModifyingProduct(productId));
+        onSetCurrentModifyProduct: (productId) => {
+            dispatch(setCurrentModifyProduct(productId));
         },
-        onClearCurrentModifyingProduct: () => {
-            dispatch(clearCurrentModifyingProduct());
+        onResetProduct: (productId) => {
+            dispatch(resetProduct(productId));
         }
     }
 };

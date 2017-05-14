@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 
 class NameValueSelector extends React.Component {
     constructor(props) {
@@ -7,7 +7,7 @@ class NameValueSelector extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         return (this.props.currentValue !== nextProps.currentValue) ||
-            (this.props.nameValueList.length != nextProps.nameValueList.length)
+            (this.props.nameValueList.length !== nextProps.nameValueList.length)
     }
 
     onValueSelected(value) {
@@ -28,12 +28,16 @@ class NameValueSelector extends React.Component {
         let currentValue = this.props.currentValue;
         let nameValueList = this.props.nameValueList;
 
-        return (<select className='form-control form-control-sm' value={currentValue}
-                    onChange={(event) => this.onValueSelected(event.target.value)}>
-            {
-                NameValueSelector.renderList(nameValueList)
-            }
-        </select>)
+        return (
+            <select className='form-control form-control-sm' value={currentValue}
+                    onChange={(event) => this.onValueSelected(event.target.value)}
+                    onClick={(event) => event.stopPropagation()}
+            >
+                {
+                    NameValueSelector.renderList(nameValueList)
+                }
+            </select>
+        )
     }
 }
 

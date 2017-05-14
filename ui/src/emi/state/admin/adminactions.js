@@ -1,15 +1,13 @@
 import update from 'react-addons-update';
-import {replace} from 'react-router-redux';
 import {
     adminCategoriesTreeSelector,
     modifiedCategoriesListSaveSelector
 } from '../selectors/categoriesselector';
-import {adminModifiedProductsSaveSelector} from '../selectors/productsselector';
+import {adminModifiedProductsSelector} from '../selectors/productsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
 import {updateCategories, removeCategories} from '../categories/categoriesactions';
 import {loadWarehouse} from '../warehouse/warehouseactions';
-import {checkLoggedIn} from '../security/securityactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
@@ -27,8 +25,8 @@ export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
 export const SET_NOTIFICATION_TEXT = 'SET_NOTIFICATION_TEXT';
 export const SAVE_STARTED = 'SAVE_STARTED';
 export const SAVE_FINISHED = 'SAVE_FINISHED';
-export const SET_CURRENT_MODIFYING_PRODUCT_ID = "SET_CURRENT_MODIFYING_PRODUCT_ID";
-export const CLEAR_CURRENT_MODIFYING_PRODUCT_ID = "CLEAR_CURRENT_MODIFYING_PRODUCT_ID";
+export const SET_MODIFY_PRODUCT = "SET_MODIFY_PRODUCT";
+export const CLEAR_MODIFY_PRODUCT = "CLEAR_MODIFY_PRODUCT";
 
 export function resetProducts() {
     return {type: ADMIN_PRODUCTS_RESET};
@@ -56,11 +54,19 @@ export function deleteProduct(productId) {
         let productById = state.emiapp.warehouse.products.productById;
 
         if (productById.hasOwnProperty(productId)) {
+            dispatch(removeModifiedProduct(productId));
             dispatch(setProductDeleted(productId));
         } else {
             dispatch(removeProductDeleted(productId));
             dispatch(removeModifiedProduct(productId));
         }
+    }
+}
+
+export function resetProduct(productId) {
+    return function (dispatch, getState) {
+        dispatch(removeProductDeleted(productId));
+        dispatch(removeModifiedProduct(productId));
     }
 }
 
@@ -121,19 +127,19 @@ export function createCategory() {
     }
 }
 
-export function addNewCategory(category) {
+function addNewCategory(category) {
     return {type: ADD_NEW_CATEGORY, category};
 }
 
-export function removeModifiedProduct(id) {
+function removeModifiedProduct(id) {
     return {type: REMOVE_MODIFIED_PRODUCT, id: id};
 }
 
-export function setModifiedCategory(category) {
+function setModifiedCategory(category) {
     return {type: SET_MODIFIED_CATEGORY, category: category}
 }
 
-export function removeModifiedCategory(id) {
+function removeModifiedCategory(id) {
     return {type: REMOVE_MODIFIED_CATEGORY, id: id}
 }
 
@@ -239,7 +245,7 @@ function modifyProducts(dispatch, products) {
 export function saveProducts(saveModalId) {
     return function (dispatch, getState) {
         dispatch(saveStarted());
-        let products = adminModifiedProductsSaveSelector(getState());
+        let products = adminModifiedProductsSelector(getState());
         deleteProducts(dispatch, products.deletedProducts)
             .then(() => createProducts(dispatch, products.createdProducts))
             .then(() => modifyProducts(dispatch, products.modifiedProducts))
@@ -597,10 +603,24 @@ export function bootstrapAdmin() {
     }
 }
 
-export function setCurrentModifyingProduct(productId) {
-    return {type: SET_CURRENT_MODIFYING_PRODUCT_ID, productId: productId};
+export function setCurrentModifyProduct(productId) {
+    return function(dispatch, getState) {
+        let state = getState();
+
+        if (state.emiapp.admin.currentModifyProductId === null) {
+            dispatch(setModifyProduct(productId));
+        } else if (state.emiapp.admin.currentModifyProductId !== productId) {
+            dispatch(setModifyProduct(productId));
+        } else {
+            dispatch(clearModifyProduct());
+        }
+    }
 }
 
-export function clearCurrentModifyingProduct(productId) {
-    return {type: CLEAR_CURRENT_MODIFYING_PRODUCT_ID};
+function setModifyProduct(productId) {
+    return {type: SET_MODIFY_PRODUCT, productId: productId};
+}
+
+function clearModifyProduct() {
+    return {type: CLEAR_MODIFY_PRODUCT};
 }

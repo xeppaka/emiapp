@@ -8,11 +8,11 @@ import {
     ADD_NEW_PRODUCT, ADD_NEW_CATEGORY,
     SET_PRODUCT_DELETED, REMOVE_PRODUCT_DELETED,
     SET_CATEGORY_DELETED, REMOVE_CATEGORY_DELETED,
-    SET_CURRENT_MODIFYING_PRODUCT_ID, CLEAR_CURRENT_MODIFYING_PRODUCT_ID
+    SET_MODIFY_PRODUCT, CLEAR_MODIFY_PRODUCT
 } from './adminactions';
 
 const initialAdminState = {
-    currentModifyingProductId: null,
+    currentModifyProductId: null,
     modifiedProductById: {},
     modifiedCategoryById: {},
     deletedProducts: [],
@@ -39,7 +39,8 @@ function admin(state = initialAdminState, action) {
             return update(state, {
                 modifiedProductById: {$set: {}},
                 deletedProducts: {$set: []},
-                nextProductId: {$set: 0}
+                nextProductId: {$set: 0},
+                currentModifyProductId: {$set: null}
             });
         case ADMIN_CATEGORIES_RESET:
             return update(state, {
@@ -54,7 +55,8 @@ function admin(state = initialAdminState, action) {
                 modifiedProductById: {
                     [product.productId]: {$set: product}
                 },
-                nextProductId: {$apply: id => id + 1}
+                nextProductId: {$apply: id => id + 1},
+                currentModifyProductId: {$set: product.productId}
             });
         }
         case ADD_NEW_CATEGORY: {
@@ -142,13 +144,13 @@ function admin(state = initialAdminState, action) {
             return update(state, {
                 saving: {$set: false}
             });
-        case SET_CURRENT_MODIFYING_PRODUCT_ID:
+        case SET_MODIFY_PRODUCT:
             return update(state, {
-                currentModifyingProductId: {$set: action.productId}
+                currentModifyProductId: {$set: action.productId}
             });
-        case CLEAR_CURRENT_MODIFYING_PRODUCT_ID:
+        case CLEAR_MODIFY_PRODUCT:
             return update(state, {
-                currentModifyingProductId: {$set: null}
+                currentModifyProductId: {$set: null}
             });
         default:
             return state;

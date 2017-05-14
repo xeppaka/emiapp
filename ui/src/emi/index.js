@@ -46,7 +46,7 @@ render(
             <div>
                 <Route exact path="/" component={CustomerMainContainer} />
                 <PrivateRouteContainer path="/admin" component={AdminMainContainer} />
-                <Route path="/login" component={LoginContainer} />
+                <Route exact path="/login" component={LoginContainer} />
             </div>
         </HashRouter>
     </Provider>,

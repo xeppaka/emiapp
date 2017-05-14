@@ -27,9 +27,9 @@ export function createAdminCategoriesList(categoryTree) {
 
         if (catId === 'root') {
             rootCategory = category;
-        } else if (category.type === 'CREATED') {
+        } else if (category.modification === 'CREATED') {
             newCategoryList.push(category);
-        } else if (category.type !== 'DELETED') {
+        } else if (category.modification !== 'DELETED') {
             categoryList.push(category);
         }
 

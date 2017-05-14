@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 import CreateProductModal from '../components/admin/create/createproductmodal';
-import { categoriesListSelector } from '../state/selectors/categoriesselector';
+import { categoryListSelector } from '../state/selectors/categoriesselector';
 import { createProduct } from '../state/admin/adminactions';
 
 const mapStateToProps = (state) => {
     return {
-        categoriesList: categoriesListSelector(state),
+        categoriesList: categoryListSelector(state),
         saving: state.emiapp.admin.saving
     }
 };

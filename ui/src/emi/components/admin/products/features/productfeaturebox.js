@@ -5,18 +5,16 @@ class ProductFeature extends React.Component {
         super(props);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return true;
-    }
-
     render() {
         let name = this.props.name;
         let enabled = this.props.enabled;
 
         return (
-            <label className='form-check-label'>
+            <label className='form-check-label' onClick={(event) => event.stopPropagation()}>
                 <input checked={enabled} type='checkbox' className='form-check-input'
-                       onChange={(event) => this.props.onChange(event.target.checked)} />{name}
+                       onChange={(event) => this.props.onChange(event.target.checked)}
+                       onClick={(event) => event.stopPropagation()}
+                />{name}
             </label>
         )
     }

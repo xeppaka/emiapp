@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ProductFeaturesText from './features/productfeaturestext';
 
-class AdminProductsTableRow extends React.Component {
+class AdminProductsTableDeletedRow extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -21,7 +21,7 @@ class AdminProductsTableRow extends React.Component {
         return (<tr onClick={() => this.props.onSetCurrentModifyProduct(product.productId)}>
             <th scope='row'>{this.props.idx}</th>
             <td>
-                {product.name}
+                <span style={{color: 'red'}}>{'DELETED'}</span>{' - ' + product.name}
             </td>
             <td>
                 {product.price}
@@ -45,4 +45,4 @@ class AdminProductsTableRow extends React.Component {
     }
 }
 
-export default AdminProductsTableRow;
+export default AdminProductsTableDeletedRow;
