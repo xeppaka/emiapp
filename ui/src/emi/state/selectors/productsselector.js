@@ -241,6 +241,7 @@ export const adminProductCountersSelector = createSelector(
     ],
     (products) => {
         let productById = products.productById;
+        let modificationById = products.modificationById;
         let createdProductsCount = 0;
         let modifiedProductsCount = 0;
         let deletedProductsCount = 0;
@@ -249,7 +250,7 @@ export const adminProductCountersSelector = createSelector(
             if (!productById.hasOwnProperty(key))
                 continue;
 
-            let modification = productById[key].modification;
+            let modification = modificationById[key];
             if (modification === 'CREATED') {
                 createdProductsCount++;
             } else if (modification === 'MODIFIED') {
