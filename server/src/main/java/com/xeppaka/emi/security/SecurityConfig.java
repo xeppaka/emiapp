@@ -45,7 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(tokenAuthenticationProvider);
-        auth.inMemoryAuthentication().withUser("admin").password("megadrive12").roles("admin");
+        auth.inMemoryAuthentication().withUser("admin").password("admin777").roles("admin");
+        auth.inMemoryAuthentication().withUser("marina").password("korbutisthebest00").roles("admin");
+        auth.inMemoryAuthentication().withUser("elvira").password("elvira1515").roles("admin");
     }
 
     @Override

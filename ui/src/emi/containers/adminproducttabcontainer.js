@@ -5,6 +5,7 @@ import {categoryListSelector} from '../state/selectors/categoriesselector';
 import {
     setProductName, setProductPrice, setProductCategory,
     setProductMultiplicity, setProductNote, setProductWeight,
+    setProductImageThumbnail, setProductImage,
     resetProducts, createProduct, deleteProduct, setProductFeature,
     setCurrentModifyProduct, resetProduct
 } from '../state/admin/adminactions';
@@ -37,6 +38,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onProductMultiplicityChanged: (productId, multiplicity) => {
             dispatch(setProductMultiplicity(productId, multiplicity));
+        },
+        onProductImageThumbnailChanged: (productId, imageThumbnail) => {
+            dispatch(setProductImageThumbnail(productId, imageThumbnail));
+        },
+        onProductImageChanged: (productId, image) => {
+            dispatch(setProductImage(productId, image));
         },
         onProductNoteChanged: (productId, note) => {
             dispatch(setProductNote(productId, note));

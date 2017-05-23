@@ -42,13 +42,13 @@ const store = createStore(
 
 render(
     <Provider store={store}>
-        <HashRouter history={history}>
+        <ConnectedRouter history={history}>
             <div>
                 <Route exact path="/" component={CustomerMainContainer} />
                 <PrivateRouteContainer path="/admin" component={AdminMainContainer} />
                 <Route exact path="/login" component={LoginContainer} />
             </div>
-        </HashRouter>
+        </ConnectedRouter>
     </Provider>,
     document.getElementById('applicationContainer')
 );

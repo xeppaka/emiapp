@@ -2,9 +2,6 @@ package com.xeppaka.emi.domain.value;
 
 import org.apache.commons.lang3.Validate;
 
-/**
- * Created by nnm on 10/19/16.
- */
 public class UserName {
     public static final UserName SYSTEM_USER_NAME = new UserName("*SYSTEM*");
     private String userName;
@@ -21,5 +18,10 @@ public class UserName {
 
     public static UserName userName(String userName) {
         return new UserName(userName);
+    }
+
+    @Override
+    public String toString() {
+        return userName;
     }
 }

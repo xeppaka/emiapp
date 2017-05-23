@@ -372,7 +372,7 @@ export function saveCategories(saveModalId) {
                     dispatch(hideModal(saveModalId));
                 }, () => {
                     dispatch(saveFinished());
-                    dispatch(showMessageBoxModal('Category(s) save failed.', 'Error occurred while saving category(s).'));
+                    dispatch(showMessageBoxModal('Category(ies) save failed.', 'Error occurred while saving category(s).'));
                 }
             );
     };
@@ -399,6 +399,8 @@ function compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct) 
         modifiedProduct.categoryId === originalProduct.categoryId &&
         modifiedProduct.multiplicity === originalProduct.multiplicity &&
         featuresEquals(modifiedProduct.features, originalProduct.features) &&
+        modifiedProduct.imageThumbnail === originalProduct.imageThumbnail &&
+        modifiedProduct.image === originalProduct.image &&
         modifiedProduct.note === originalProduct.note &&
         modifiedProduct.weight === originalProduct.weight) {
         dispatch(removeModifiedProduct(originalProduct.productId));
@@ -535,6 +537,40 @@ export function setProductWeight(productId, weight) {
         modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
         modifiedProduct = update(modifiedProduct, {
             weight: {$set: weight}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductImageThumbnail(productId, imageLink) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+        modifiedProduct = update(modifiedProduct, {
+            imageThumbnail: {$set: imageLink}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductImage(productId, imageLink) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+        modifiedProduct = update(modifiedProduct, {
+            image: {$set: imageLink}
         });
 
         compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);

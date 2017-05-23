@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import com.xeppaka.emi.security.tokens.SecurityTokenContainer;
 @RestController
 @RequestMapping(SecurityController.URI)
 public class SecurityController {
+    private static final Logger log = LoggerFactory.getLogger(SecurityController.class);
     static final String URI = "/api/security";
     private static final String X_AUTH_HEADER_NAME = "x-auth-token";
     private AuthenticationManager authenticationManager;
@@ -45,6 +48,8 @@ public class SecurityController {
                 .authenticate(new UsernamePasswordAuthenticationToken(userNamePassword.getUserName(), userNamePassword.getPassword()));
 
         if (authentication != null && authentication.isAuthenticated()) {
+            log.info("Successful user login: {}.", authentication.getName());
+
             final UUID newToken = securityTokenContainer.generateToken((String) authentication.getName());
             return ResponseEntity.created(new URI(URI + "/currentuser")).header(X_AUTH_HEADER_NAME, newToken.toString()).build();
         }
@@ -54,7 +59,8 @@ public class SecurityController {
 
     @RequestMapping(value = "logout", method = RequestMethod.POST)
     public ResponseEntity logout(Authentication authentication) {
-        System.out.println(authentication.getName());
+        log.info("User logout: {}.", authentication.getName());
+
         return ResponseEntity.ok().build();
     }
 }

@@ -1,7 +1,8 @@
 import update from 'react-addons-update';
 import {
     SHOW_SAVE_PRODUCTS_MODAL, SHOW_SAVE_CATEGORIES_MODAL, SHOW_PRODUCTS_ORDER_MODAL,
-    SHOW_MESSAGE_BOX_MODAL, SHOW_CREATE_PRODUCT_MODAL, SHOW_CREATE_CATEGORY_MODAL, HIDE_MODAL
+    SHOW_MESSAGE_BOX_MODAL, SHOW_CREATE_PRODUCT_MODAL, SHOW_CREATE_CATEGORY_MODAL,
+    SHOW_IMAGE_MODAL, HIDE_MODAL
 } from './modalsactions';
 
 const initialModalsState = {
@@ -50,6 +51,13 @@ function modals(state = initialModalsState, action) {
             let id = state.nextId;
             return update(state, {
                 visibleModals: {$push: [{id: id, type: 'CREATE_CATEGORY_MODAL', title: action.title, text: action.text}]},
+                nextId: {$apply: (prev) => prev + 1}
+            });
+        }
+        case SHOW_IMAGE_MODAL: {
+            let id = state.nextId;
+            return update(state, {
+                visibleModals: {$push: [{id: id, type: 'IMAGE_MODAL', title: action.title, imageLink: action.imageLink}]},
                 nextId: {$apply: (prev) => prev + 1}
             });
         }

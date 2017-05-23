@@ -19,7 +19,6 @@ public class ProductImageChanged extends EmiEvent {
                               @JsonProperty("image") String image) {
         super(EmiEventType.PRODUCT_IMAGE_CHANGED);
         Validate.notNull(productId);
-        Validate.notNull(image);
 
         this.productId = productId;
         this.image = image;

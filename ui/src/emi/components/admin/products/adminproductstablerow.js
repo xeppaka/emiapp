@@ -15,13 +15,23 @@ class AdminProductsTableRow extends React.Component {
 
     render() {
         let product = this.props.product;
+        let modification = this.props.modification;
         let category = this.props.categories.find((cat) => cat.categoryId === product.categoryId);
         let categoryName = category.name;
+
+        let nameComponent;
+        if (modification === 'DELETED') {
+            nameComponent = <span><span style={{color: 'red'}}>{'DELETED'}</span>{' - ' + product.name}</span>;
+        } else if (modification === 'CREATED') {
+            nameComponent = <span><span style={{color: 'green'}}>{'CREATED'}</span>{' - ' + product.name}</span>;
+        } else {
+            nameComponent = <span>{product.name}</span>;
+        }
 
         return (<tr onClick={() => this.props.onSetCurrentModifyProduct(product.productId)}>
             <th scope='row'>{this.props.idx}</th>
             <td>
-                {product.name}
+                {nameComponent}
             </td>
             <td>
                 {product.price}

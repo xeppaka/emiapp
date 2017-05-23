@@ -20,6 +20,7 @@ public class ProductCreated extends EmiEvent {
     private final String note;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
+    private final String imageThumbnail;
     private final String image;
     private final int weight;
 
@@ -31,6 +32,7 @@ public class ProductCreated extends EmiEvent {
                           @JsonProperty("note") String note,
                           @JsonProperty("categoryId") UUID categoryId,
                           @JsonProperty("features") Collection<ProductFeature> features,
+                          @JsonProperty("imageThumbnail") String imageThumbnail,
                           @JsonProperty("image") String image,
                           @JsonProperty("weight") int weight) {
         super(EmiEventType.PRODUCT_CREATED);
@@ -44,13 +46,14 @@ public class ProductCreated extends EmiEvent {
         this.name = name;
         this.price = price;
         this.multiplicity = multiplicity;
-        this.note = note;
+        this.note = note == null ? "" : note;
         this.categoryId = categoryId;
         if (features.isEmpty()) {
             this.features = EnumSet.noneOf(ProductFeature.class);
         } else {
             this.features = EnumSet.copyOf(features);
         }
+        this.imageThumbnail = imageThumbnail == null ? "" : imageThumbnail;
         this.image = image == null ? "" : image;
         this.weight = weight;
     }
@@ -81,6 +84,10 @@ public class ProductCreated extends EmiEvent {
 
     public Set<ProductFeature> getFeatures() {
         return features;
+    }
+
+    public String getImageThumbnail() {
+        return imageThumbnail;
     }
 
     public String getImage() {

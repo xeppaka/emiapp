@@ -49,7 +49,7 @@ public class RestTokenAuthenticationFilter extends GenericFilterBean {
 
             chain.doFilter(req, res);
         } catch (BadCredentialsException e) {
-            logger.info(MessageFormat.format("Unsuccessful authentication. Token: {0}.", httpReq.getHeader(X_AUTH_HEADER_NAME)));
+            logger.info(MessageFormat.format("Unsuccessful token authentication. Token: {0}.", httpReq.getHeader(X_AUTH_HEADER_NAME)));
             final HttpServletResponse httpRes = (HttpServletResponse) res;
             httpRes.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }

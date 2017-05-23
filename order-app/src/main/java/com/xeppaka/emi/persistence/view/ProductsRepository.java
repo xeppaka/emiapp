@@ -4,7 +4,6 @@ import com.xeppaka.emi.domain.ProductFeature;
 import com.xeppaka.emi.persistence.view.dto.ProductDto;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,7 +11,12 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +30,7 @@ public class ProductsRepository {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     public void createProduct(UUID productId, String name, int price, int multiplicity, String note,
-                              UUID categoryId, Set<ProductFeature> productFeatures, String image, int weight) {
+                              UUID categoryId, Set<ProductFeature> productFeatures, String imageThumbnail, String image, int weight) {
         Validate.notNull(productId);
         Validate.notNull(name);
         Validate.inclusiveBetween(0, Integer.MAX_VALUE, price);
@@ -38,13 +42,14 @@ public class ProductsRepository {
         sqlParameterSource.addValue("PRICE", price);
         sqlParameterSource.addValue("MULTIPLICITY", multiplicity);
         sqlParameterSource.addValue("FEATURES", productFeaturesToString(productFeatures));
+        sqlParameterSource.addValue("IMAGE_THUMBNAIL", image);
         sqlParameterSource.addValue("IMAGE", image);
         sqlParameterSource.addValue("NOTE", note);
         sqlParameterSource.addValue("CATEGORY", categoryId);
         sqlParameterSource.addValue("WEIGHT", weight);
 
-        jdbcTemplate.update("INSERT INTO PRODUCTS(ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE, NOTE, CATEGORY, WEIGHT) " +
-                        "VALUES(:ID, :NAME, :PRICE, :MULTIPLICITY, :FEATURES, :IMAGE, :NOTE, :CATEGORY, :WEIGHT)", sqlParameterSource);
+        jdbcTemplate.update("INSERT INTO PRODUCTS(ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE_THUMBNAIL, IMAGE, NOTE, CATEGORY, WEIGHT) " +
+                "VALUES(:ID, :NAME, :PRICE, :MULTIPLICITY, :FEATURES, :IMAGE_THUMBNAIL, :IMAGE, :NOTE, :CATEGORY, :WEIGHT)", sqlParameterSource);
     }
 
     public void updateProductName(UUID productId, String name) {
@@ -81,7 +86,7 @@ public class ProductsRepository {
     }
 
     public List<ProductDto> getProducts() {
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE, NOTE, CATEGORY, WEIGHT FROM PRODUCTS", PRODUCT_DTO_ROW_MAPPER);
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE_THUMBNAIL, IMAGE, NOTE, CATEGORY, WEIGHT FROM PRODUCTS", PRODUCT_DTO_ROW_MAPPER);
     }
 
     public ProductDto getProduct(UUID id) {
@@ -92,7 +97,7 @@ public class ProductsRepository {
         final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         sqlParameterSource.addValue("IDS", ids);
 
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE ID IN (:IDS) ",
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE_THUMBNAIL, IMAGE, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE ID IN (:IDS) ",
                 sqlParameterSource, PRODUCT_DTO_ROW_MAPPER);
     }
 
@@ -100,7 +105,7 @@ public class ProductsRepository {
         final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         sqlParameterSource.addValue("CATEGORY_IDS", categoryIds);
 
-        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE CATEGORY IN (:CATEGORY_IDS) ",
+        return jdbcTemplate.query("SELECT ID, NAME, PRICE, MULTIPLICITY, FEATURES, IMAGE_THUMBNAIL, IMAGE, NOTE, CATEGORY, WEIGHT FROM PRODUCTS WHERE CATEGORY IN (:CATEGORY_IDS) ",
                 sqlParameterSource, PRODUCT_DTO_ROW_MAPPER);
     }
 
@@ -133,6 +138,16 @@ public class ProductsRepository {
         sqlParameterSource.addValue("NOTE", note);
 
         jdbcTemplate.update("UPDATE PRODUCTS SET NOTE = :NOTE WHERE ID = :ID", sqlParameterSource);
+    }
+
+    public void updateProductImageThumbnail(UUID productId, String imageThumbnail) {
+        Validate.notNull(productId);
+
+        final MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("ID", productId);
+        sqlParameterSource.addValue("IMAGE_THUMBNAIL", imageThumbnail);
+
+        jdbcTemplate.update("UPDATE PRODUCTS SET IMAGE_THUMBNAIL = :IMAGE_THUMBNAIL WHERE ID = :ID", sqlParameterSource);
     }
 
     public void updateProductImage(UUID productId, String image) {
@@ -198,13 +213,14 @@ public class ProductsRepository {
             final int price = rs.getInt("PRICE");
             final int multiplicity = rs.getInt("MULTIPLICITY");
             final Set<ProductFeature> productFeatures = productFeaturesFromString(rs.getString("FEATURES"));
+            final String imageThumbnail = rs.getString("IMAGE_THUMBNAIL");
             final String image = rs.getString("IMAGE");
             final String note = rs.getString("NOTE");
             final String categoryIdStr = rs.getString("CATEGORY");
             final UUID categoryId = categoryIdStr == null ? null : UUID.fromString(categoryIdStr);
             final int weight = rs.getInt("WEIGHT");
 
-            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, image, categoryId, weight);
+            return new ProductDto(productId, name, price, multiplicity, note, productFeatures, imageThumbnail, image, categoryId, weight);
         }
     }
 }

@@ -21,8 +21,9 @@ class AdminProductsTab extends React.Component {
                                     onProductNoteChanged={this.props.onProductNoteChanged}
                                     onProductWeightChanged={this.props.onProductWeightChanged}
                                     onProductFeatureChanged={this.props.onProductFeatureChanged}
+                                    onProductImageThumbnailChanged={this.props.onProductImageThumbnailChanged}
+                                    onProductImageChanged={this.props.onProductImageChanged}
                                     onDeleteProduct={this.props.onDeleteProduct}
-                                    onAcceptProduct={this.props.onClearCurrentModifyProduct}
                                     onResetProduct={this.props.onResetProduct}
                                     onSetCurrentModifyProduct={this.props.onSetCurrentModifyProduct}
                 />

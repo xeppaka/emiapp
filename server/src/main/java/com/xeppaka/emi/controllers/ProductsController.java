@@ -1,10 +1,9 @@
 package com.xeppaka.emi.controllers;
 
-import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
+import com.xeppaka.emi.domain.value.UserName;
+import com.xeppaka.emi.persistence.view.dto.ProductDto;
+import com.xeppaka.emi.service.EmiWarehouseException;
+import com.xeppaka.emi.service.ProductsService;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.persistence.view.dto.ProductDto;
-import com.xeppaka.emi.service.EmiWarehouseException;
-import com.xeppaka.emi.service.ProductsService;
+import java.net.URI;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(ProductsController.URI)
@@ -34,24 +33,25 @@ public class ProductsController {
     }
 
     @RequestMapping(method = RequestMethod.PATCH)
-    public List<ProductDto> updateProducts(@RequestBody Collection<ProductDto> products) throws EmiWarehouseException {
+    public List<ProductDto> updateProducts(@RequestBody Collection<ProductDto> products, Principal principal) throws EmiWarehouseException {
         Validate.notNull(products);
         Validate.notEmpty(products);
 
-        return productsService.updateProducts(UserName.SYSTEM_USER_NAME, products);
+        return productsService.updateProducts(UserName.userName(principal.getName().toUpperCase()), products);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto product) throws EmiWarehouseException {
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto product, Principal principal) throws EmiWarehouseException {
         Validate.notNull(product);
 
-        final ProductDto createdProduct = productsService.createProduct(UserName.SYSTEM_USER_NAME,
+        final ProductDto createdProduct = productsService.createProduct(UserName.userName(principal.getName().toUpperCase()),
                 product.getName(),
                 product.getPrice(),
                 product.getMultiplicity(),
                 product.getNote(),
                 product.getCategoryId(),
                 product.getFeatures(),
+                product.getImageThumbnail(),
                 product.getImage(),
                 product.getWeight());
 
@@ -60,10 +60,10 @@ public class ProductsController {
     }
 
     @RequestMapping(value = "{productId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteProduct(@PathVariable UUID productId) throws EmiWarehouseException {
+    public ResponseEntity<Void> deleteProduct(@PathVariable UUID productId, Principal principal) throws EmiWarehouseException {
         Validate.notNull(productId);
 
-        productsService.deleteProduct(UserName.SYSTEM_USER_NAME, productId);
+        productsService.deleteProduct(UserName.userName(principal.getName().toUpperCase()), productId);
         return ResponseEntity.noContent().build();
     }
 }

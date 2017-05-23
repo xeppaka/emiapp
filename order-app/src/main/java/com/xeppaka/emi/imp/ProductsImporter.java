@@ -53,7 +53,7 @@ public class ProductsImporter {
             Set<ProductFeature> features = EnumSet.of(ProductFeature.VISIBLE, ProductFeature.AVAILABLE);
 
             emiWarehouse.handle(new CreateProductCommand(UUID.randomUUID(), p.getName(), (int) (p.getPrice() * 100),
-                    p.getMultiplicity(), p.getNote(), category.getCategoryId(), features, "", 0));
+                    p.getMultiplicity(), p.getNote(), category.getCategoryId(), features, null, null, 0));
         }
     }
 

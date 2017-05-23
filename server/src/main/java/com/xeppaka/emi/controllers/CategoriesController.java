@@ -1,6 +1,7 @@
 package com.xeppaka.emi.controllers;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -34,26 +35,26 @@ public class CategoriesController {
     }
 
     @RequestMapping(method = RequestMethod.PATCH)
-    public List<CategoryDto> updateCategories(@RequestBody Collection<CategoryDto> categories) throws EmiWarehouseException {
+    public List<CategoryDto> updateCategories(@RequestBody Collection<CategoryDto> categories, Principal principal) throws EmiWarehouseException {
         Validate.notNull(categories);
         Validate.notEmpty(categories);
 
-        return categoriesService.updateCategories(UserName.SYSTEM_USER_NAME, categories);
+        return categoriesService.updateCategories(UserName.userName(principal.getName().toUpperCase()), categories);
     }
 
     @RequestMapping(value = "{categoryId}", method = RequestMethod.DELETE)
-    public ResponseEntity<DeleteCategoryResult> deleteCategory(@PathVariable UUID categoryId) throws EmiWarehouseException {
+    public ResponseEntity<DeleteCategoryResult> deleteCategory(@PathVariable UUID categoryId, Principal principal) throws EmiWarehouseException {
         Validate.notNull(categoryId);
 
-        final DeleteCategoryResult deleteCategoryResult = categoriesService.deleteCategory(UserName.SYSTEM_USER_NAME, categoryId);
+        final DeleteCategoryResult deleteCategoryResult = categoriesService.deleteCategory(UserName.userName(principal.getName().toUpperCase()), categoryId);
         return ResponseEntity.ok(deleteCategoryResult);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto category) throws EmiWarehouseException {
+    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto category, Principal principal) throws EmiWarehouseException {
         Validate.notNull(category);
 
-        final CategoryDto createdCategory = categoriesService.createCategory(UserName.SYSTEM_USER_NAME,
+        final CategoryDto createdCategory = categoriesService.createCategory(UserName.userName(principal.getName().toUpperCase()),
                 category.getName(),
                 category.getParentCategoryId(),
                 category.getWeight());
