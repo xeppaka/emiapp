@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 import MainProductsTable from './mainproductstable';
 import PosProductsTable from './posproductstable';
 
@@ -29,19 +29,23 @@ class ProductsTables extends React.Component {
 
     render() {
         return (
-                    <div className="container-fluid">
-                        <div className="row">
-                            <MainProductsTable ref='mainProductsContainer'
-                                    products={this.props.mainProducts}
-                                    setProductQuantity={this.props.setProductQuantity} />
-                        </div>
-                        <div className="row">
-                            <PosProductsTable ref='posProductsContainer'
-                                    products={this.props.posProducts}
-                                    setProductQuantity={this.props.setProductQuantity} />
-                        </div>
-                    </div>
-               )
+            <div className="container-fluid">
+                <div className="row">
+                    <MainProductsTable ref='mainProductsContainer'
+                                       products={this.props.mainProducts}
+                                       setProductQuantity={this.props.setProductQuantity}
+                                       onShowProductImage={this.props.onShowProductImage}
+                    />
+                </div>
+                <div className="row">
+                    <PosProductsTable ref='posProductsContainer'
+                                      products={this.props.posProducts}
+                                      setProductQuantity={this.props.setProductQuantity}
+                                      onShowProductImage={this.props.onShowProductImage}
+                    />
+                </div>
+            </div>
+        )
     }
 }
 

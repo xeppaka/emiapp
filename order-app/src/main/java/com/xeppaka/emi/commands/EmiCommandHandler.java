@@ -12,9 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by nnm on 10/13/16.
- */
 @Component
 public class EmiCommandHandler {
     private static final Logger log = LoggerFactory.getLogger(EmiCommandHandler.class);
@@ -32,8 +29,8 @@ public class EmiCommandHandler {
         try {
             emiWarehouseRepository.save(userName.getUserName(), emiWarehouse);
         } catch (RepositoryException e) {
-            log.error("Error occurred while handling command.", e);
-            throw new CommandHandleException("Error occurred while handling command.", e);
+            log.error("Error saving warehouse state occurred while handling command.", e);
+            throw new CommandHandleException("Error occurred while handling command.", e, command);
         }
     }
 }

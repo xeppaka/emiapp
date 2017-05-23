@@ -68,8 +68,8 @@ const createDeepEqualSelector = createSelectorCreator(
 
 export const categoriesTreeSelector = createDeepEqualSelector(
     [
-        (state) => { return { type: 'categoryById', value: state.warehouse.categories.categoryById } },
-        (state) => { return { type: 'productById', value: state.warehouse.products.productById } }
+        (state) => { return { type: 'categoryById', value: state.emiapp.warehouse.categories.categoryById } },
+        (state) => { return { type: 'productById', value: state.emiapp.warehouse.products.productById } }
     ],
     (categoryByIdVal, productByIdVal) => {
         let categoryById = categoryByIdVal.value;
@@ -79,7 +79,7 @@ export const categoriesTreeSelector = createDeepEqualSelector(
     }
 );
 
-export const categoriesListSelector = createSelector(
+export const categoryListSelector = createSelector(
     [
         categoriesTreeSelector
     ],
@@ -90,9 +90,9 @@ export const categoriesListSelector = createSelector(
 
 export const adminCategoriesSelector = createSelector(
     [
-        (state) => state.warehouse.categories.categoryById,
-        (state) => state.admin.modifiedCategoryById,
-        (state) => state.admin.deletedCategories
+        (state) => state.emiapp.warehouse.categories.categoryById,
+        (state) => state.emiapp.admin.modifiedCategoryById,
+        (state) => state.emiapp.admin.deletedCategories
     ],
     (categoryById, modifiedCategoryById, deletedCategoryIds) => {
         let resultCategoryById = {};
@@ -102,10 +102,10 @@ export const adminCategoriesSelector = createSelector(
                 continue;
 
             if (!resultCategoryById.hasOwnProperty(key)) {
-                let type = categoryById.hasOwnProperty(key) ? 'MODIFIED' : 'CREATED';
+                let modification = categoryById.hasOwnProperty(key) ? 'MODIFIED' : 'CREATED';
 
                 resultCategoryById[key] = update(modifiedCategoryById[key], {
-                    type: {$set: type}
+                    modification: {$set: modification}
                 });
             }
         }
@@ -115,10 +115,10 @@ export const adminCategoriesSelector = createSelector(
                 continue;
 
             if (!resultCategoryById.hasOwnProperty(key)) {
-                let type = deletedCategoryIds.indexOf(key) >= 0 ? 'DELETED' : 'UNCHANGED';
+                let modification = deletedCategoryIds.indexOf(key) >= 0 ? 'DELETED' : 'UNCHANGED';
 
                 resultCategoryById[key] = update(categoryById[key], {
-                    type: {$set: type}
+                    modification: {$set: modification}
                 });
             }
         }
@@ -132,7 +132,7 @@ export const adminCategoriesTreeSelector = createSelector(
         adminCategoriesSelector,
         adminProductsSelector
     ],
-    (categoryById, adminProducts) => createCategoriesTree(categoryById, adminProducts.productById)
+    (categoryById, products) => createCategoriesTree(categoryById, products.productById)
 );
 
 export const adminCategoriesListSelector = createSelector(
@@ -157,11 +157,11 @@ export const adminCategoryCountersSelector = createSelector(
 
             let category = categoryById[key];
 
-            if (category.type === 'CREATED') {
+            if (category.modification === 'CREATED') {
                 createdCategoryCount++;
-            } else if (category.type === 'MODIFIED') {
+            } else if (category.modification === 'MODIFIED') {
                 modifiedCategoryCount++;
-            } else if (category.type === 'DELETED') {
+            } else if (category.modification === 'DELETED') {
                 deletedCategoryCount++;
             }
         }
@@ -196,11 +196,11 @@ export const modifiedCategoriesListSelector = createSelector(
                 continue;
 
             let category = convertCategoryToViewCategory(categoryById[key], categoryById);
-            if (category.type === 'CREATED') {
+            if (category.modification === 'CREATED') {
                 createdCategories.push(category);
-            } else if (category.type === 'MODIFIED') {
+            } else if (category.modification === 'MODIFIED') {
                 modifiedCategories.push(category);
-            } else if (category.type === 'DELETED') {
+            } else if (category.modification === 'DELETED') {
                 deletedCategories.push(category);
             }
         }
@@ -227,11 +227,11 @@ export const modifiedCategoriesListSaveSelector = createSelector(
                 continue;
 
             let category = categoryById[key];
-            if (category.type === 'CREATED') {
+            if (category.modification === 'CREATED') {
                 createdCategories.push(category);
-            } else if (category.type === 'MODIFIED') {
+            } else if (category.modification === 'MODIFIED') {
                 modifiedCategories.push(category);
-            } else if (category.type === 'DELETED') {
+            } else if (category.modification === 'DELETED') {
                 deletedCategories.push(category);
             }
         }

@@ -59,4 +59,14 @@ public class CategoryDto {
         result = 31 * result + weight;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "CategoryDto{" +
+                "categoryId=" + categoryId +
+                ", name='" + name + '\'' +
+                ", parentCategoryId=" + parentCategoryId +
+                ", weight=" + weight +
+                '}';
+    }
 }

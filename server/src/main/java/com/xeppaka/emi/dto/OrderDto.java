@@ -1,46 +1,33 @@
 package com.xeppaka.emi.dto;
 
-import com.xeppaka.emi.domain.Country;
-import com.xeppaka.emi.domain.order.Order;
-
 import java.util.Collection;
-import java.util.stream.Collectors;
 
-/**
- * Created by Pavel K. on 10/3/16.
- */
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class OrderDto {
-    private String email;
-    private String country;
-    private Collection<ProductDto> products;
+    private final String email;
+    private final String country;
+    private final Collection<OrderProductDto> products;
 
-    private OrderDto() {}
+    @JsonCreator
+    public OrderDto(@JsonProperty("email") String email,
+                    @JsonProperty("country") String country,
+                    @JsonProperty("products") Collection<OrderProductDto> products) {
+        this.email = email;
+        this.country = country;
+        this.products = products;
+    }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Collection<ProductDto> getProducts() {
+    public Collection<OrderProductDto> getProducts() {
         return products;
-    }
-
-    public void setProducts(Collection<ProductDto> products) {
-        this.products = products;
-    }
-
-    public Order toOrder() {
-        return new Order(email, Country.valueOf(country), products.stream().map(ProductDto::toProduct).collect(Collectors.toList()));
     }
 }

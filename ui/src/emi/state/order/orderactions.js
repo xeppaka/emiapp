@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { showMessageBoxModal, hideModal } from '../modals/modalsactions';
-import { orderSelector } from '../selectors/orderselector';
+import { sendOrderSelector } from '../selectors/orderselector';
 
 export const SET_ORDER_EMAIL = 'SET_ORDER_EMAIL';
 export const SET_ORDER_COUNTRY = 'SET_ORDER_COUNTRY';
@@ -32,14 +32,14 @@ export function submitOrder(orderModalId) {
     return function(dispatch, getState) {
         dispatch(submitOrderStarted());
 
-        let order = orderSelector(getState());
+        let order = sendOrderSelector(getState());
         let orderToSubmit = {
             email: order.email,
             country: order.country,
             products: order.products
         };
 
-        fetch('orders', {
+        fetch('/api/order', {
                             method: 'POST',
                             headers: {
                                         'Accept': 'application/json',
@@ -48,7 +48,7 @@ export function submitOrder(orderModalId) {
                             body:    JSON.stringify(orderToSubmit)
                         })
             .then(response => {
-                if (response.status !== 200 && response.status !== 201) {
+                if (response.status !== 200) {
                     dispatch(submitOrderFinishedFail());
                     dispatch(showMessageBoxModal('Order submit failed', 'Error occurred while creating your order. Please check your email, if you haven\'t received new emails try to Submit order again and if error appears again please contact international E.Mi office at <email>.'));
                 } else {

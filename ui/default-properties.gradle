@@ -1,5 +1,0 @@
-ext {
-    proxyListenPort = project.hasProperty('proxyListenPort') ? project.property('proxyListenPort') : 10777
-    proxyRemotePort = project.hasProperty('proxyRemotePort') ? project.property('proxyRemotePort') : 8080
-    proxyRemoteServer = project.hasProperty('proxyRemoteServer') ? project.property('proxyRemoteServer') : 'localhost'
-}

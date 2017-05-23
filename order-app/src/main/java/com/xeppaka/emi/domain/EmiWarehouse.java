@@ -60,6 +60,12 @@ public class EmiWarehouse extends BaseAggregate {
             case PRODUCT_FEATURES_CHANGED:
                 applyProductFeaturesChanged((ProductFeaturesChanged) emiEvent);
                 break;
+            case PRODUCT_IMAGE_THUMBNAIL_CHANGED:
+                applyProductImageThumbnailChanged((ProductImageThumbnailChanged) emiEvent);
+                break;
+            case PRODUCT_IMAGE_CHANGED:
+                applyProductImageChanged((ProductImageChanged) emiEvent);
+                break;
             case PRODUCT_NOTE_CHANGED:
                 applyProductNoteChanged((ProductNoteChanged) emiEvent);
                 break;
@@ -81,6 +87,16 @@ public class EmiWarehouse extends BaseAggregate {
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event: {0}.", event));
         }
+    }
+
+    private void applyProductImageThumbnailChanged(ProductImageThumbnailChanged productImageThumbnailChanged) {
+        final Product product = productsMap.get(productImageThumbnailChanged.getProductId());
+        product.setImageThumbnail(productImageThumbnailChanged.getImageThumbnail());
+    }
+
+    private void applyProductImageChanged(ProductImageChanged productImageChanged) {
+        final Product product = productsMap.get(productImageChanged.getProductId());
+        product.setImage(productImageChanged.getImage());
     }
 
     private void applyProductWeightChanged(ProductWeightChanged productWeightChanged) {
@@ -140,7 +156,9 @@ public class EmiWarehouse extends BaseAggregate {
                         createProductEvent.getCategoryId(),
                         createProductEvent.getNote(),
                         createProductEvent.getWeight(),
-                        createProductEvent.getFeatures()));
+                        createProductEvent.getFeatures(),
+                        createProductEvent.getImageThumbnail(),
+                        createProductEvent.getImage()));
     }
 
     private void applyProductNameChanged(ProductNameChanged productNameChangedEvent) {
@@ -205,6 +223,8 @@ public class EmiWarehouse extends BaseAggregate {
                 command.getNote(),
                 command.getCategoryId(),
                 command.getFeatures(),
+                command.getImageThumbnail(),
+                command.getImage(),
                 command.getWeight());
 
         apply(productCreated);
@@ -230,6 +250,8 @@ public class EmiWarehouse extends BaseAggregate {
         final String note = command.getNote();
         final int weight = command.getWeight();
         final Set<ProductFeature> features = command.getFeatures();
+        final String image = command.getImage();
+        final String imageThumbnail = command.getImageThumbnail();
 
         if (!originalProduct.getName().equals(name)) {
             final ProductNameChanged productNameChanged =
@@ -271,6 +293,20 @@ public class EmiWarehouse extends BaseAggregate {
                     new ProductFeaturesChanged(originalProduct.getId(), features);
             apply(productFeaturesChanged);
             addEvent(productFeaturesChanged);
+        }
+
+        if (!originalProduct.getImageThumbnail().equals(imageThumbnail)) {
+            final ProductImageThumbnailChanged productImageThumbnailChanged =
+                    new ProductImageThumbnailChanged(originalProduct.getId(), imageThumbnail);
+            apply(productImageThumbnailChanged);
+            addEvent(productImageThumbnailChanged);
+        }
+
+        if (!originalProduct.getImage().equals(image)) {
+            final ProductImageChanged productImageChanged =
+                    new ProductImageChanged(originalProduct.getId(), image);
+            apply(productImageChanged);
+            addEvent(productImageChanged);
         }
 
         if (originalProduct.getWeight() != weight) {

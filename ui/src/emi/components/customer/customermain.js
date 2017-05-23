@@ -10,6 +10,10 @@ class CustomerMain extends React.Component {
         super(props);
     }
 
+    componentWillMount() {
+        this.props.bootstrapCustomer();
+    }
+
     render() {
         return (
             <div className="container-fluid">

@@ -2,8 +2,23 @@ package com.xeppaka.emi.persistence.view;
 
 import com.xeppaka.ddd.events.Event;
 import com.xeppaka.ddd.events.EventListener;
-import com.xeppaka.emi.events.*;
-
+import com.xeppaka.emi.events.CategoryCreated;
+import com.xeppaka.emi.events.CategoryDeleted;
+import com.xeppaka.emi.events.CategoryNameChanged;
+import com.xeppaka.emi.events.CategoryParentChanged;
+import com.xeppaka.emi.events.CategoryWeightChanged;
+import com.xeppaka.emi.events.EmiEvent;
+import com.xeppaka.emi.events.ProductCategoryChanged;
+import com.xeppaka.emi.events.ProductCreated;
+import com.xeppaka.emi.events.ProductDeleted;
+import com.xeppaka.emi.events.ProductFeaturesChanged;
+import com.xeppaka.emi.events.ProductImageChanged;
+import com.xeppaka.emi.events.ProductImageThumbnailChanged;
+import com.xeppaka.emi.events.ProductMultiplicityChanged;
+import com.xeppaka.emi.events.ProductNameChanged;
+import com.xeppaka.emi.events.ProductNoteChanged;
+import com.xeppaka.emi.events.ProductPriceChanged;
+import com.xeppaka.emi.events.ProductWeightChanged;
 import org.apache.commons.lang3.Validate;
 
 import java.text.MessageFormat;
@@ -70,9 +85,24 @@ public class EmiEventPersistenceListener implements EventListener {
             case PRODUCT_NOTE_CHANGED:
                 onProductNoteChanged((ProductNoteChanged) emiEvent);
                 break;
+            case PRODUCT_IMAGE_THUMBNAIL_CHANGED:
+                onProductImageThumbnailChanged((ProductImageThumbnailChanged) emiEvent);
+                break;
+            case PRODUCT_IMAGE_CHANGED:
+                onProductImageChanged((ProductImageChanged) emiEvent);
+                break;
             default:
                 throw new IllegalArgumentException(MessageFormat.format("Unknown event {0}.", event));
         }
+    }
+
+    private void onProductImageThumbnailChanged(ProductImageThumbnailChanged productImageThumbnailChanged) {
+        productsRepository.updateProductImageThumbnail(productImageThumbnailChanged.getProductId(),
+                productImageThumbnailChanged.getImageThumbnail());
+    }
+
+    private void onProductImageChanged(ProductImageChanged productImageChanged) {
+        productsRepository.updateProductImage(productImageChanged.getProductId(), productImageChanged.getImage());
     }
 
     private void onProductNoteChanged(ProductNoteChanged productNoteChanged) {
@@ -120,6 +150,8 @@ public class EmiEventPersistenceListener implements EventListener {
                 productCreated.getNote(),
                 productCreated.getCategoryId(),
                 productCreated.getFeatures(),
+                productCreated.getImageThumbnail(),
+                productCreated.getImage(),
                 productCreated.getWeight());
     }
 

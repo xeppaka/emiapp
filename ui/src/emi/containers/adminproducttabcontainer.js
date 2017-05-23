@@ -1,18 +1,23 @@
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import AdminProductsTab from '../components/admin/adminproductstab';
-import { adminProductListSelector, adminProductCountersSelector } from '../state/selectors/productsselector';
-import { categoriesListSelector } from '../state/selectors/categoriesselector';
-import { setProductName, setProductPrice, setProductCategory,
-         setProductMultiplicity, setProductNote, setProductWeight,
-         resetProducts, createProduct, deleteProduct, setProductFeature } from '../state/admin/adminactions';
-import { showSaveProductsModal } from '../state/modals/modalsactions';
+import {adminProductListSelector, adminProductCountersSelector} from '../state/selectors/productsselector';
+import {categoryListSelector} from '../state/selectors/categoriesselector';
+import {
+    setProductName, setProductPrice, setProductCategory,
+    setProductMultiplicity, setProductNote, setProductWeight,
+    setProductImageThumbnail, setProductImage,
+    resetProducts, createProduct, deleteProduct, setProductFeature,
+    setCurrentModifyProduct, resetProduct
+} from '../state/admin/adminactions';
+import {showSaveProductsModal} from '../state/modals/modalsactions';
 
 const mapStateToProps = (state) => {
     let counters = adminProductCountersSelector(state);
 
     return {
-        categoriesList: categoriesListSelector(state),
-        productsList: adminProductListSelector(state),
+        currentModifyProductId: state.emiapp.admin.currentModifyProductId,
+        categories: categoryListSelector(state),
+        products: adminProductListSelector(state),
         createdProducts: counters.createdProducts,
         deletedProducts: counters.deletedProducts,
         modifiedProducts: counters.modifiedProducts,
@@ -34,6 +39,12 @@ const mapDispatchToProps = (dispatch) => {
         onProductMultiplicityChanged: (productId, multiplicity) => {
             dispatch(setProductMultiplicity(productId, multiplicity));
         },
+        onProductImageThumbnailChanged: (productId, imageThumbnail) => {
+            dispatch(setProductImageThumbnail(productId, imageThumbnail));
+        },
+        onProductImageChanged: (productId, image) => {
+            dispatch(setProductImage(productId, image));
+        },
         onProductNoteChanged: (productId, note) => {
             dispatch(setProductNote(productId, note));
         },
@@ -54,6 +65,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onDeleteProduct: (productId) => {
             dispatch(deleteProduct(productId));
+        },
+        onSetCurrentModifyProduct: (productId) => {
+            dispatch(setCurrentModifyProduct(productId));
+        },
+        onResetProduct: (productId) => {
+            dispatch(resetProduct(productId));
         }
     }
 };

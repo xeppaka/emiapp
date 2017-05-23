@@ -2,23 +2,23 @@ import { createSelector } from 'reselect';
 
 export const adminProductsSelector = createSelector(
     [
-        (state) => state.warehouse.products.productById,
-        (state) => state.admin.modifiedProductById,
-        (state) => state.admin.deletedProducts
+        (state) => state.emiapp.warehouse.products.productById,
+        (state) => state.emiapp.admin.modifiedProductById,
+        (state) => state.emiapp.admin.deletedProducts
     ],
     (productById, modifiedProductById, deletedProductIds) => {
         let adminProductById = {};
-        let adminModificationTypeById = {};
+        let modificationById = {};
 
         for (let key in modifiedProductById) {
             if (!modifiedProductById.hasOwnProperty(key))
                 continue;
 
             if (!adminProductById.hasOwnProperty(key)) {
-                let type = productById.hasOwnProperty(key) ? 'MODIFIED' : 'CREATED';
+                let modification = deletedProductIds.indexOf(key) >= 0 ? 'DELETED' : productById.hasOwnProperty(key) ? 'MODIFIED' : 'CREATED';
 
                 adminProductById[key] = modifiedProductById[key];
-                adminModificationTypeById[key] = type;
+                modificationById[key] = modification;
             }
         }
 
@@ -27,16 +27,16 @@ export const adminProductsSelector = createSelector(
                 continue;
 
             if (!adminProductById.hasOwnProperty(key)) {
-                let type = deletedProductIds.indexOf(key) >= 0 ? 'DELETED' : 'UNCHANGED';
+                let modification = deletedProductIds.indexOf(key) >= 0 ? 'DELETED' : 'UNCHANGED';
 
                 adminProductById[key] = productById[key];
-                adminModificationTypeById[key] = type;
+                modificationById[key] = modification;
             }
         }
 
         return {
             productById: adminProductById,
-            modificationTypeById: adminModificationTypeById
+            modificationById: modificationById
         };
     }
 );

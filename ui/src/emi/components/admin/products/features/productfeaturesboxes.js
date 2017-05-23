@@ -1,13 +1,9 @@
 import React, { PropTypes } from 'react';
-import ProductFeature from './productfeature';
+import ProductFeatureBox from './productfeaturebox';
 
-class ProductFeatures extends React.Component {
+class ProductFeaturesBoxes extends React.Component {
     constructor(props) {
         super(props);
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return true;
     }
 
     render() {
@@ -19,23 +15,23 @@ class ProductFeatures extends React.Component {
 
         return (
             <div>
-                <ProductFeature
-                    name='F' enabled={isFlammable}
-                    onChange={(enabled) => this.props.onProductFeatureChanged('FLAMMABLE', enabled)}
-                />
-                &nbsp;&nbsp;
-                <ProductFeature
-                    name='N' enabled={isNew}
+                <ProductFeatureBox
+                    name='NEW' enabled={isNew}
                     onChange={(enabled) => this.props.onProductFeatureChanged('NEW', enabled)}
                 />
-                &nbsp;&nbsp;
-                <ProductFeature
-                    name='V' enabled={isVisible}
+                <span style={{marginRight: '7px'}} />
+                <ProductFeatureBox
+                    name='FLA' enabled={isFlammable}
+                    onChange={(enabled) => this.props.onProductFeatureChanged('FLAMMABLE', enabled)}
+                />
+                <span style={{marginRight: '7px'}} />
+                <ProductFeatureBox
+                    name='VIS' enabled={isVisible}
                     onChange={(enabled) => this.props.onProductFeatureChanged('VISIBLE', enabled)}
                 />
-                &nbsp;&nbsp;
-                <ProductFeature
-                    name='A' enabled={isAvailable}
+                <span style={{marginRight: '7px'}} />
+                <ProductFeatureBox
+                    name='AVA' enabled={isAvailable}
                     onChange={(enabled) => this.props.onProductFeatureChanged('AVAILABLE', enabled)}
                 />
             </div>
@@ -43,4 +39,4 @@ class ProductFeatures extends React.Component {
     }
 }
 
-export default ProductFeatures;
+export default ProductFeaturesBoxes;

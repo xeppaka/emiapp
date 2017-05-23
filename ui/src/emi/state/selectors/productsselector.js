@@ -1,8 +1,8 @@
-import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
+import {createSelector, createSelectorCreator, defaultMemoize} from 'reselect';
 import update from 'react-addons-update';
-import { adminProductsSelector } from './adminproductsselector';
-import { categoriesTreeSelector } from './categoriesselector';
-import { adminCategoriesTreeSelector } from './categoriesselector';
+import {adminProductsSelector} from './adminproductsselector';
+import {categoriesTreeSelector} from './categoriesselector';
+import {adminCategoriesTreeSelector} from './categoriesselector';
 
 function isProductByIdEqual(val1, val2) {
     let val1Keys = 0;
@@ -67,7 +67,9 @@ function getProductIds(categoryById, id, productIds, isPos, prevPos = false) {
 
 const productIdsSelector = createProductIdsSelector(
     [
-        (state) => { return { type: 'categoriesTree', value: categoriesTreeSelector(state) } }
+        (state) => {
+            return {type: 'categoriesTree', value: categoriesTreeSelector(state)}
+        }
     ],
     (categoriesTreeVal) => {
         let categoryById = categoriesTreeVal.value;
@@ -142,20 +144,24 @@ export const productAnchorsSelector = createSelector(
 export const mainTotalWithoutDiscountSelector = createSelector(
     [
         productIdsSelector,
-        (state) => state.warehouse.products.productById
+        (state) => state.emiapp.warehouse.products.productById
     ],
     (productIds, productById) => {
-        return productIds.mainProductIds.reduce((prev, id) => { return prev + (productById[id].price * productById[id].quantity); }, 0);
+        return productIds.mainProductIds.reduce((prev, id) => {
+            return prev + (productById[id].price * productById[id].quantity);
+        }, 0);
     }
 );
 
 export const posTotalWithoutDiscountSelector = createSelector(
     [
         productIdsSelector,
-        (state) => state.warehouse.products.productById
+        (state) => state.emiapp.warehouse.products.productById
     ],
     (productIds, productById) => {
-        return productIds.posProductIds.reduce((prev, id) => { return prev + (productById[id].price * productById[id].quantity); }, 0);
+        return productIds.posProductIds.reduce((prev, id) => {
+            return prev + (productById[id].price * productById[id].quantity);
+        }, 0);
     }
 );
 
@@ -186,12 +192,14 @@ export const mainProductsSelector = createSelector(
     [
         productIdsSelector,
         productAnchorsSelector,
-        (state) => state.warehouse.products.productById
+        (state) => state.emiapp.warehouse.products.productById
     ],
     (productIds, anchorsById, productById) => {
         return productIds.mainProductIds
             .filter((id) => productById[id].features.indexOf('VISIBLE') >= 0)
-            .map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
+            .map((id) => {
+                return {product: productById[id], anchor: anchorsById[id]}
+            });
     }
 );
 
@@ -199,12 +207,14 @@ export const posProductsSelector = createSelector(
     [
         productIdsSelector,
         productAnchorsSelector,
-        (state) => state.warehouse.products.productById,
+        (state) => state.emiapp.warehouse.products.productById,
     ],
     (productIds, anchorsById, productById) => {
         return productIds.posProductIds
             .filter((id) => productById[id].features.indexOf('VISIBLE') >= 0)
-            .map((id) => { return { product: productById[id], anchor: anchorsById[id] } });
+            .map((id) => {
+                return {product: productById[id], anchor: anchorsById[id]}
+            });
     }
 );
 
@@ -212,7 +222,7 @@ export const posProductsWithLeftAmountSelector = createSelector(
     [
         productIdsSelector,
         productAnchorsSelector,
-        (state) => state.warehouse.products.productById,
+        (state) => state.emiapp.warehouse.products.productById,
         posAmountToOrderSelector
     ],
     (productIds, anchorsById, productById, posAmount) => {
@@ -220,7 +230,7 @@ export const posProductsWithLeftAmountSelector = createSelector(
             let product = productById[id];
             let piecesLeftToOrder = posAmount >= 0 ? Math.floor((posAmount / product.price)) : 0;
 
-            return { product: update(product, { piecesLeftToOrder: { $set: piecesLeftToOrder } }), anchor: anchorsById[id] }
+            return {product: update(product, {piecesLeftToOrder: {$set: piecesLeftToOrder}}), anchor: anchorsById[id]}
         });
     }
 );
@@ -229,23 +239,23 @@ export const adminProductCountersSelector = createSelector(
     [
         adminProductsSelector
     ],
-    (adminProducts) => {
-        let modificationTypeById = adminProducts.modificationTypeById;
-
+    (products) => {
+        let productById = products.productById;
+        let modificationById = products.modificationById;
         let createdProductsCount = 0;
         let modifiedProductsCount = 0;
         let deletedProductsCount = 0;
 
-        for (let key in modificationTypeById) {
-            if (!modificationTypeById.hasOwnProperty(key))
+        for (let key in productById) {
+            if (!productById.hasOwnProperty(key))
                 continue;
 
-            let modificationType = modificationTypeById[key];
-            if (modificationType === 'CREATED') {
+            let modification = modificationById[key];
+            if (modification === 'CREATED') {
                 createdProductsCount++;
-            } else if (modificationType === 'MODIFIED') {
+            } else if (modification === 'MODIFIED') {
                 modifiedProductsCount++;
-            } else if (modificationType === 'DELETED') {
+            } else if (modification === 'DELETED') {
                 deletedProductsCount++;
             }
         }
@@ -258,10 +268,6 @@ export const adminProductCountersSelector = createSelector(
     }
 );
 
-function isAdminPos(arg1, arg2, arg3) {
-    return false;
-}
-
 const adminProductIdsSelector = createProductIdsSelector(
     [
         adminCategoriesTreeSelector
@@ -271,7 +277,7 @@ const adminProductIdsSelector = createProductIdsSelector(
             mainProductIds: [],
             posProductIds: []
         };
-        getProductIds(categoryById, 'root', productIds, isAdminPos);
+        getProductIds(categoryById, 'root', productIds, () => false);
 
         return productIds;
     }
@@ -282,35 +288,35 @@ export const adminProductListSelector = createSelector(
         adminProductIdsSelector,
         adminProductsSelector
     ],
-    (adminProductIds, adminProducts) => {
-        return adminProductIds.mainProductIds
-            .filter(id => adminProducts.modificationTypeById[id] !== 'DELETED')
-            .map(id => {
-            return { product: adminProducts.productById[id] };
-        });
+    (productIds, products) => {
+        let productById = products.productById;
+
+        return {
+            productList: productIds.mainProductIds.map(id => productById[id]),
+            modificationById: products.modificationById
+        }
     }
 );
 
 function convertProductToViewProduct(product, categoryById) {
     return update(product, {
         categoryName: {$set: categoryById[product.categoryId].name},
-        features: {$apply: features => features
-            .map(f => f.substring(0,1))
-            .reduce((acc, cval, idx, arr) =>
-                (idx + 1 === arr.length) ? (acc + cval) : (acc + cval + ':'), '')
+        features: {
+            $apply: features => features
+                .map(f => f.substring(0, 1))
+                .reduce((acc, cval, idx, arr) =>
+                    (idx + 1 === arr.length) ? (acc + cval) : (acc + cval + ':'), '')
         }
     });
 }
 
 export const adminModifiedProductsSelector = createSelector(
     [
-        adminCategoriesTreeSelector,
         adminProductsSelector
     ],
-    (categoryById, adminProducts) => {
-        let productById = adminProducts.productById;
-        let modificationTypeById = adminProducts.modificationTypeById;
-
+    (products) => {
+        let productById = products.productById;
+        let modificationById = products.modificationById;
         let createdProducts = [];
         let modifiedProducts = [];
         let deletedProducts = [];
@@ -319,13 +325,13 @@ export const adminModifiedProductsSelector = createSelector(
             if (!productById.hasOwnProperty(key))
                 continue;
 
-            let product = convertProductToViewProduct(productById[key], categoryById);
-            let modificationType = modificationTypeById[key];
-            if (modificationType === 'CREATED') {
+            let product = productById[key];
+            let modification = modificationById[key];
+            if (modification === 'CREATED') {
                 createdProducts.push(product);
-            } else if (modificationType === 'MODIFIED') {
+            } else if (modification === 'MODIFIED') {
                 modifiedProducts.push(product);
-            } else if (modificationType === 'DELETED') {
+            } else if (modification === 'DELETED') {
                 deletedProducts.push(product);
             }
         }
@@ -338,37 +344,16 @@ export const adminModifiedProductsSelector = createSelector(
     }
 );
 
-export const adminModifiedProductsSaveSelector = createSelector(
+export const adminModifiedProductsViewSelector = createSelector(
     [
-        adminProductsSelector
+        adminCategoriesTreeSelector,
+        adminModifiedProductsSelector
     ],
-    (adminProducts) => {
-        let productById = adminProducts.productById;
-        let modificationTypeById = adminProducts.modificationTypeById;
-
-        let createdProducts = [];
-        let modifiedProducts = [];
-        let deletedProducts = [];
-
-        for (let key in productById) {
-            if (!productById.hasOwnProperty(key))
-                continue;
-
-            let product = productById[key];
-            let modificationType = modificationTypeById[key];
-            if (modificationType === 'CREATED') {
-                createdProducts.push(product);
-            } else if (modificationType === 'MODIFIED') {
-                modifiedProducts.push(product);
-            } else if (modificationType === 'DELETED') {
-                deletedProducts.push(product);
-            }
-        }
-
+    (categoryById, saveProducts) => {
         return {
-            createdProducts: createdProducts,
-            modifiedProducts: modifiedProducts,
-            deletedProducts: deletedProducts
+            createdProducts: saveProducts.createdProducts.map(product => convertProductToViewProduct(product, categoryById)),
+            modifiedProducts: saveProducts.modifiedProducts.map(product => convertProductToViewProduct(product, categoryById)),
+            deletedProducts: saveProducts.deletedProducts.map(product => convertProductToViewProduct(product, categoryById))
         };
     }
 );

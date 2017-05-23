@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 
-export const adminProductsSelector1 = createSelector(
+export const adminProductsSelector = createSelector(
     [
-        (state) => state.admin.modifiedProductById,
-        (state) => state.admin.newProductById
+        (state) => state.emiapp.admin.modifiedProductById,
+        (state) => state.emiapp.admin.newProductById
     ],
     (modifiedProductById, newProductById) => {
         let products = [];
@@ -47,9 +47,9 @@ function generateCustomerNotification(products) {
 
 export const notificationSelector = createSelector(
     [
-        (state) => state.admin.sendNotificationToCustomers,
-        (state) => state.admin.notificationText,
-        adminProductsSelector1
+        (state) => state.emiapp.admin.sendNotificationToCustomers,
+        (state) => state.emiapp.admin.notificationText,
+        adminProductsSelector
     ],
     (sendNotification, notificationText, modifiedProducts) => {
         if (!sendNotification) {

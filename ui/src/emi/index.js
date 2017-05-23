@@ -3,44 +3,52 @@ import React from 'react';
 
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route, browserHistory } from 'react-router';
-import { createStore, applyMiddleware } from 'redux';
+import { Route } from 'react-router';
+import PrivateRouteContainer from './containers/privateroutecontainer';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import createLogger from 'redux-logger';
+import createHistory from 'history/createBrowserHistory';
+import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux';
+import { HashRouter } from 'react-router-dom';
+import { createLogger } from 'redux-logger';
 
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';
 
-import CustomerMain from './components/customer/customermain';
-import AdminMain from './components/admin/adminmain';
-import AdminProductsTabContainer from './containers/adminproducttabcontainer';
-import AdminCategoriesTabContainer from './containers/admincategorytabcontainer';
+import CustomerMainContainer from './containers/customermaincontainer';
+import AdminMainContainer from './containers/adminmaincontainer';
+import LoginContainer from './containers/logincontainer';
 
 import emiApp from './state/emiapp';
-import { loadWarehouse } from './state/warehouse/warehouseactions';
 
 import './index.scss';
 
 const loggerMiddleware = createLogger();
 
-let store = createStore(emiApp,
+const history = createHistory();
+const roterMiddleware = routerMiddleware(history);
+
+const store = createStore(
+    combineReducers({
+        emiapp: emiApp,
+        router: routerReducer
+    }),
     applyMiddleware(
         thunkMiddleware,
-        loggerMiddleware
+        loggerMiddleware,
+        roterMiddleware
     )
 );
 
-store.dispatch(loadWarehouse());
-
 render(
     <Provider store={store}>
-        <Router>
-            <Route path="/" component={CustomerMain} />
-            <Route path="/admin" component={AdminMain}>
-                <Route path="products" component={AdminProductsTabContainer}/>
-                <Route path="categories" component={AdminCategoriesTabContainer}/>
-            </Route>
-        </Router>
+        <ConnectedRouter history={history}>
+            <div>
+                <Route exact path="/" component={CustomerMainContainer} />
+                <PrivateRouteContainer path="/admin" component={AdminMainContainer} />
+                <Route exact path="/login" component={LoginContainer} />
+            </div>
+        </ConnectedRouter>
     </Provider>,
     document.getElementById('applicationContainer')
 );

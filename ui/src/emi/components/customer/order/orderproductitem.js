@@ -7,18 +7,21 @@ class OrderProductItem extends React.Component {
 
     render() {
         let product = this.props.product;
-        let isMain = product.productFeatures.indexOf('MAIN') !== -1;
-        let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(2));
-        let calculatedPriceWithDiscount = isMain ? Number((product.price / 200 * product.quantity).toFixed(2)) : 0;
+        let isMain = product.isMain;
+
+        let price = Number((product.price / 100).toFixed(2));
+        let discountPrice = isMain ? Number((product.price / 200).toFixed(2)) : 0;
+        let calculatedTotalPrice = Number((product.price / 100 * product.quantity).toFixed(2));
+        let calculatedTotalPriceWithDiscount = product.isMain ? Number((product.price / 200 * product.quantity).toFixed(2)) : 0;
 
         return (<tr>
             <th scope="row">{this.props.idx}</th>
             <td style={{width: '300px'}}>{product.name}</td>
-            <td>{Number((product.price / 100).toFixed(2))}</td>
-            <td>{Number((product.price / 200).toFixed(2))}</td>
+            <td>{price}</td>
+            <td>{discountPrice}</td>
             <td>{product.quantity}</td>
-            <td>{calculatedPrice}</td>
-            <td>{calculatedPriceWithDiscount}</td>
+            <td>{calculatedTotalPrice}</td>
+            <td>{calculatedTotalPriceWithDiscount}</td>
         </tr>)
     }
 }

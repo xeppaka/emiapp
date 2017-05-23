@@ -1,8 +1,15 @@
-package com.xeppaka.emi.domain.order;
+package com.xeppaka.emi.domain.value;
 
-import com.xeppaka.emi.domain.Country;
-import com.xeppaka.emi.domain.ProductFeature;
-import org.apache.commons.lang3.Validate;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -11,30 +18,30 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.Properties;
 
-/**
- * Created by nnm on 10/4/16.
- */
+import org.apache.commons.lang3.Validate;
+
+import com.xeppaka.emi.domain.Country;
+import com.xeppaka.emi.persistence.view.dto.ProductDto;
+
 public class Order {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     private final String email;
     private final Country country;
-    private final Collection<Product> products;
+    private final Map<ProductDto, Integer> productsQuantity;
+    private final Set<UUID> posCategories;
 
-    public Order(String email, Country country, Collection<Product> products) {
+    public Order(String email, Country country, Map<ProductDto, Integer> productsQuantity, Set<UUID> posCategories) {
         Validate.notEmpty(email);
         Validate.notNull(country);
-        Validate.notEmpty(products);
+        Validate.notEmpty(productsQuantity);
+        Validate.notNull(posCategories);
 
         this.email = email;
         this.country = country;
-        this.products = products;
+        this.productsQuantity = productsQuantity;
+        this.posCategories = posCategories;
     }
 
     public String getEmail() {
@@ -49,15 +56,21 @@ public class Order {
         return country.getCountry();
     }
 
-    public Collection<Product> getProducts() {
-        return products;
+    public Map<ProductDto, Integer> getProductsQuantity() {
+        return productsQuantity;
+    }
+
+    public Set<UUID> getPosCategories() {
+        return posCategories;
     }
 
     public double getTotal() {
         double total = 0;
 
-        for (Product p : products) {
-            total += p.getPrice() * p.getQuantity();
+        for (Map.Entry<ProductDto, Integer> p : productsQuantity.entrySet()) {
+            if (!posCategories.contains(p.getKey().getCategoryId())) {
+                total += p.getKey().getPrice() / 100f * p.getValue();
+            }
         }
 
         return total;
@@ -66,10 +79,10 @@ public class Order {
     public double getTotalWithDiscount() {
         double total = 0;
 
-        for (Product p : products) {
-//            if (p.getType() == ProductFeature.MAIN) {
-//                total += p.getPrice() / 2 * p.getQuantity();
-//            }
+        for (Map.Entry<ProductDto, Integer> p : productsQuantity.entrySet()) {
+            if (!posCategories.contains(p.getKey().getCategoryId())) {
+                total += p.getKey().getPrice() / 200f * p.getValue();
+            }
         }
 
         return total;
@@ -79,7 +92,7 @@ public class Order {
         sendToEmails(new InternetAddress("kachalouski@protonmail.com"), new InternetAddress(getEmail()));
     }
 
-    private void sendToEmails(InternetAddress ...emails) throws MessagingException {
+    private void sendToEmails(InternetAddress... emails) throws MessagingException {
         Validate.isTrue(emails.length > 0);
 
         final Properties properties = new Properties();
@@ -105,7 +118,7 @@ public class Order {
 
         mimeMessage.setFrom(new InternetAddress("xeptest@yandex.com"));
         mimeMessage.setSubject(MessageFormat.format("New Order from {0}.", getCountryString()));
-        mimeMessage.setContent(toHtml(), "text/html");
+        mimeMessage.setContent(toHtml(), "text/html; charset=\"UTF-8\"");
 
         Transport.send(mimeMessage);
     }
@@ -115,10 +128,14 @@ public class Order {
         final String date = MessageFormat.format("<div>Order date: {0}</div>", LocalDateTime.now().format(FORMATTER));
         final String space = "<div><br /></div>";
 
+        final List<Map.Entry<ProductDto, Integer>> sortedProducts = new ArrayList<>(productsQuantity.entrySet());
+        sortedProducts.sort(Comparator.comparing(e2 -> e2.getKey().getName()));
         final StringBuilder tableRows = new StringBuilder();
         int idx = 0;
-        for (Product p : products) {
-            tableRows.append(productToHtml(++idx, p));
+        for (Map.Entry<ProductDto, Integer> e : sortedProducts) {
+            final ProductDto product = e.getKey();
+            final int quantity = e.getValue();
+            tableRows.append(productToHtml(++idx, product, quantity, !posCategories.contains(product.getCategoryId())));
         }
 
         final String table = MessageFormat.format("<table style=\"width:100%; border-spacing: 0px; border-top: 1px solid black; border-right: 1px solid black;\"><thead>" +
@@ -145,39 +162,40 @@ public class Order {
         return country + date + space + table;
     }
 
-    private String productToHtml(int idx, Product product) {
+    private String productToHtml(int idx, ProductDto product, int quantity, boolean isMain) {
         return MessageFormat.format("<tr>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{0}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{1}</td>" +
-                        "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{2}</td>" +
+                        "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{2,number,#.##}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{3,number,#.##}</td>" +
-                        "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{4}</td>" +
+                        "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{4,number,#}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{5,number,#.##}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{6,number,#.##}</td>" +
                         "</tr>",
-                idx, product.getName(), product.getPrice(), product.getPrice() / 2, product.getQuantity(),
-                product.getPrice() * product.getQuantity(),
-                product.getPrice() / 2 * product.getQuantity());
+                idx, product.getName(), product.getPrice() / 100f, isMain ? (product.getPrice() / 200f) : 0, quantity,
+                product.getPrice() / 100f * quantity,
+                isMain ? (product.getPrice() / 200f * quantity) : 0);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         Order order = (Order) o;
 
         if (!email.equals(order.email)) return false;
         if (country != order.country) return false;
-        return products.equals(order.products);
-
+        return productsQuantity.equals(order.productsQuantity);
     }
 
     @Override
     public int hashCode() {
-        int result = email.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + email.hashCode();
         result = 31 * result + country.hashCode();
-        result = 31 * result + products.hashCode();
+        result = 31 * result + productsQuantity.hashCode();
         return result;
     }
 
@@ -186,7 +204,7 @@ public class Order {
         return "Order{" +
                 "email='" + email + '\'' +
                 ", country=" + country +
-                ", products=" + products +
+                ", productsQuantity=" + productsQuantity +
                 '}';
     }
 }

@@ -3,10 +3,11 @@ import {
     adminCategoriesTreeSelector,
     modifiedCategoriesListSaveSelector
 } from '../selectors/categoriesselector';
-import {adminModifiedProductsSaveSelector} from '../selectors/productsselector';
+import {adminModifiedProductsSelector} from '../selectors/productsselector';
 import {showMessageBoxModal, hideModal} from '../modals/modalsactions';
 import {updateProducts, removeProduct} from '../products/productsactions';
 import {updateCategories, removeCategories} from '../categories/categoriesactions';
+import {loadWarehouse} from '../warehouse/warehouseactions';
 
 export const SET_MODIFIED_PRODUCT = 'SET_MODIFIED_PRODUCT';
 export const REMOVE_MODIFIED_PRODUCT = 'REMOVE_MODIFIED_PRODUCT';
@@ -24,6 +25,8 @@ export const SET_SEND_CUSTOMER_NOTIFICATION = 'SET_SEND_CUSTOMER_NOTIFICATION';
 export const SET_NOTIFICATION_TEXT = 'SET_NOTIFICATION_TEXT';
 export const SAVE_STARTED = 'SAVE_STARTED';
 export const SAVE_FINISHED = 'SAVE_FINISHED';
+export const SET_MODIFY_PRODUCT = "SET_MODIFY_PRODUCT";
+export const CLEAR_MODIFY_PRODUCT = "CLEAR_MODIFY_PRODUCT";
 
 export function resetProducts() {
     return {type: ADMIN_PRODUCTS_RESET};
@@ -48,14 +51,22 @@ function removeProductDeleted(productId) {
 export function deleteProduct(productId) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
+        let productById = state.emiapp.warehouse.products.productById;
 
         if (productById.hasOwnProperty(productId)) {
+            dispatch(removeModifiedProduct(productId));
             dispatch(setProductDeleted(productId));
         } else {
             dispatch(removeProductDeleted(productId));
             dispatch(removeModifiedProduct(productId));
         }
+    }
+}
+
+export function resetProduct(productId) {
+    return function (dispatch, getState) {
+        dispatch(removeProductDeleted(productId));
+        dispatch(removeModifiedProduct(productId));
     }
 }
 
@@ -70,7 +81,7 @@ function removeCategoryDeleted(categoryId) {
 export function deleteCategory(categoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
 
         if (categoryById.hasOwnProperty(categoryId)) {
             dispatch(setCategoryDeleted(categoryId));
@@ -116,19 +127,19 @@ export function createCategory() {
     }
 }
 
-export function addNewCategory(category) {
+function addNewCategory(category) {
     return {type: ADD_NEW_CATEGORY, category};
 }
 
-export function removeModifiedProduct(id) {
+function removeModifiedProduct(id) {
     return {type: REMOVE_MODIFIED_PRODUCT, id: id};
 }
 
-export function setModifiedCategory(category) {
+function setModifiedCategory(category) {
     return {type: SET_MODIFIED_CATEGORY, category: category}
 }
 
-export function removeModifiedCategory(id) {
+function removeModifiedCategory(id) {
     return {type: REMOVE_MODIFIED_CATEGORY, id: id}
 }
 
@@ -150,13 +161,15 @@ export function saveFinished() {
 
 function deleteProducts(dispatch, products) {
     let promises = [];
+    let authToken = localStorage.getItem('auth-token');
     for (let i = 0; i < products.length; i++) {
         let productId = products[i].productId;
-        let p = fetch('api/products/' + productId, {
+        let p = fetch('/api/products/' + productId, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             }
         }).then(response => {
             if (response.status !== 204) {
@@ -174,16 +187,18 @@ function deleteProducts(dispatch, products) {
 
 function createProducts(dispatch, products) {
     let promises = [];
+    let authToken = localStorage.getItem('auth-token');
     for (let key in products) {
         if (!products.hasOwnProperty(key))
             continue;
 
         let product = products[key];
-        let p = fetch('api/products', {
+        let p = fetch('/api/products', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             },
             body: JSON.stringify(product)
         }).then(response => {
@@ -204,11 +219,13 @@ function createProducts(dispatch, products) {
 
 function modifyProducts(dispatch, products) {
     if (products.length > 0) {
-        return fetch('api/products', {
+        let authToken = localStorage.getItem('auth-token');
+        return fetch('/api/products', {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             },
             body: JSON.stringify(products)
         }).then(response => {
@@ -228,7 +245,7 @@ function modifyProducts(dispatch, products) {
 export function saveProducts(saveModalId) {
     return function (dispatch, getState) {
         dispatch(saveStarted());
-        let products = adminModifiedProductsSaveSelector(getState());
+        let products = adminModifiedProductsSelector(getState());
         deleteProducts(dispatch, products.deletedProducts)
             .then(() => createProducts(dispatch, products.createdProducts))
             .then(() => modifyProducts(dispatch, products.modifiedProducts))
@@ -246,13 +263,15 @@ export function saveProducts(saveModalId) {
 
 function deleteCategories(dispatch, categories) {
     let promises = [];
+    let authToken = localStorage.getItem('auth-token');
     for (let i = 0; i < categories.length; i++) {
         let categoryId = categories[i].categoryId;
-        let p = fetch('api/categories/' + categoryId, {
+        let p = fetch('/api/categories/' + categoryId, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             }
         }).then(response => {
             if (response.status !== 200) {
@@ -281,14 +300,16 @@ function updateParentCategoryIds(oldCategoryId, newCategoryId, categories) {
 
 function createCategories(dispatch, categories) {
     let currPromise = Promise.resolve();
+    let authToken = localStorage.getItem('auth-token');
     for (let i = 0; i < categories.length; i++) {
         let category = categories[i];
         currPromise = currPromise.then(
-            () => fetch('api/categories', {
+            () => fetch('/api/categories', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-auth-token': authToken
                 },
                 body: JSON.stringify(category)})
         ).then(response => {
@@ -308,11 +329,13 @@ function createCategories(dispatch, categories) {
 
 function modifyCategories(dispatch, categories) {
     if (categories.length > 0) {
-        return fetch('api/categories', {
+        let authToken = localStorage.getItem('auth-token');
+        return fetch('/api/categories', {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-auth-token': authToken
             },
             body: JSON.stringify(categories)
         }).then(response => {
@@ -349,7 +372,7 @@ export function saveCategories(saveModalId) {
                     dispatch(hideModal(saveModalId));
                 }, () => {
                     dispatch(saveFinished());
-                    dispatch(showMessageBoxModal('Category(s) save failed.', 'Error occurred while saving category(s).'));
+                    dispatch(showMessageBoxModal('Category(ies) save failed.', 'Error occurred while saving category(s).'));
                 }
             );
     };
@@ -376,6 +399,8 @@ function compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct) 
         modifiedProduct.categoryId === originalProduct.categoryId &&
         modifiedProduct.multiplicity === originalProduct.multiplicity &&
         featuresEquals(modifiedProduct.features, originalProduct.features) &&
+        modifiedProduct.imageThumbnail === originalProduct.imageThumbnail &&
+        modifiedProduct.image === originalProduct.image &&
         modifiedProduct.note === originalProduct.note &&
         modifiedProduct.weight === originalProduct.weight) {
         dispatch(removeModifiedProduct(originalProduct.productId));
@@ -387,8 +412,8 @@ function compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct) 
 export function setProductName(productId, name) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -405,8 +430,8 @@ export function setProductName(productId, name) {
 export function setProductPrice(productId, price) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -423,8 +448,8 @@ export function setProductPrice(productId, price) {
 export function setProductCategory(productId, categoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -440,8 +465,8 @@ export function setProductCategory(productId, categoryId) {
 export function setProductFeature(productId, featureName, enabled) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -470,8 +495,8 @@ export function setProductFeature(productId, featureName, enabled) {
 export function setProductMultiplicity(productId, multiplicity) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -487,8 +512,8 @@ export function setProductMultiplicity(productId, multiplicity) {
 export function setProductNote(productId, note) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
@@ -504,14 +529,48 @@ export function setProductNote(productId, note) {
 export function setProductWeight(productId, weight) {
     return function (dispatch, getState) {
         let state = getState();
-        let productById = state.warehouse.products.productById;
-        let modifiedProductById = state.admin.modifiedProductById;
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
 
         let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
         let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
         modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
         modifiedProduct = update(modifiedProduct, {
             weight: {$set: weight}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductImageThumbnail(productId, imageLink) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+        modifiedProduct = update(modifiedProduct, {
+            imageThumbnail: {$set: imageLink}
+        });
+
+        compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
+    };
+}
+
+export function setProductImage(productId, imageLink) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let productById = state.emiapp.warehouse.products.productById;
+        let modifiedProductById = state.emiapp.admin.modifiedProductById;
+
+        let originalProduct = productById.hasOwnProperty(productId) ? productById[productId] : null;
+        let modifiedProduct = modifiedProductById.hasOwnProperty(productId) ? modifiedProductById[productId] : null;
+        modifiedProduct = modifiedProduct === null ? originalProduct : modifiedProduct;
+        modifiedProduct = update(modifiedProduct, {
+            image: {$set: imageLink}
         });
 
         compareProductsAndDispatch(dispatch, modifiedProduct, originalProduct);
@@ -532,9 +591,9 @@ function compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCatego
 export function setCategoryName(categoryId, name) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
         let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
-        let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
+        let modifiedCategory = state.emiapp.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.emiapp.admin.modifiedCategoryById[categoryId] : null;
         modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
         modifiedCategory = update(modifiedCategory, {
             name: {$set: name}
@@ -547,9 +606,9 @@ export function setCategoryName(categoryId, name) {
 export function setCategoryParentId(categoryId, parentCategoryId) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
         let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
-        let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
+        let modifiedCategory = state.emiapp.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.emiapp.admin.modifiedCategoryById[categoryId] : null;
         modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
         modifiedCategory = update(modifiedCategory, {
             parentCategoryId: {$set: parentCategoryId}
@@ -562,9 +621,9 @@ export function setCategoryParentId(categoryId, parentCategoryId) {
 export function setCategoryWeight(categoryId, weight) {
     return function (dispatch, getState) {
         let state = getState();
-        let categoryById = state.warehouse.categories.categoryById;
+        let categoryById = state.emiapp.warehouse.categories.categoryById;
         let originalCategory = categoryById.hasOwnProperty(categoryId) ? categoryById[categoryId] : null;
-        let modifiedCategory = state.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.admin.modifiedCategoryById[categoryId] : null;
+        let modifiedCategory = state.emiapp.admin.modifiedCategoryById.hasOwnProperty(categoryId) ? state.emiapp.admin.modifiedCategoryById[categoryId] : null;
         modifiedCategory = modifiedCategory === null ? originalCategory : modifiedCategory;
         modifiedCategory = update(modifiedCategory, {
             weight: {$set: weight}
@@ -572,4 +631,32 @@ export function setCategoryWeight(categoryId, weight) {
 
         compareCategoriesAndDispatch(dispatch, modifiedCategory, originalCategory);
     };
+}
+
+export function bootstrapAdmin() {
+    return function(dispatch) {
+        return dispatch(loadWarehouse());
+    }
+}
+
+export function setCurrentModifyProduct(productId) {
+    return function(dispatch, getState) {
+        let state = getState();
+
+        if (state.emiapp.admin.currentModifyProductId === null) {
+            dispatch(setModifyProduct(productId));
+        } else if (state.emiapp.admin.currentModifyProductId !== productId) {
+            dispatch(setModifyProduct(productId));
+        } else {
+            dispatch(clearModifyProduct());
+        }
+    }
+}
+
+function setModifyProduct(productId) {
+    return {type: SET_MODIFY_PRODUCT, productId: productId};
+}
+
+function clearModifyProduct() {
+    return {type: CLEAR_MODIFY_PRODUCT};
 }

@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 import MainProductItem from './mainproductitem';
 import CategoryItem from './categoryitem';
 
@@ -33,7 +33,7 @@ class MainProductsTable extends React.Component {
             }
         }
 
-        if (firstVisible != null) {
+        if (firstVisible !== null) {
             return this.props.products[firstVisible].anchor.name;
         }
 
@@ -50,13 +50,16 @@ class MainProductsTable extends React.Component {
             let product = products[i].product;
 
             if (anchor.hasOwnProperty('categoryAnchors')) {
-                productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'6'} />);
+                productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'7'}/>);
             }
 
             productsItems.push(<MainProductItem
-                key={product.productId} ref={'product' + i} idx={i + 1}
-                product={product}
-                setProductQuantity={this.props.setProductQuantity}/>)
+                    key={product.productId} ref={'product' + i} idx={i + 1}
+                    product={product}
+                    setProductQuantity={this.props.setProductQuantity}
+                    onShowProductImage={this.props.onShowProductImage}
+                />
+            )
         }
 
         return productsItems;
@@ -64,23 +67,25 @@ class MainProductsTable extends React.Component {
 
     render() {
         return (
-                <table className="table table-striped table-sm">
-                    <thead>
-                        <tr>
-                            <th scope='row' style={{width:'2%'}}>#</th>
-                            <th style={{width:'33%'}}>Product Name</th>
-                            <th style={{width:'13%'}}>Retail price<br />(without VAT, in &#8364;)</th>
-                            <th style={{width:'13%'}}>Discount price<br />(-50%, without VAT, in &#8364;)</th>
-                            <th style={{width:'13%'}}>Quantity</th>
-                            <th style={{width:'13%'}}>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
-                            <th style={{width:'13%'}}>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { this.renderProducts() }
-                    </tbody>
-                </table>
-               )
+            <table className="table table-striped table-sm">
+                <thead>
+                <tr>
+                    <th scope='row' style={{width: '2%'}}>#</th>
+                    <th style={{width: '10%'}}>Image</th>
+                    <th style={{width: '23%'}}>Product Name</th>
+                    <th style={{width: '13%'}}>Retail price<br />(without VAT, in &#8364;)</th>
+                    <th style={{width: '13%'}}>Discount price<br />(-50%, without VAT, in &#8364;)</th>
+                    <th style={{width: '13%'}}>Quantity</th>
+                    <th style={{width: '13%'}}>Retail price x Quantity<br />(without discount, without VAT in &#8364;)
+                    </th>
+                    <th style={{width: '13%'}}>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
+                </tr>
+                </thead>
+                <tbody>
+                { this.renderProducts() }
+                </tbody>
+            </table>
+        )
     }
 }
 

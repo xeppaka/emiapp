@@ -1,18 +1,7 @@
-buildscript {
-    // In this section you declare where to find the dependencies of your project
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE")
-    }
-}
-
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '1.4.2.RELEASE'
 }
-apply plugin: 'spring-boot'
 
 repositories {
     jcenter()
@@ -25,12 +14,12 @@ jar {
 
 dependencies {
     // using Jetty instead of Tomcat
-    compile('org.springframework.boot:spring-boot-starter-web:1.4.0.RELEASE') {
+    compile('org.springframework.boot:spring-boot-starter-web:1.4.3.RELEASE') {
         exclude module: 'spring-boot-starter-tomcat'
     }
-    compile 'org.springframework.boot:spring-boot-starter-jetty:1.4.0.RELEASE'
-    compile 'org.springframework.boot:spring-boot-starter-actuator:1.4.0.RELEASE'
-    compile 'org.springframework.boot:spring-boot-starter-security:1.4.0.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-jetty:1.4.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-actuator:1.4.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-security:1.4.3.RELEASE'
 
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'ch.qos.logback:logback-classic:1.1.7'
@@ -40,5 +29,5 @@ dependencies {
     compile project(':order-app')
     runtime project(':ui')
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test:1.4.0.RELEASE'
+    testCompile 'org.springframework.boot:spring-boot-starter-test:1.4.3.RELEASE'
 }

@@ -1,14 +1,16 @@
-var webpack = require('webpack');
+let webpack = require('webpack');
+let path = require('path');
 // this plugin generates index.html file from configuration
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
 // this plugin allows to extract all compiled CSS into one or several files
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry:  ['babel-polyfill', './src/emi/index.js'],
     output: {
-        path:     'build/tmp/emi-app-ui',
-        filename: 'app.js'
+        path:     path.join(__dirname, 'build/resources/main/static'),
+        filename: 'app.js',
+        publicPath: '/'
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -16,13 +18,11 @@ module.exports = {
             template: './src/emi/index.html',
             inject: 'body'
         }),
-        new ExtractTextPlugin("styles.css", {
-            allChunks: true
-        }),
+        new ExtractTextPlugin({ filename: 'styles.css', allChunks: true }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
-            'window.Tether': 'tether'
+            Tether: 'tether'
         })
     ],
     module: {
@@ -30,14 +30,14 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 query: {
-                    presets: ['react', 'es2015']
+                    presets: ['react', 'env']
                 }
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract("style", "css!sass")
+                loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
             }
         ]
     },
@@ -48,6 +48,6 @@ module.exports = {
                 secure: false
             }
         },
-        port: 10777
+        port: 8081
     }
 };

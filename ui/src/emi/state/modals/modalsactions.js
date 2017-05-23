@@ -4,6 +4,7 @@ export const SHOW_SAVE_CATEGORIES_MODAL = 'SHOW_SAVE_CATEGORIES_MODAL';
 export const SHOW_CREATE_PRODUCT_MODAL = 'SHOW_CREATE_PRODUCT_MODAL';
 export const SHOW_CREATE_CATEGORY_MODAL = 'SHOW_CREATE_CATEGORY_MODAL';
 export const SHOW_MESSAGE_BOX_MODAL = 'SHOW_MESSAGE_BOX_MODAL';
+export const SHOW_IMAGE_MODAL = 'SHOW_IMAGE_MODAL';
 export const HIDE_MODAL = 'HIDE_MODAL';
 
 export function showProductsOrderModal() {
@@ -28,6 +29,10 @@ export function showCreateCategoryModal() {
 
 export function showMessageBoxModal(title, text) {
     return { type: SHOW_MESSAGE_BOX_MODAL, title: title, text: text };
+}
+
+export function showImageModal(title, imageLink) {
+    return { type: SHOW_IMAGE_MODAL, title: title, imageLink: imageLink };
 }
 
 export function hideModal(id) {

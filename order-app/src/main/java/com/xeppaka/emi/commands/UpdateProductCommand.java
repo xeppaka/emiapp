@@ -13,18 +13,22 @@ public class UpdateProductCommand implements Command {
     private final int multiplicity;
     private final UUID categoryId;
     private final Set<ProductFeature> features;
+    private final String imageThumbnail;
+    private final String image;
     private final String note;
     private final int weight;
 
     public UpdateProductCommand(UUID productId, String name, int price, int multiplicity,
                                 UUID categoryId, Set<ProductFeature> features,
-                                String note, int weight) {
+                                String imageThumbnail, String image, String note, int weight) {
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.multiplicity = multiplicity;
         this.categoryId = categoryId;
         this.features = features;
+        this.imageThumbnail = imageThumbnail;
+        this.image = image;
         this.note = note;
         this.weight = weight;
     }
@@ -51,6 +55,14 @@ public class UpdateProductCommand implements Command {
 
     public Set<ProductFeature> getFeatures() {
         return features;
+    }
+
+    public String getImageThumbnail() {
+        return imageThumbnail;
+    }
+
+    public String getImage() {
+        return image;
     }
 
     public String getNote() {

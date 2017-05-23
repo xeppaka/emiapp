@@ -11,8 +11,9 @@ class AdminProductsTab extends React.Component {
         return (
             <div>
                 <button type='button' className='btn btn-primary' onClick={this.props.onCreateProduct}>New Product</button>
-                <AdminProductsTable productsList={this.props.productsList}
-                                    categoriesList={this.props.categoriesList}
+                <AdminProductsTable currentModifyProductId={this.props.currentModifyProductId}
+                                    products={this.props.products}
+                                    categories={this.props.categories}
                                     onProductNameChanged={this.props.onProductNameChanged}
                                     onProductPriceChanged={this.props.onProductPriceChanged}
                                     onProductCategoryChanged={this.props.onProductCategoryChanged}
@@ -20,7 +21,11 @@ class AdminProductsTab extends React.Component {
                                     onProductNoteChanged={this.props.onProductNoteChanged}
                                     onProductWeightChanged={this.props.onProductWeightChanged}
                                     onProductFeatureChanged={this.props.onProductFeatureChanged}
+                                    onProductImageThumbnailChanged={this.props.onProductImageThumbnailChanged}
+                                    onProductImageChanged={this.props.onProductImageChanged}
                                     onDeleteProduct={this.props.onDeleteProduct}
+                                    onResetProduct={this.props.onResetProduct}
+                                    onSetCurrentModifyProduct={this.props.onSetCurrentModifyProduct}
                 />
                 <AdminProductsTotal modifiedProducts={this.props.modifiedProducts}
                                     createdProducts={this.props.createdProducts}

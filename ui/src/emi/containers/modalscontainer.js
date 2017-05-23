@@ -5,7 +5,7 @@ import Modals from '../components/modals/modals';
 
 const mapStateToProps = (state) => {
     return {
-        modals: state.modals.visibleModals
+        modals: state.emiapp.modals.visibleModals
     }
 };
 
