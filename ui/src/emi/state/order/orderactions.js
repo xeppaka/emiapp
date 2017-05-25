@@ -1,4 +1,3 @@
-import fetch from 'isomorphic-fetch';
 import { showMessageBoxModal, hideModal } from '../modals/modalsactions';
 import { sendOrderSelector } from '../selectors/orderselector';
 

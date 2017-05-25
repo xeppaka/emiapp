@@ -37,7 +37,7 @@ public class CategoriesService {
     private ProductsRepository productsRepository;
 
     public CategoryDto createCategory(UserName userName, String name, UUID parentCategoryId, int weight) throws EmiWarehouseException {
-        log.info(MessageFormat.format("User {0}. Creating category. Name: {1}, parentCategoryId: {2}, weight: {3}.",
+        log.info(MessageFormat.format("User {0}. Creating category. Name: ''{1}'', parentCategoryId: {2}, weight: {3}.",
                 userName, name, parentCategoryId, weight));
 
         try {

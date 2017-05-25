@@ -1,0 +1,17 @@
+version: '3'
+services:
+  emiapp:
+    container_name: emi
+    image: xeppaka/emiapp:latest
+    volumes:
+      - /var/log/h2:/var/log/h2
+      - /var/log/emiapp:/var/log/emiapp
+      - /var/emiapp:/var/emiapp
+    ports:
+      - 8080:8080
+    restart: always
+    networks:
+      - emi
+networks:
+  emi:
+    driver: bridge

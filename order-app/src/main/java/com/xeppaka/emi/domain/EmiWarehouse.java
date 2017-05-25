@@ -12,8 +12,11 @@ import com.xeppaka.emi.commands.UpdateProductCommand;
 import com.xeppaka.emi.domain.entities.Category;
 import com.xeppaka.emi.domain.entities.Product;
 import com.xeppaka.emi.events.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +26,8 @@ import java.util.UUID;
  *
  */
 public class EmiWarehouse extends BaseAggregate {
+    private static final Logger log = LoggerFactory.getLogger(EmiWarehouse.class);
+
     public static final UUID AGGREGATE_ID = UUID.fromString("28612f4e-448b-4483-8f1d-6f9e2b376cee");
     private Map<UUID, Product> productsMap = new HashMap<>();
     private Map<UUID, Category> categoryMap = new HashMap<>();
@@ -215,17 +220,17 @@ public class EmiWarehouse extends BaseAggregate {
         throw new IllegalArgumentException(MessageFormat.format("Provided command {0} is not supported", command));
     }
 
-    public void handle(CreateProductCommand command) {
-        final ProductCreated productCreated = new ProductCreated(command.getProductId(),
-                command.getName(),
-                command.getPrice(),
-                command.getMultiplicity(),
-                command.getNote(),
-                command.getCategoryId(),
-                command.getFeatures(),
-                command.getImageThumbnail(),
-                command.getImage(),
-                command.getWeight());
+    public void handle(CreateProductCommand createProductCommand) {
+        final ProductCreated productCreated = new ProductCreated(createProductCommand.getProductId(),
+                createProductCommand.getName(),
+                createProductCommand.getPrice(),
+                createProductCommand.getMultiplicity(),
+                createProductCommand.getNote(),
+                createProductCommand.getCategoryId(),
+                createProductCommand.getFeatures(),
+                createProductCommand.getImageThumbnail(),
+                createProductCommand.getImage(),
+                createProductCommand.getWeight());
 
         apply(productCreated);
         addEvent(productCreated);
@@ -241,19 +246,23 @@ public class EmiWarehouse extends BaseAggregate {
         addEvent(categoryCreated);
     }
 
-    private void handle(UpdateProductCommand command) {
-        final Product originalProduct = productsMap.get(command.getProductId());
-        final String name = command.getName();
-        final int price = command.getPrice();
-        final int multiplicity = command.getMultiplicity();
-        final UUID categoryId = command.getCategoryId();
-        final String note = command.getNote();
-        final int weight = command.getWeight();
-        final Set<ProductFeature> features = command.getFeatures();
-        final String image = command.getImage();
-        final String imageThumbnail = command.getImageThumbnail();
+    private void handle(UpdateProductCommand updateProductCommand) {
+        log.info("Modifying product: '{}'.", updateProductCommand.getName());
+
+        final Product originalProduct = productsMap.get(updateProductCommand.getProductId());
+        final String name = updateProductCommand.getName();
+        final int price = updateProductCommand.getPrice();
+        final int multiplicity = updateProductCommand.getMultiplicity();
+        final UUID categoryId = updateProductCommand.getCategoryId();
+        final String note = updateProductCommand.getNote();
+        final int weight = updateProductCommand.getWeight();
+        final Set<ProductFeature> features = updateProductCommand.getFeatures();
+        final String image = updateProductCommand.getImage();
+        final String imageThumbnail = updateProductCommand.getImageThumbnail();
 
         if (!originalProduct.getName().equals(name)) {
+            log.info("Changing product name: from ''{}'' to ''{}''.", originalProduct.getName(), name);
+
             final ProductNameChanged productNameChanged =
                     new ProductNameChanged(originalProduct.getId(), name);
             apply(productNameChanged);
@@ -261,6 +270,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (originalProduct.getPrice() != price) {
+            log.info("Changing product price: from {} to {}.", originalProduct.getPrice(), price);
+
             final ProductPriceChanged productPriceChanged =
                     new ProductPriceChanged(originalProduct.getId(), price);
             apply(productPriceChanged);
@@ -268,6 +279,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getCategoryId().equals(categoryId)) {
+            log.info("Changing product category id: from ''{}'' to ''{}''.", originalProduct.getCategoryId(), categoryId);
+
             final ProductCategoryChanged productCategoryChanged =
                     new ProductCategoryChanged(originalProduct.getId(), categoryId);
             apply(productCategoryChanged);
@@ -275,6 +288,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (originalProduct.getMultiplicity() != multiplicity) {
+            log.info("Changing product multiplicity: from {} to {}.", originalProduct.getMultiplicity(), multiplicity);
+
             final ProductMultiplicityChanged productMultiplicityChanged =
                     new ProductMultiplicityChanged(originalProduct.getId(), multiplicity);
             apply(productMultiplicityChanged);
@@ -282,6 +297,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getNote().equals(note)) {
+            log.info("Changing product note: from ''{}'' to ''{}''.", originalProduct.getNote(), note);
+
             final ProductNoteChanged productNoteChanged =
                     new ProductNoteChanged(originalProduct.getId(), note);
             apply(productNoteChanged);
@@ -289,6 +306,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getFeatures().equals(features)) {
+            log.info("Changing product features: from ''{}'' to ''{}''.", originalProduct.getFeatures(), features);
+
             final ProductFeaturesChanged productFeaturesChanged =
                     new ProductFeaturesChanged(originalProduct.getId(), features);
             apply(productFeaturesChanged);
@@ -296,6 +315,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getImageThumbnail().equals(imageThumbnail)) {
+            log.info("Changing product image thumbnail: from ''{}'' to ''{}''.", originalProduct.getImageThumbnail(), imageThumbnail);
+
             final ProductImageThumbnailChanged productImageThumbnailChanged =
                     new ProductImageThumbnailChanged(originalProduct.getId(), imageThumbnail);
             apply(productImageThumbnailChanged);
@@ -303,6 +324,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getImage().equals(image)) {
+            log.info("Changing product image: from ''{}'' to ''{}''.", originalProduct.getImage(), image);
+
             final ProductImageChanged productImageChanged =
                     new ProductImageChanged(originalProduct.getId(), image);
             apply(productImageChanged);
@@ -310,6 +333,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (originalProduct.getWeight() != weight) {
+            log.info("Changing product weight: from {} to {}.", originalProduct.getWeight(), weight);
+
             final ProductWeightChanged productWeightChanged =
                     new ProductWeightChanged(originalProduct.getId(), weight);
             apply(productWeightChanged);
@@ -317,13 +342,17 @@ public class EmiWarehouse extends BaseAggregate {
         }
     }
 
-    private void handle(UpdateCategoryCommand command) {
-        final Category originalCategory = categoryMap.get(command.getCategoryId());
-        final String name = command.getName();
-        final UUID parentCategoryId = command.getParentCategoryId();
-        final int weight = command.getWeight();
+    private void handle(UpdateCategoryCommand updateCategoryCommand) {
+        log.info("Modifying category: '{}'.", updateCategoryCommand.getName());
+
+        final Category originalCategory = categoryMap.get(updateCategoryCommand.getCategoryId());
+        final String name = updateCategoryCommand.getName();
+        final UUID parentCategoryId = updateCategoryCommand.getParentCategoryId();
+        final int weight = updateCategoryCommand.getWeight();
 
         if (!originalCategory.getName().equals(name)) {
+            log.info("Changing category name: from ''{}'' to ''{}''.", originalCategory.getName(), name);
+
             final CategoryNameChanged categoryNameChanged =
                     new CategoryNameChanged(originalCategory.getId(), name);
             apply(categoryNameChanged);
@@ -331,6 +360,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalCategory.getParentCategoryId().equals(parentCategoryId)) {
+            log.info("Changing category parent: from ''{}'' to ''{}''.", originalCategory.getParentCategoryId(), parentCategoryId);
+
             final CategoryParentChanged categoryParentChanged = new CategoryParentChanged(originalCategory.getId(),
                     parentCategoryId);
             apply(categoryParentChanged);
@@ -338,6 +369,8 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (originalCategory.getWeight() != weight) {
+            log.info("Changing category weight: from {} to {}.", originalCategory.getWeight(), weight);
+
             final CategoryWeightChanged categoryWeightChanged = new CategoryWeightChanged(originalCategory.getId(),
                     weight);
             apply(categoryWeightChanged);
@@ -363,5 +396,11 @@ public class EmiWarehouse extends BaseAggregate {
                 "productsMap=" + productsMap +
                 ", categoryMap=" + categoryMap +
                 '}';
+    }
+
+    public String summary() {
+        return MessageFormat.format("EmiWarehouse aggregate (id={0}):\nproducts: {1}\ncategories: {2}\n",
+                AGGREGATE_ID.toString(),
+                productsMap.size(), categoryMap.size());
     }
 }

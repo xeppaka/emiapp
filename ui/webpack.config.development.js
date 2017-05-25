@@ -6,7 +6,7 @@ let HtmlWebpackPlugin = require('html-webpack-plugin');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry:  ['babel-polyfill', './src/emi/index.js'],
+    entry:  ['./src/emi/index.js'],
     output: {
         path:     path.join(__dirname, 'build/resources/main/static'),
         filename: 'app.js',
@@ -26,18 +26,22 @@ module.exports = {
         })
     ],
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['react', 'env']
-                }
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['react', 'env']
+                        }
+                    }
+                ]
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+                use: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
             }
         ]
     },
@@ -49,5 +53,6 @@ module.exports = {
             }
         },
         port: 8081
-    }
+    },
+    devtool: 'eval-source-map'
 };

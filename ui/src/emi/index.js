@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import React from 'react';
 
 import { render } from 'react-dom';
@@ -26,7 +25,7 @@ import './index.scss';
 const loggerMiddleware = createLogger();
 
 const history = createHistory();
-const roterMiddleware = routerMiddleware(history);
+const routerMiddlewareVal = routerMiddleware(history);
 
 const store = createStore(
     combineReducers({
@@ -36,7 +35,7 @@ const store = createStore(
     applyMiddleware(
         thunkMiddleware,
         loggerMiddleware,
-        roterMiddleware
+        routerMiddlewareVal
     )
 );
 

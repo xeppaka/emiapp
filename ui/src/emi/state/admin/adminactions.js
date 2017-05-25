@@ -102,6 +102,8 @@ export function createProduct() {
             price: 0,
             multiplicity: 1,
             features: ['VISIBLE', 'AVAILABLE'],
+            imageThumbnail: '',
+            image: '',
             categoryId: rootCategoryId,
             weight: 0,
             note: ''
