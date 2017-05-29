@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -29,8 +30,8 @@ public class EmiWarehouse extends BaseAggregate {
     private static final Logger log = LoggerFactory.getLogger(EmiWarehouse.class);
 
     public static final UUID AGGREGATE_ID = UUID.fromString("28612f4e-448b-4483-8f1d-6f9e2b376cee");
-    private Map<UUID, Product> productsMap = new HashMap<>();
-    private Map<UUID, Category> categoryMap = new HashMap<>();
+    private Map<UUID, Product> productsMap = new ConcurrentHashMap<>();
+    private Map<UUID, Category> categoryMap = new ConcurrentHashMap<>();
 
     public EmiWarehouse() {
         super(AGGREGATE_ID);
@@ -261,7 +262,7 @@ public class EmiWarehouse extends BaseAggregate {
         final String imageThumbnail = updateProductCommand.getImageThumbnail();
 
         if (!originalProduct.getName().equals(name)) {
-            log.info("Changing product name: from ''{}'' to ''{}''.", originalProduct.getName(), name);
+            log.info("Changing product name: from '{}' to '{}'.", originalProduct.getName(), name);
 
             final ProductNameChanged productNameChanged =
                     new ProductNameChanged(originalProduct.getId(), name);
@@ -279,7 +280,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getCategoryId().equals(categoryId)) {
-            log.info("Changing product category id: from ''{}'' to ''{}''.", originalProduct.getCategoryId(), categoryId);
+            log.info("Changing product category id: from '{}' to '{}'.", originalProduct.getCategoryId(), categoryId);
 
             final ProductCategoryChanged productCategoryChanged =
                     new ProductCategoryChanged(originalProduct.getId(), categoryId);
@@ -297,7 +298,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getNote().equals(note)) {
-            log.info("Changing product note: from ''{}'' to ''{}''.", originalProduct.getNote(), note);
+            log.info("Changing product note: from '{}' to '{}'.", originalProduct.getNote(), note);
 
             final ProductNoteChanged productNoteChanged =
                     new ProductNoteChanged(originalProduct.getId(), note);
@@ -306,7 +307,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getFeatures().equals(features)) {
-            log.info("Changing product features: from ''{}'' to ''{}''.", originalProduct.getFeatures(), features);
+            log.info("Changing product features: from '{}' to '{}'.", originalProduct.getFeatures(), features);
 
             final ProductFeaturesChanged productFeaturesChanged =
                     new ProductFeaturesChanged(originalProduct.getId(), features);
@@ -315,7 +316,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getImageThumbnail().equals(imageThumbnail)) {
-            log.info("Changing product image thumbnail: from ''{}'' to ''{}''.", originalProduct.getImageThumbnail(), imageThumbnail);
+            log.info("Changing product image thumbnail: from '{}' to '{}'.", originalProduct.getImageThumbnail(), imageThumbnail);
 
             final ProductImageThumbnailChanged productImageThumbnailChanged =
                     new ProductImageThumbnailChanged(originalProduct.getId(), imageThumbnail);
@@ -324,7 +325,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalProduct.getImage().equals(image)) {
-            log.info("Changing product image: from ''{}'' to ''{}''.", originalProduct.getImage(), image);
+            log.info("Changing product image: from '{}' to '{}'.", originalProduct.getImage(), image);
 
             final ProductImageChanged productImageChanged =
                     new ProductImageChanged(originalProduct.getId(), image);
@@ -351,7 +352,7 @@ public class EmiWarehouse extends BaseAggregate {
         final int weight = updateCategoryCommand.getWeight();
 
         if (!originalCategory.getName().equals(name)) {
-            log.info("Changing category name: from ''{}'' to ''{}''.", originalCategory.getName(), name);
+            log.info("Changing category name: from '{}' to '{}'.", originalCategory.getName(), name);
 
             final CategoryNameChanged categoryNameChanged =
                     new CategoryNameChanged(originalCategory.getId(), name);
@@ -360,7 +361,7 @@ public class EmiWarehouse extends BaseAggregate {
         }
 
         if (!originalCategory.getParentCategoryId().equals(parentCategoryId)) {
-            log.info("Changing category parent: from ''{}'' to ''{}''.", originalCategory.getParentCategoryId(), parentCategoryId);
+            log.info("Changing category parent: from '{}' to '{}'.", originalCategory.getParentCategoryId(), parentCategoryId);
 
             final CategoryParentChanged categoryParentChanged = new CategoryParentChanged(originalCategory.getId(),
                     parentCategoryId);

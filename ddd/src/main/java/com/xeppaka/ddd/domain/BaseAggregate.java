@@ -23,8 +23,10 @@ public abstract class BaseAggregate extends BaseEntity implements Aggregate<UUID
         events.add(event);
     }
 
-    public List<Event> getEvents() {
-        return new ArrayList<>(events);
+    public List<Event> getAndClearEvents() {
+        final List<Event> resultEvents = new ArrayList<>(events);
+        clearEvents();
+        return resultEvents;
     }
 
     public void clearEvents() {

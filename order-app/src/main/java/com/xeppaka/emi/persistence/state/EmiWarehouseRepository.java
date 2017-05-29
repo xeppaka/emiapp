@@ -88,7 +88,7 @@ public class EmiWarehouseRepository implements AggregateRepository<UUID, EmiWare
         Validate.notNull(userName);
         Validate.notNull(emiWarehouse);
 
-        final Collection<Event> events = emiWarehouse.getEvents();
+        final Collection<Event> events = emiWarehouse.getAndClearEvents();
 
         final UUID aggregateId = emiWarehouse.getId();
 
@@ -107,8 +107,6 @@ public class EmiWarehouseRepository implements AggregateRepository<UUID, EmiWare
                 throw new RepositoryException(e);
             }
         }
-
-        emiWarehouse.clearEvents();
     }
 
     private void postEvent(Event event) {
