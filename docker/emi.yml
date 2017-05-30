@@ -4,9 +4,9 @@ services:
     container_name: emi
     image: xeppaka/emiapp:latest
     volumes:
-      - /var/log/h2:/var/log/h2
-      - /var/log/emiapp:/var/log/emiapp
-      - /var/emiapp:/var/emiapp
+      - /var/lib/emiapp/log:/var/log/emiapp
+      - /var/lib/emiapp/log/h2:/var/log/h2
+      - /var/lib/emiapp:/var/emiapp
     ports:
       - 8080:8080
     restart: always

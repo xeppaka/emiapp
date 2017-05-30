@@ -11,27 +11,27 @@
         <encoder>
             <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-        <file>emiapp.log</file>
+        <file>/var/log/emiapp/emiapp.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/var/log/emiapp/emiapp.%d{yyyy-MM}.log</fileNamePattern>
             <maxHistory>12</maxHistory>
         </rollingPolicy>
     </appender>
 
-    <appender name="UIAPP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <encoder>
-            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-        <file>emiapp_ui.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/emiapp/emiapp_ui.%d{yyyy-MM}.log</fileNamePattern>
-            <maxHistory>12</maxHistory>
-        </rollingPolicy>
-    </appender>
+    <!--<appender name="UIAPP" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<encoder>-->
+            <!--<pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+        <!--</encoder>-->
+        <!--<file>/var/log/emiapp/emiapp_ui.log</file>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--<fileNamePattern>/var/log/emiapp/emiapp_ui.%d{yyyy-MM}.log</fileNamePattern>-->
+            <!--<maxHistory>12</maxHistory>-->
+        <!--</rollingPolicy>-->
+    <!--</appender>-->
 
-    <logger name="com.xeppaka.emi.ui" level="info">
-        <appender-ref ref="UIAPP" />
-    </logger>
+    <!--<logger name="com.xeppaka.emi.ui" level="info">-->
+        <!--<appender-ref ref="UIAPP" />-->
+    <!--</logger>-->
 
     <root level="info">
         <appender-ref ref="EMIAPP" />
