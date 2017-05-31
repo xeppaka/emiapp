@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -29,6 +30,7 @@ public class ProductsService {
     @Autowired
     private ProductsRepository productsRepository;
 
+    @Transactional
     public ProductDto createProduct(UserName userName, String name, int price, int multiplicity,
                               String note, UUID categoryId, Collection<ProductFeature> features,
                               String imageThumbnail, String image, int weight) throws EmiWarehouseException {
@@ -51,6 +53,7 @@ public class ProductsService {
         }
     }
 
+    @Transactional
     public List<ProductDto> updateProducts(UserName userName, Collection<ProductDto> products) throws EmiWarehouseException {
         try {
             for (ProductDto product : products) {
@@ -78,6 +81,7 @@ public class ProductsService {
         return productsRepository.getProduct(id);
     }
 
+    @Transactional
     public void deleteProduct(UserName userName, UUID productId) throws EmiWarehouseException {
         log.info("User: {}. Deleting product with id: {}.", userName, productId);
 

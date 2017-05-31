@@ -24,6 +24,7 @@ import com.xeppaka.emi.persistence.view.CategoriesRepository;
 import com.xeppaka.emi.persistence.view.ProductsRepository;
 import com.xeppaka.emi.persistence.view.dto.CategoryDto;
 import com.xeppaka.emi.persistence.view.dto.ProductDto;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoriesService {
@@ -36,6 +37,7 @@ public class CategoriesService {
     @Autowired
     private ProductsRepository productsRepository;
 
+    @Transactional
     public CategoryDto createCategory(UserName userName, String name, UUID parentCategoryId, int weight) throws EmiWarehouseException {
         log.info(MessageFormat.format("User {0}. Creating category. Name: ''{1}'', parentCategoryId: {2}, weight: {3}.",
                 userName, name, parentCategoryId, weight));
@@ -54,6 +56,7 @@ public class CategoriesService {
         }
     }
 
+    @Transactional
     public List<CategoryDto> updateCategories(UserName userName, Collection<CategoryDto> categories) throws EmiWarehouseException {
         try {
             for (CategoryDto category : categories) {
@@ -94,6 +97,7 @@ public class CategoriesService {
         return (categoryDto.getName().equals("POS") && parentCategoryId.equals(Category.ROOT_CATEGORY_ID)) || isCategoryUnderPos(parentCategoryId);
     }
 
+    @Transactional
     public DeleteCategoryResult deleteCategory(UserName userName, UUID categoryId) throws EmiWarehouseException {
         log.info("User: {}. Deleting category: {}.", userName, categoryId);
 
