@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 class MessageBoxModal extends React.Component {
     constructor(props) {
@@ -21,11 +21,11 @@ class MessageBoxModal extends React.Component {
                     <div className='modal-dialog' role='document'>
                         <div className='modal-content'>
                             <div className='modal-header'>
+                                <h4 className='modal-title'>{this.props.title}</h4>
                                 <button type='button' className='close' aria-label='Close'
                                         onClick={(event) => this.onClose(event)}>
                                     <span aria-hidden='true'>&times;</span>
                                 </button>
-                                <h4 className='modal-title'>{this.props.title}</h4>
                             </div>
                             <div className='modal-body'>
                                 <p>{this.props.text}</p>

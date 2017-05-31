@@ -17,7 +17,7 @@ class Modals extends React.Component {
             <div>
                 {
                     this.props.modals.map((modal, idx) => {
-                        let zIndex = idx * 2;
+                        let zIndex = idx * 2 + 1050;
                         switch (modal.type) {
                             case 'SAVE_PRODUCTS_MODAL':
                                 return <SaveProductsModalContainer key={modal.id}

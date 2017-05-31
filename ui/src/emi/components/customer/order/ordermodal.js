@@ -24,7 +24,7 @@ class OrderModal extends React.Component {
 
     render() {
         let style = {display: 'block', zIndex: this.props.zIndex + 1};
-        let modalHeight = $(window).height() * 0.55;
+        let modalHeight = $(window).height() * 0.65;
         let modalWidth = $(window).width() * 0.8;
         let divFeedbackClass = this.props.order.emailValid ? 'has-success' : 'has-danger';
         let inputFeedbackClass = this.props.order.emailValid ? 'form-control-success' : 'form-control-danger';
@@ -35,12 +35,12 @@ class OrderModal extends React.Component {
                       <div className='modal-dialog' role='document' style={{maxWidth: modalWidth + 'px'}}>
                         <div className='modal-content'>
                           <div className='modal-header'>
+                              <h4 className='modal-title'>Create order</h4>
                             <button type='button' className='close' aria-label='Close' onClick={(event) => this.onCancel(event)}>
                                 <span aria-hidden='true'>&times;</span>
                             </button>
-                            <h4 className='modal-title'>Create order</h4>
                           </div>
-                          <div className='modal-body'>
+                          <div className='modal-body' style={{maxHeight: modalHeight + 'px', overflowY: 'auto', marginTop: '7px'}}>
                             <div className='container-fluid'>
                                 <div className='row'>
                                     <form className='form-inline'>
@@ -65,7 +65,7 @@ class OrderModal extends React.Component {
                                       </div>
                                       </form>
                                 </div>
-                                <div className='row' style={{maxHeight: modalHeight + 'px', overflowY: 'auto', marginTop: '7px'}}>
+                                <div className='row'>
                                     <OrderProductsTable products={ this.props.order.products } />
                                 </div>
                                 <div className='row'>
@@ -86,7 +86,7 @@ class OrderModal extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className='modal-backdrop fade show' style={{zIndex: this.props.zIndex}}></div>
+                    <div className='modal-backdrop fade show' style={{zIndex: this.props.zIndex}}/>
                  </div>
                )
     }

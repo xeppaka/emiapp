@@ -18,14 +18,6 @@ class MainProductItem extends React.Component {
         return (elemTop >= 0) && (elemBottom <= window.innerHeight);
     }
 
-    // componentDidMount() {
-    //     $('[data-toggle="tooltip"]').tooltip({
-    //         trigger: 'hover',
-    //         placement: 'left',
-    //         html: true
-    //     });
-    // }
-
     render() {
         let product = this.props.product;
         let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(2));
@@ -35,7 +27,7 @@ class MainProductItem extends React.Component {
         let isFlammable = product.features.indexOf('FLAMMABLE') >= 0;
 
         let imageTitle = product.image.length > 0 ? 'Click to open image...' : null;
-        let image = product.imageThumbnail.length > 0 ? <img height='64' width='64'
+        let image = product.imageThumbnail.length > 0 ? <img style={{maxWidth: '64px', maxHeight: '64px'}}
                                                              src={product.imageThumbnail}
                                                              title={imageTitle}
                                                              onClick={(event) => {
@@ -44,7 +36,7 @@ class MainProductItem extends React.Component {
                                                              }}/> : null;
 
         return (<tr>
-            <th scope="row">{this.props.idx}
+            <th scope='row'>{this.props.idx}
                 <div ref={'vis'}/>
             </th>
             <td>

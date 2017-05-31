@@ -7,7 +7,8 @@ export const orderProductsSelector = createSelector(
         mainProductsSelector,
         posProductsSelector
     ],
-    (mainProducts, posProducts) => mainProducts.filter(p => p.product.quantity > 0)
+    (mainProducts, posProducts) => mainProducts
+        .filter(p => p.product.quantity > 0)
         .map(p => update(p.product, {
             isMain: {$set: true}
         }))

@@ -13,7 +13,7 @@ class OrderProductsTable extends React.Component {
 
         for (let i = 0; i < productsLength; i++) {
             let product = products[i];
-            productsItems.push(<OrderProductItem key={product.id} idx={i+1} product={product} />);
+            productsItems.push(<OrderProductItem key={product.productId} idx={i+1} product={product} />);
         }
 
         return productsItems;

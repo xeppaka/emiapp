@@ -185,7 +185,7 @@ export const posAmountToOrderSelector = createSelector(
         mainTotalWithoutDiscountSelector,
         posTotalWithoutDiscountSelector
     ],
-    (mainTotalWithoutDiscount, posTotalWithoutDiscount) => mainTotalWithoutDiscount * 0.06 - posTotalWithoutDiscount
+    (mainTotalWithoutDiscount, posTotalWithoutDiscount) => mainTotalWithoutDiscount * 0.05 - posTotalWithoutDiscount
 );
 
 export const mainProductsSelector = createSelector(

@@ -33,7 +33,7 @@ class PosProductsTable extends React.Component {
             }
         }
 
-        if (firstVisible != null) {
+        if (firstVisible !== null) {
             return this.props.products[firstVisible].anchor.name;
         }
 
@@ -45,22 +45,21 @@ class PosProductsTable extends React.Component {
         let products = this.props.products;
         let productsLength = products.length;
 
-        for (let i = 0; i < products.length; i++) {
+        for (let i = 0; i < productsLength; i++) {
             let product = products[i].product;
             let anchor = products[i].anchor;
-            let features = product.features;
 
             if (anchor.hasOwnProperty('categoryAnchors')) {
-                productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'7'} />);
+                productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'9'} />);
             }
 
-            if (features.indexOf('VISIBLE') >= 0) {
-                let available = features.indexOf('AVAILABLE') >= 0;
-
-                productsItems.push(<PosProductItem
-                    key={product.productId} ref={'product' + i} idx={i + 1} available={available}
-                    product={product} setProductQuantity={this.props.setProductQuantity}/>)
-            }
+            productsItems.push(<PosProductItem
+                    key={product.productId} ref={'product' + i} idx={i + 1}
+                    product={product}
+                    setProductQuantity={this.props.setProductQuantity}
+                    onShowProductImage={this.props.onShowProductImage}
+                />
+            )
         }
 
         return productsItems;
@@ -72,13 +71,14 @@ class PosProductsTable extends React.Component {
                     <thead>
                         <tr>
                             <th scope='row' style={{width:'2%'}}>#</th>
-                            <th style={{width:'32%'}}>Product Name</th>
-                            <th style={{width:'11%'}}>Retail price<br />(without VAT, in &#8364;)</th>
-                            <th style={{width:'11%'}}>Discount price<br />(-100%, without VAT, in &#8364;)</th>
-                            <th style={{width:'11%'}}>Pieces left to order</th>
-                            <th style={{width:'11%'}}>Quantity</th>
-                            <th style={{width:'11%'}}>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
-                            <th style={{width:'11%'}}>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
+                            <th style={{width: '7%'}}>Image</th>
+                            <th style={{width:'31%'}}>Product Name</th>
+                            <th style={{width:'10%'}}>Retail price<br />(without VAT, in &#8364;)</th>
+                            <th style={{width:'10%'}}>Discount price<br />(-100%, without VAT, in &#8364;)</th>
+                            <th style={{width:'10%'}}>Pieces left to order</th>
+                            <th style={{width:'10%'}}>Quantity</th>
+                            <th style={{width:'10%'}}>Retail price x Quantity<br />(without discount, without VAT in &#8364;)</th>
+                            <th style={{width:'10%'}}>Retail price x Quantity<br />(with discount, without VAT in &#8364;)</th>
                         </tr>
                     </thead>
                     <tbody>

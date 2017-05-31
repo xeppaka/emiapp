@@ -15,7 +15,7 @@ class OrderProductItem extends React.Component {
         let calculatedTotalPriceWithDiscount = product.isMain ? Number((product.price / 200 * product.quantity).toFixed(2)) : 0;
 
         return (<tr>
-            <th scope="row">{this.props.idx}</th>
+            <th scope='row'>{this.props.idx}</th>
             <td style={{width: '300px'}}>{product.name}</td>
             <td>{price}</td>
             <td>{discountPrice}</td>

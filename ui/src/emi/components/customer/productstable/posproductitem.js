@@ -33,8 +33,20 @@ class PosProductItem extends React.Component {
         let isNew = product.features.indexOf('NEW') >= 0;
         let isFlammable = product.features.indexOf('FLAMMABLE') >= 0;
 
+        let imageTitle = product.image.length > 0 ? 'Click to open image...' : null;
+        let image = product.imageThumbnail.length > 0 ? <img style={{maxWidth: '64', maxHeight: '64'}}
+                                                             src={product.imageThumbnail}
+                                                             title={imageTitle}
+                                                             onClick={(event) => {
+                                                                 if (product.image.length > 0)
+                                                                     this.props.onShowProductImage(product.productId)
+                                                             }}/> : null;
+
         return (<tr>
-            <th scope='row'>{this.props.idx}<div ref={'vis'}></div></th>
+            <th scope='row'>{this.props.idx}<div ref={'vis'}/></th>
+            <td>
+                {image}
+            </td>
             <td>
                 {isNew ? <span style={{color: '#e72626'}}>NEW!&nbsp;</span> : null}
                 {!isAvailable ? <span style={{fontWeight: 'bold'}}>NOT AVAILABLE!&nbsp;</span> : null}
