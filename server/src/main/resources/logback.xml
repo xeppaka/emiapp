@@ -3,13 +3,13 @@
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%date{ISO8601,Europe/Prague} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="EMIAPP" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
-            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%date{ISO8601,Europe/Prague} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <file>/var/log/emiapp/emiapp.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
