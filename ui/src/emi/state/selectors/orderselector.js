@@ -7,16 +7,18 @@ export const orderProductsSelector = createSelector(
         mainProductsSelector,
         posProductsSelector
     ],
-    (mainProducts, posProducts) => mainProducts
-        .filter(p => p.product.quantity > 0)
-        .map(p => update(p.product, {
-            isMain: {$set: true}
-        }))
-        .concat(posProducts
+    (mainProducts, posProducts) => {
+        return mainProducts
             .filter(p => p.product.quantity > 0)
             .map(p => update(p.product, {
-                isMain: {$set: false}
-            })))
+                isMain: {$set: true}
+            }))
+            .concat(posProducts
+                .filter(p => p.product.quantity > 0)
+                .map(p => update(p.product, {
+                    isMain: {$set: false}
+                })));
+    }
 );
 
 const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;

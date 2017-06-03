@@ -220,18 +220,19 @@ export const posProductsSelector = createSelector(
 
 export const posProductsWithLeftAmountSelector = createSelector(
     [
-        productIdsSelector,
-        productAnchorsSelector,
-        (state) => state.emiapp.warehouse.products.productById,
+        posProductsSelector,
         posAmountToOrderSelector
     ],
-    (productIds, anchorsById, productById, posAmount) => {
-        return productIds.posProductIds.map((id) => {
-            let product = productById[id];
-            let piecesLeftToOrder = posAmount >= 0 ? Math.floor((posAmount / product.price)) : 0;
+    (posProducts, posAmount) => {
+        return posProducts
+            .map((productWithAnchor) => {
+                let piecesLeftToOrder = posAmount >= 0 ? Math.floor((posAmount / productWithAnchor.product.price)) : 0;
 
-            return {product: update(product, {piecesLeftToOrder: {$set: piecesLeftToOrder}}), anchor: anchorsById[id]}
-        });
+                return {
+                    product: update(productWithAnchor.product, {piecesLeftToOrder: {$set: piecesLeftToOrder}}),
+                    anchor: productWithAnchor.anchor
+                }
+            });
     }
 );
 

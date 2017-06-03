@@ -1,14 +1,28 @@
 package com.xeppaka.emi.domain;
 
 /**
- * Created by nnm on 10/4/16.
+ *
  */
 public enum Country {
-    CZ("Czech Republic"),
-    IT("Italy"),
-    SP("Spain"),
-    IR("Ireland"),
-    FI("Finland");
+    CYP("Cyprus"),
+    CZE("Czech Republic"),
+    EST("Estonia"),
+    FIN("Finland"),
+    FRA("France"),
+    GRE("Greece"),
+    GER("Germany"),
+    IRL("Ireland"),
+    ISR("Israel"),
+    ITA("Italy"),
+    KOR("South Korea"),
+    LAT("Latvia"),
+    LIT("Lithuania"),
+    POR("Portugal"),
+    ROM("Romania"),
+    SPA("Spain"),
+    SWI("Switzerland"),
+    TUN("Tunisia"),
+    UAE("UAE");
 
     private final String country;
 

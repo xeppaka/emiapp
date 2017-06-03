@@ -1,12 +1,7 @@
 package com.xeppaka.emi.domain.entities;
 
 import com.xeppaka.ddd.domain.BaseEntity;
-import org.apache.commons.lang3.Validate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 /**

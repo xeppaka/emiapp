@@ -1,5 +1,6 @@
 package com.xeppaka.emi.controllers;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,13 +41,13 @@ public class OrderController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity sendOrder(@RequestBody OrderDto order) throws MessagingException {
-        final String email = order.getEmail();
-        final String country = order.getCountry();
-        final Map<ProductDto, Integer> productsQuantity = new HashMap<>(order.getProducts().size());
+    public ResponseEntity sendOrder(@RequestBody OrderDto orderDto) throws IOException {
+        final String email = orderDto.getEmail();
+        final String country = orderDto.getCountry();
+        final Map<ProductDto, Integer> productsQuantity = new HashMap<>(orderDto.getProducts().size());
         final Set<UUID> posCategories = new HashSet<>();
 
-        for (OrderProductDto orderProduct : order.getProducts()) {
+        for (OrderProductDto orderProduct : orderDto.getProducts()) {
             final ProductDto productDto = productsService.getProduct(orderProduct.getProductId());
 
             if (categoriesService.isCategoryUnderPos(productDto.getCategoryId())) {
@@ -56,7 +57,8 @@ public class OrderController {
             productsQuantity.put(productDto, orderProduct.getQuantity());
         }
 
-        orderService.sendOrder(new Order(email, Country.valueOf(country), productsQuantity, posCategories));
+        final Order order = new Order(email, Country.valueOf(country), productsQuantity, posCategories);
+        order.send();
 
         return ResponseEntity.ok().build();
     }

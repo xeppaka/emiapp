@@ -1,36 +1,37 @@
 package com.xeppaka.emi.domain.value;
 
+import com.xeppaka.emi.domain.Country;
+import com.xeppaka.emi.persistence.view.dto.ProductDto;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.lang3.Validate;
-
-import com.xeppaka.emi.domain.Country;
-import com.xeppaka.emi.persistence.view.dto.ProductDto;
-
 public class Order {
+    private static final Logger log = LoggerFactory.getLogger(Order.class);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     private final String email;
     private final Country country;
     private final Map<ProductDto, Integer> productsQuantity;
     private final Set<UUID> posCategories;
+    private final Comparator<Map.Entry<ProductDto, Integer>> productDtoComparator;
 
     public Order(String email, Country country, Map<ProductDto, Integer> productsQuantity, Set<UUID> posCategories) {
         Validate.notEmpty(email);
@@ -42,6 +43,9 @@ public class Order {
         this.country = country;
         this.productsQuantity = productsQuantity;
         this.posCategories = posCategories;
+        this.productDtoComparator = Comparator
+                .<Map.Entry<ProductDto, Integer>>comparingInt(p -> posCategories.contains(p.getKey().getCategoryId()) ? 1 : 0)
+                .thenComparing(p -> p.getKey().getName());
     }
 
     public String getEmail() {
@@ -69,7 +73,7 @@ public class Order {
 
         for (Map.Entry<ProductDto, Integer> p : productsQuantity.entrySet()) {
             if (!posCategories.contains(p.getKey().getCategoryId())) {
-                total += p.getKey().getPrice() / 100f * p.getValue();
+                total += p.getKey().getPrice() / 100d * p.getValue();
             }
         }
 
@@ -81,55 +85,67 @@ public class Order {
 
         for (Map.Entry<ProductDto, Integer> p : productsQuantity.entrySet()) {
             if (!posCategories.contains(p.getKey().getCategoryId())) {
-                total += p.getKey().getPrice() / 200f * p.getValue();
+                total += p.getKey().getPrice() / 200d * p.getValue();
             }
         }
 
         return total;
     }
 
-    public void send() throws MessagingException {
-        sendToEmails(new InternetAddress("kachalouski@protonmail.com"), new InternetAddress(getEmail()));
+    public void send() throws IOException {
+        sendWithPostfix();
     }
 
-    private void sendToEmails(InternetAddress... emails) throws MessagingException {
-        Validate.isTrue(emails.length > 0);
+    private void sendWithPostfix() throws IOException {
+        final Path emailPath = prepareEmailBody();
+        try {
+            final Runtime r = Runtime.getRuntime();
+            final String[] commands = {"/bin/sh", "-c", MessageFormat.format("cat {0} | sendmail -t -i", emailPath.toString())};
+            log.info("Sending email with command line: {}.", Arrays.toString(commands));
+            final Process p = r.exec(commands);
+            int rc = p.waitFor();
+            log.info("Send email process return code: {}.", rc);
+        } catch (InterruptedException e) {
+            log.error("Error while waiting process.");
+            Thread.currentThread().interrupt();
+        } finally {
+            //Files.delete(emailPath);
+            log.info("Deleted file with email successfully: {}.", emailPath.toString());
+        }
+    }
 
-        final Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.yandex.com");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.port", "465");
-        properties.put("mail.smtp.socketFactory.port", "465");
-        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+    private Path prepareEmailBody() throws IOException {
+        final Path emailPath = Files
+                .createTempFile("e-mail-", ".tmp", PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-r--r--")));
+        log.info("Created temporary file for e-mail: {}", emailPath.toString());
 
-        final Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("xeptest", "Kleopatra");
-            }
-        });
-
-        final MimeMessage mimeMessage = new MimeMessage(session);
-        // mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(""));
-        mimeMessage.addRecipient(Message.RecipientType.TO, emails[0]);
-        for (int i = 1; i < emails.length; ++i) {
-            mimeMessage.addRecipient(Message.RecipientType.CC, emails[i]);
+        try (final BufferedWriter os = new BufferedWriter(new FileWriter(emailPath.toFile()))) {
+            os.write("To: E.Mi International <kachalouski@protonmail.com>");
+            os.newLine();
+            os.write(MessageFormat.format("CC: Customer <{0}>", this.email));
+            os.newLine();
+            os.write("From: E.Mi International <no-reply@emischool.com>");
+            os.newLine();
+            os.write(MessageFormat.format("Subject: New order from {0}.", this.country.getCountry()));
+            os.newLine();
+            os.write("Content-Type: text/html; charset=UTF-8");
+            os.newLine();
+            os.write(toHtml());
+            os.newLine();
         }
 
-        mimeMessage.setFrom(new InternetAddress("xeptest@yandex.com"));
-        mimeMessage.setSubject(MessageFormat.format("New Order from {0}.", getCountryString()));
-        mimeMessage.setContent(toHtml(), "text/html; charset=\"UTF-8\"");
-
-        Transport.send(mimeMessage);
+        return emailPath;
     }
 
     public String toHtml() {
-        final String country = MessageFormat.format("<div>Order country: {0}</div>", getCountryString());
-        final String date = MessageFormat.format("<div>Order date: {0}</div>", LocalDateTime.now().format(FORMATTER));
-        final String space = "<div><br /></div>";
+        final String htmlBegin = "<html>\n<head></head>\n<body>\n";
+        final String htmlEnd = "</html>\n";
+        final String country = MessageFormat.format("<div>Order country: {0}</div>\n", getCountryString());
+        final String date = MessageFormat.format("<div>Order date: {0}</div>\n", LocalDateTime.now().format(FORMATTER));
+        final String space = "<div><br/></div>\n";
 
         final List<Map.Entry<ProductDto, Integer>> sortedProducts = new ArrayList<>(productsQuantity.entrySet());
-        sortedProducts.sort(Comparator.comparing(e2 -> e2.getKey().getName()));
+        sortedProducts.sort(productDtoComparator);
         final StringBuilder tableRows = new StringBuilder();
         int idx = 0;
         for (Map.Entry<ProductDto, Integer> e : sortedProducts) {
@@ -138,28 +154,28 @@ public class Order {
             tableRows.append(productToHtml(++idx, product, quantity, !posCategories.contains(product.getCategoryId())));
         }
 
-        final String table = MessageFormat.format("<table style=\"width:100%; border-spacing: 0px; border-top: 1px solid black; border-right: 1px solid black;\"><thead>" +
-                "<tr>" +
-                "<th style=\"width:2%; border-bottom: 1px solid black; border-left: 1px solid black;\">#</th>" +
-                "<th style=\"width:38%; border-bottom: 1px solid black; border-left: 1px solid black;\">Product Name</th>" +
-                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price (without VAT, in &#8364;)</th>" +
-                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Discount price (without VAT, in &#8364;)</th>" +
-                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Quantity</th>" +
-                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price x Quantity (without discount, without VAT in &#8364;)</th>" +
-                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price x Quantity (with discount, without VAT in &#8364;)</th>" +
-                "</tr>" +
-                "</thead>" +
-                "<tfoot>" +
+        final String table = MessageFormat.format("<table style=\"width:100%; border-spacing: 0px; border-top: 1px solid black; border-right: 1px solid black;\">\n<thead>\n" +
+                "<tr>\n" +
+                "<th style=\"width:2%; border-bottom: 1px solid black; border-left: 1px solid black;\">#</th>\n" +
+                "<th style=\"width:38%; border-bottom: 1px solid black; border-left: 1px solid black;\">Product Name</th>\n" +
+                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price (without VAT, in &#8364;)</th>\n" +
+                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Discount price (without VAT, in &#8364;)</th>\n" +
+                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Quantity</th>\n" +
+                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price x Quantity (without discount, without VAT in &#8364;)</th>\n" +
+                "<th style=\"width:12%; border-bottom: 1px solid black; border-left: 1px solid black;\">Retail price x Quantity (with discount, without VAT in &#8364;)</th>\n" +
+                "</tr>\n" +
+                "</thead>\n" +
+                "<tfoot>\n" +
                 "<tr>" +
                 "<td colspan=\"7\" style=\"text-align: right; border-bottom: 1px solid black; border-left: 1px solid black;\">Total without discount: {1,number,#.##}&#8364;&nbsp;&nbsp;&nbsp;Total with discount: {2,number,#.##}&#8364;</td>" +
-                "</tr>" +
-                "</tfoot>" +
-                "<tbody>" +
-                "{0}" +
-                "</tbody>" +
-                "</table>", tableRows.toString(), getTotal(), getTotalWithDiscount());
+                "</tr>\n" +
+                "</tfoot>\n" +
+                "<tbody>\n" +
+                "{0}\n" +
+                "</tbody>\n" +
+                "</table>\n", tableRows.toString(), getTotal(), getTotalWithDiscount());
 
-        return country + date + space + table;
+        return htmlBegin + country + date + space + table + htmlEnd;
     }
 
     private String productToHtml(int idx, ProductDto product, int quantity, boolean isMain) {
@@ -171,10 +187,10 @@ public class Order {
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{4,number,#}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{5,number,#.##}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{6,number,#.##}</td>" +
-                        "</tr>",
-                idx, product.getName(), product.getPrice() / 100f, isMain ? (product.getPrice() / 200f) : 0, quantity,
-                product.getPrice() / 100f * quantity,
-                isMain ? (product.getPrice() / 200f * quantity) : 0);
+                        "</tr>\n",
+                idx, product.getName(), product.getPrice() / 100d, isMain ? (product.getPrice() / 200d) : 0, quantity,
+                product.getPrice() / 100d * quantity,
+                isMain ? (product.getPrice() / 200d * quantity) : 0);
     }
 
     @Override
