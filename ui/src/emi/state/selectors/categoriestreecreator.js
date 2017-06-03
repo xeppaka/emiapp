@@ -66,7 +66,7 @@ function sortCategoryTreeWithComparators(catId, categoryById, categoriesComparat
 }
 
 function setAnchors(categoriesTree) {
-    setAnchorsRecursively(categoriesTree, 'root', '#');
+    setAnchorsRecursively(categoriesTree, 'root', '');
 }
 
 function setAnchorsRecursively(categoriesTree, id, anchor) {
