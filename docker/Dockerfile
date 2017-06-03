@@ -4,6 +4,7 @@ MAINTAINER Pavel Kachalouski <kachalouski@protonmail.com>
 RUN apk update
 RUN apk add supervisor
 RUN mkdir /etc/supervisor.d
+RUN apk add postfix
 
 COPY emiapp/emiapp-*.jar /opt/emiapp/
 COPY h2/h2-*.jar /opt/h2/
