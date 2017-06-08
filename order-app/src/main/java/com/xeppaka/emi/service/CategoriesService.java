@@ -1,18 +1,5 @@
 package com.xeppaka.emi.service;
 
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.h2.command.dml.Delete;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.xeppaka.ddd.commands.CommandHandleException;
 import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.DeleteCategoryCommand;
@@ -24,7 +11,18 @@ import com.xeppaka.emi.persistence.view.CategoriesRepository;
 import com.xeppaka.emi.persistence.view.ProductsRepository;
 import com.xeppaka.emi.persistence.view.dto.CategoryDto;
 import com.xeppaka.emi.persistence.view.dto.ProductDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoriesService {

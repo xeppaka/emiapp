@@ -1,8 +1,7 @@
 package com.xeppaka.emi.security;
 
-import java.util.Collections;
-import java.util.UUID;
-
+import com.xeppaka.emi.security.tokens.SecurityToken;
+import com.xeppaka.emi.security.tokens.SecurityTokenContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,8 +11,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import com.xeppaka.emi.security.tokens.SecurityToken;
-import com.xeppaka.emi.security.tokens.SecurityTokenContainer;
+import java.util.Collections;
+import java.util.UUID;
 
 @Component
 public class TokenAuthenticationProvider implements AuthenticationProvider {

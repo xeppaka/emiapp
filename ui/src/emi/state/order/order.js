@@ -3,7 +3,7 @@ import { SET_ORDER_EMAIL, SET_ORDER_COUNTRY, SUBMIT_ORDER_STARTED, SUBMIT_ORDER_
 
 const initialOrderState = {
     email: '',
-    country: 'CZ',
+    country: 'CYP',
     submitting: false
 };
 

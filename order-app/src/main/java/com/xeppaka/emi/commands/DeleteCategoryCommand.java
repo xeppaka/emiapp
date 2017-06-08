@@ -1,8 +1,8 @@
 package com.xeppaka.emi.commands;
 
-import java.util.UUID;
-
 import com.xeppaka.ddd.commands.Command;
+
+import java.util.UUID;
 
 /**
  *

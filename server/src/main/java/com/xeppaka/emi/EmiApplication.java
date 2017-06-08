@@ -2,8 +2,6 @@ package com.xeppaka.emi;
 
 import com.xeppaka.ddd.persistence.RepositoryException;
 import com.xeppaka.emi.domain.EmiWarehouse;
-import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.imp.ProductsImporter;
 import com.xeppaka.emi.persistence.state.EmiWarehouseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

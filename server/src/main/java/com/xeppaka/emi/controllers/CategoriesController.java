@@ -1,11 +1,10 @@
 package com.xeppaka.emi.controllers;
 
-import java.net.URI;
-import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
+import com.xeppaka.emi.domain.value.UserName;
+import com.xeppaka.emi.persistence.view.dto.CategoryDto;
+import com.xeppaka.emi.service.CategoriesService;
+import com.xeppaka.emi.service.DeleteCategoryResult;
+import com.xeppaka.emi.service.EmiWarehouseException;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xeppaka.emi.domain.value.UserName;
-import com.xeppaka.emi.persistence.view.dto.CategoryDto;
-import com.xeppaka.emi.service.CategoriesService;
-import com.xeppaka.emi.service.DeleteCategoryResult;
-import com.xeppaka.emi.service.EmiWarehouseException;
+import java.net.URI;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(CategoriesController.URI)

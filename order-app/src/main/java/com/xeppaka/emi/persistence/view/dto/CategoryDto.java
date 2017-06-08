@@ -1,9 +1,9 @@
 package com.xeppaka.emi.persistence.view.dto;
 
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.UUID;
 
 public class CategoryDto {
     private final UUID categoryId;

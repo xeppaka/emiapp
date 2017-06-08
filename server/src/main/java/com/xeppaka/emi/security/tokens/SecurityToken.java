@@ -1,9 +1,9 @@
 package com.xeppaka.emi.security.tokens;
 
+import org.apache.commons.lang3.Validate;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import org.apache.commons.lang3.Validate;
 
 public class SecurityToken {
     private final UUID tokenId;

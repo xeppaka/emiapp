@@ -1,9 +1,9 @@
 package com.xeppaka.emi.dto;
 
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.UUID;
 
 public class OrderProductDto {
     private final UUID productId;

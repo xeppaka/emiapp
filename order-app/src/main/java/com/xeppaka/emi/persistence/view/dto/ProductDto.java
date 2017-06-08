@@ -1,12 +1,12 @@
 package com.xeppaka.emi.persistence.view.dto;
 
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.xeppaka.emi.domain.ProductFeature;
+
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class ProductDto {
     private final UUID productId;

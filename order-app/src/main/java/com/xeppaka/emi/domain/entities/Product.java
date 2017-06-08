@@ -2,7 +2,6 @@ package com.xeppaka.emi.domain.entities;
 
 import com.xeppaka.ddd.domain.BaseEntity;
 import com.xeppaka.emi.domain.ProductFeature;
-
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;

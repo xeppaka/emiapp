@@ -20,7 +20,7 @@ class PosProductItem extends React.Component {
     render() {
         let product = this.props.product;
         let setProductQuantity = this.props.setProductQuantity;
-        let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(2));
+        let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(3));
         let calculatedPriceStr = '';
         let calculatedPriceDiscountStr = '';
 
@@ -53,7 +53,7 @@ class PosProductItem extends React.Component {
                 {product.name}
                 {isFlammable ? <span>&nbsp;&nbsp;<SvgFlame width={20} height={20} /></span> : null}
             </td>
-            <td>{Number((product.price / 100).toFixed(2))}</td>
+            <td>{Number((product.price / 100).toFixed(3))}</td>
             <td>{0}</td>
             <td>{isAvailable ? product.piecesLeftToOrder : 0}</td>
             <td>

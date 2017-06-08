@@ -1,9 +1,9 @@
 package com.xeppaka.emi.dto;
 
-import java.util.Collection;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Collection;
 
 public class OrderDto {
     private final String email;

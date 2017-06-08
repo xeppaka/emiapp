@@ -1,9 +1,7 @@
 package com.xeppaka.emi.security;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.UUID;
-
+import com.xeppaka.emi.security.dto.UserNamePassword;
+import com.xeppaka.emi.security.tokens.SecurityTokenContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xeppaka.emi.security.dto.UserNamePassword;
-import com.xeppaka.emi.security.tokens.SecurityTokenContainer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(SecurityController.URI)

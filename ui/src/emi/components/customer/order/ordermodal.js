@@ -89,13 +89,13 @@ class OrderModal extends React.Component {
                                             <ul className='nav navbar-nav pull-xs-right'>
                                                 <li className='nav-item'><a className='nav-link active'>Total without
                                                     discount: <span
-                                                        style={{fontSize: '120%'}}>{Number((this.props.order.totalWithoutDiscount / 100).toFixed(2))}&#8364;</span></a>
+                                                        style={{fontSize: '120%'}}>{Number((this.props.order.totalWithoutDiscount / 100).toFixed(3))}&#8364;</span></a>
                                                 </li>
                                                 <li className='nav-item'><a className='nav-link active'>Total with
                                                     discount: <span style={{
                                                         fontWeight: 'bold',
                                                         fontSize: '120%'
-                                                    }}>{Number((this.props.order.totalWithDiscount / 100).toFixed(2))}&#8364;</span></a>
+                                                    }}>{Number((this.props.order.totalWithDiscount / 100).toFixed(3))}&#8364;</span></a>
                                                 </li>
                                             </ul>
                                         </nav>

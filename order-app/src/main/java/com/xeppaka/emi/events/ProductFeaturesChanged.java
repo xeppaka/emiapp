@@ -1,13 +1,13 @@
 package com.xeppaka.emi.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.xeppaka.emi.domain.ProductFeature;
+
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.xeppaka.emi.domain.ProductFeature;
 
 public class ProductFeaturesChanged extends EmiEvent {
     private final UUID productId;

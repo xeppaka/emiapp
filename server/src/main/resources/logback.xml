@@ -13,8 +13,8 @@
         </encoder>
         <file>/var/log/emiapp/emiapp.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/emiapp/emiapp.%d{yyyy-MM}.log</fileNamePattern>
-            <maxHistory>12</maxHistory>
+            <fileNamePattern>/var/log/emiapp/history/emiapp.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>180</maxHistory>
         </rollingPolicy>
     </appender>
 

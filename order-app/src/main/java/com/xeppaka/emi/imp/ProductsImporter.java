@@ -6,7 +6,6 @@ import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.domain.EmiWarehouse;
 import com.xeppaka.emi.domain.ProductFeature;
 import com.xeppaka.emi.domain.entities.Category;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,11 +1,11 @@
 package com.xeppaka.emi.security.tokens;
 
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang3.Validate;
-import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityTokenContainer {

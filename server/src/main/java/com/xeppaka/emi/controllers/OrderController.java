@@ -1,14 +1,12 @@
 package com.xeppaka.emi.controllers;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.mail.MessagingException;
-
+import com.xeppaka.emi.domain.Country;
+import com.xeppaka.emi.domain.value.Order;
+import com.xeppaka.emi.dto.OrderDto;
+import com.xeppaka.emi.dto.OrderProductDto;
+import com.xeppaka.emi.persistence.view.dto.ProductDto;
+import com.xeppaka.emi.service.CategoriesService;
+import com.xeppaka.emi.service.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,28 +14,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.xeppaka.emi.domain.Country;
-import com.xeppaka.emi.domain.value.Order;
-import com.xeppaka.emi.dto.OrderDto;
-import com.xeppaka.emi.dto.OrderProductDto;
-import com.xeppaka.emi.persistence.view.dto.CategoryDto;
-import com.xeppaka.emi.persistence.view.dto.ProductDto;
-import com.xeppaka.emi.service.CategoriesService;
-import com.xeppaka.emi.service.OrderService;
-import com.xeppaka.emi.service.ProductsService;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
     private final ProductsService productsService;
     private final CategoriesService categoriesService;
-    private final OrderService orderService;
 
     @Autowired
-    public OrderController(ProductsService productsService, CategoriesService categoriesService, OrderService orderService) {
+    public OrderController(ProductsService productsService, CategoriesService categoriesService) {
         this.productsService = productsService;
         this.categoriesService = categoriesService;
-        this.orderService = orderService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -57,8 +50,7 @@ public class OrderController {
             productsQuantity.put(productDto, orderProduct.getQuantity());
         }
 
-        final Order order = new Order(email, Country.valueOf(country), productsQuantity, posCategories);
-        order.send();
+        new Order(email, Country.valueOf(country), productsQuantity, posCategories).send();
 
         return ResponseEntity.ok().build();
     }

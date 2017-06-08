@@ -1,7 +1,6 @@
 package com.xeppaka.emi.commands;
 
 import com.xeppaka.ddd.commands.Command;
-import com.xeppaka.emi.domain.value.UserName;
 import org.apache.commons.lang3.Validate;
 
 import java.util.UUID;

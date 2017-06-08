@@ -1,9 +1,9 @@
 package com.xeppaka.emi.service;
 
+import com.xeppaka.emi.persistence.view.dto.ProductDto;
+
 import java.util.List;
 import java.util.UUID;
-
-import com.xeppaka.emi.persistence.view.dto.ProductDto;
 
 public class DeleteCategoryResult {
     private final List<UUID> deletedCategories;

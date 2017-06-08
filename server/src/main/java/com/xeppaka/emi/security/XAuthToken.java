@@ -1,10 +1,10 @@
 package com.xeppaka.emi.security;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class XAuthToken extends AbstractAuthenticationToken {
     private final String authToken;

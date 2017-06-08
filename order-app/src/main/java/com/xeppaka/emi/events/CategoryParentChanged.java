@@ -1,11 +1,9 @@
 package com.xeppaka.emi.events;
 
-import java.util.UUID;
-
-import org.apache.commons.lang3.Validate;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.UUID;
 
 /**
  *
