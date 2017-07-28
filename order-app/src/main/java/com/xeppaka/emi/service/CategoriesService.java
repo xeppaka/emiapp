@@ -28,12 +28,16 @@ import java.util.stream.Collectors;
 public class CategoriesService {
     private static final Logger log = LoggerFactory.getLogger(ProductsService.class);
 
+    private final EmiCommandHandler emiCommandHandler;
+    private final CategoriesRepository categoriesRepository;
+    private final ProductsRepository productsRepository;
+
     @Autowired
-    private EmiCommandHandler emiCommandHandler;
-    @Autowired
-    private CategoriesRepository categoriesRepository;
-    @Autowired
-    private ProductsRepository productsRepository;
+    public CategoriesService(EmiCommandHandler emiCommandHandler, CategoriesRepository categoriesRepository, ProductsRepository productsRepository) {
+        this.emiCommandHandler = emiCommandHandler;
+        this.categoriesRepository = categoriesRepository;
+        this.productsRepository = productsRepository;
+    }
 
     @Transactional
     public CategoryDto createCategory(UserName userName, String name, UUID parentCategoryId, int weight) throws EmiWarehouseException {
@@ -85,7 +89,7 @@ public class CategoriesService {
     }
 
     public boolean isCategoryUnderPos(UUID id) {
-        if (id.equals(Category.ROOT_CATEGORY_ID)) {
+        if (Category.ROOT_CATEGORY_ID.equals(id)) {
             return false;
         }
 
@@ -93,6 +97,17 @@ public class CategoriesService {
         final UUID parentCategoryId = categoryDto.getParentCategoryId();
 
         return (categoryDto.getName().equals("POS") && parentCategoryId.equals(Category.ROOT_CATEGORY_ID)) || isCategoryUnderPos(parentCategoryId);
+    }
+
+    public boolean isCategoryUnderCertificate(UUID id) {
+        if (Category.ROOT_CATEGORY_ID.equals(id)) {
+            return false;
+        }
+
+        final CategoryDto categoryDto = getCategory(id);
+        final UUID parentCategoryId = categoryDto.getParentCategoryId();
+
+        return (categoryDto.getName().equals("Certificates") && parentCategoryId.equals(Category.ROOT_CATEGORY_ID)) || isCategoryUnderCertificate(parentCategoryId);
     }
 
     @Transactional

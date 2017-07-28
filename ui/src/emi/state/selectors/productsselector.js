@@ -43,17 +43,12 @@ const createProductIdsSelector = createSelectorCreator(
     isEqualForProductIdsSelector
 );
 
-function isPos(prevPos, category, rootCategoryId) {
-    return prevPos || ((category.parentCategoryId === rootCategoryId) && (category.name === 'POS'));
-}
-
-function getProductIds(categoryById, id, productIds, isPos, prevPos = false) {
+function getProductIds(categoryById, id, productIds) {
     let currentCategory = categoryById[id];
-    let pos = isPos(prevPos, currentCategory, categoryById['root'].categoryId);
-    if (pos) {
-        Array.prototype.push.apply(productIds.posProductIds, currentCategory.productIds);
-    } else {
+    if (currentCategory.isMain) {
         Array.prototype.push.apply(productIds.mainProductIds, currentCategory.productIds);
+    } else {
+        Array.prototype.push.apply(productIds.posProductIds, currentCategory.productIds);
     }
 
     let childCategoryIds = currentCategory.childCategoryIds;
@@ -61,7 +56,7 @@ function getProductIds(categoryById, id, productIds, isPos, prevPos = false) {
 
     for (let i = 0; i < l; i++) {
         let childCategoryId = childCategoryIds[i];
-        getProductIds(categoryById, childCategoryId, productIds, isPos, pos);
+        getProductIds(categoryById, childCategoryId, productIds);
     }
 }
 
@@ -78,7 +73,7 @@ const productIdsSelector = createProductIdsSelector(
             mainProductIds: [],
             posProductIds: []
         };
-        getProductIds(categoryById, 'root', productIds, isPos);
+        getProductIds(categoryById, 'root', productIds);
 
         return productIds;
     }
@@ -175,17 +170,37 @@ export const totalWithoutDiscountSelector = createSelector(
 
 export const totalWithDiscountSelector = createSelector(
     [
-        mainTotalWithoutDiscountSelector
+        productIdsSelector,
+        (state) => state.emiapp.warehouse.products.productById
     ],
-    (mainTotalWithoutDiscount) => mainTotalWithoutDiscount / 2
+    (productIds, productById) => {
+        return productIds.mainProductIds.reduce((prev, id) => {
+            let product = productById[id];
+            return prev + ((product.isCertificate ? product.price : product.price / 2)  * productById[id].quantity);
+        }, 0);
+    }
+);
+
+const mainTotalWithoutCertificatesWithoutDiscountSelector = createSelector(
+    [
+        productIdsSelector,
+        (state) => state.emiapp.warehouse.products.productById
+    ],
+    (productIds, productById) => {
+        return productIds.mainProductIds
+            .filter(id => !productById[id].isCertificate)
+            .reduce((prev, id) => {
+                return prev + (productById[id].price * productById[id].quantity);
+            }, 0);
+    }
 );
 
 export const posAmountToOrderSelector = createSelector(
     [
-        mainTotalWithoutDiscountSelector,
+        mainTotalWithoutCertificatesWithoutDiscountSelector,
         posTotalWithoutDiscountSelector
     ],
-    (mainTotalWithoutDiscount, posTotalWithoutDiscount) => mainTotalWithoutDiscount * 0.05 - posTotalWithoutDiscount
+    (mainTotalWithoutCertificatesWithoutDiscount, posTotalWithoutDiscount) => mainTotalWithoutCertificatesWithoutDiscount * 0.05 - posTotalWithoutDiscount
 );
 
 export const mainProductsSelector = createSelector(
@@ -196,7 +211,6 @@ export const mainProductsSelector = createSelector(
     ],
     (productIds, anchorsById, productById) => {
         return productIds.mainProductIds
-            .filter((id) => productById[id].features.indexOf('VISIBLE') >= 0)
             .map((id) => {
                 return {product: productById[id], anchor: anchorsById[id]}
             });
@@ -211,7 +225,6 @@ export const posProductsSelector = createSelector(
     ],
     (productIds, anchorsById, productById) => {
         return productIds.posProductIds
-            .filter((id) => productById[id].features.indexOf('VISIBLE') >= 0)
             .map((id) => {
                 return {product: productById[id], anchor: anchorsById[id]}
             });

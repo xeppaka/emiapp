@@ -7,10 +7,13 @@ import com.xeppaka.emi.commands.CreateCategoryCommand;
 import com.xeppaka.emi.commands.CreateProductCommand;
 import com.xeppaka.emi.commands.DeleteCategoryCommand;
 import com.xeppaka.emi.commands.DeleteProductCommand;
+import com.xeppaka.emi.commands.SendOrderCommand;
 import com.xeppaka.emi.commands.UpdateCategoryCommand;
 import com.xeppaka.emi.commands.UpdateProductCommand;
 import com.xeppaka.emi.domain.entities.Category;
+import com.xeppaka.emi.domain.entities.Order;
 import com.xeppaka.emi.domain.entities.Product;
+import com.xeppaka.emi.domain.value.OrderProduct;
 import com.xeppaka.emi.events.CategoryCreated;
 import com.xeppaka.emi.events.CategoryDeleted;
 import com.xeppaka.emi.events.CategoryNameChanged;
@@ -32,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -232,6 +237,11 @@ public class EmiWarehouse extends BaseAggregate {
             return;
         }
 
+        if (command instanceof SendOrderCommand) {
+            handle((SendOrderCommand) command);
+            return;
+        }
+
         throw new IllegalArgumentException(MessageFormat.format("Provided command {0} is not supported", command));
     }
 
@@ -403,6 +413,51 @@ public class EmiWarehouse extends BaseAggregate {
         final ProductDeleted productDeleted = new ProductDeleted(command.getProductId());
         apply(productDeleted);
         addEvent(productDeleted);
+    }
+
+    private void handle(SendOrderCommand command) {
+        final List<OrderProduct> orderProducts = new ArrayList<>(command.getProductsQuantity().size());
+
+        for (Map.Entry<UUID, Integer> productQuantity : command.getProductsQuantity().entrySet()) {
+            final Product p = productsMap.get(productQuantity.getKey());
+            final Category c = categoryMap.get(p.getCategoryId());
+            orderProducts.add(new OrderProduct(p.getId(), p.getName(), p.getPrice(),
+                    c.getName(), productQuantity.getValue(), isMain(p.getId()), isCertificate(p.getId()), p.hasFeature(ProductFeature.FLAMMABLE)));
+        }
+
+        new Order(command.getEmail(), command.getCountry(), orderProducts).send();
+    }
+
+    private boolean isMain(UUID productId) {
+        final Product product = productsMap.get(productId);
+        return !isCategoryUnderPos(product.getCategoryId());
+    }
+
+    private boolean isCategoryUnderPos(UUID categoryId) {
+        if (Category.ROOT_CATEGORY_ID.equals(categoryId)) {
+            return false;
+        }
+
+        final Category category = categoryMap.get(categoryId);
+        final Category parentCategory = categoryMap.get(category.getParentCategoryId());
+
+        return (category.getName().equalsIgnoreCase("POS") && parentCategory.getId().equals(Category.ROOT_CATEGORY_ID)) || isCategoryUnderPos(parentCategory.getId());
+    }
+
+    private boolean isCertificate(UUID productId) {
+        final Product product = productsMap.get(productId);
+        return isCategoryUnderCertificate(product.getCategoryId());
+    }
+
+    private boolean isCategoryUnderCertificate(UUID categoryId) {
+        if (Category.ROOT_CATEGORY_ID.equals(categoryId)) {
+            return false;
+        }
+
+        final Category category = categoryMap.get(categoryId);
+        final Category parentCategory = categoryMap.get(category.getParentCategoryId());
+
+        return (category.getName().equalsIgnoreCase("Certificates") && parentCategory.getId().equals(Category.ROOT_CATEGORY_ID)) || isCategoryUnderCertificate(parentCategory.getId());
     }
 
     @Override

@@ -27,7 +27,8 @@ class PosProductsTable extends React.Component {
         let productsCount = this.props.products.length;
         let firstVisible = null;
         for (let i = 0; i < productsCount; i++) {
-            if (this.refs['product' + i].isVisible()) {
+            let refId = 'product' + i;
+            if (this.refs.hasOwnProperty(refId) && this.refs[refId].isVisible()) {
                 firstVisible = i;
                 break;
             }
@@ -53,13 +54,15 @@ class PosProductsTable extends React.Component {
                 productsItems.push(<CategoryItem key={anchor.name} anchor={anchor} colspan={'9'} />);
             }
 
-            productsItems.push(<PosProductItem
-                    key={product.productId} ref={'product' + i} idx={i + 1}
-                    product={product}
-                    setProductQuantity={this.props.setProductQuantity}
-                    onShowProductImage={this.props.onShowProductImage}
-                />
-            )
+            if (product.features.indexOf('VISIBLE') >= 0) {
+                productsItems.push(<PosProductItem
+                        key={product.productId} ref={'product' + i} idx={i + 1}
+                        product={product}
+                        setProductQuantity={this.props.setProductQuantity}
+                        onShowProductImage={this.props.onShowProductImage}
+                    />
+                )
+            }
         }
 
         return productsItems;

@@ -1,6 +1,10 @@
-import { createSelector } from 'reselect';
-import update from 'react-addons-update';
-import { mainProductsSelector, posProductsSelector, totalWithoutDiscountSelector, totalWithDiscountSelector } from './productsselector';
+import {createSelector} from 'reselect';
+import {
+    mainProductsSelector,
+    posProductsSelector,
+    totalWithDiscountSelector,
+    totalWithoutDiscountSelector
+} from './productsselector';
 
 export const orderProductsSelector = createSelector(
     [
@@ -8,16 +12,8 @@ export const orderProductsSelector = createSelector(
         posProductsSelector
     ],
     (mainProducts, posProducts) => {
-        return mainProducts
-            .filter(p => p.product.quantity > 0)
-            .map(p => update(p.product, {
-                isMain: {$set: true}
-            }))
-            .concat(posProducts
-                .filter(p => p.product.quantity > 0)
-                .map(p => update(p.product, {
-                    isMain: {$set: false}
-                })));
+        return mainProducts.filter(p => p.product.quantity > 0).map(p => p.product)
+            .concat(posProducts.filter(p => p.product.quantity > 0).map(p => p.product))
     }
 );
 

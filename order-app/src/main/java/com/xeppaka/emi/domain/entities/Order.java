@@ -1,6 +1,8 @@
-package com.xeppaka.emi.domain.value;
+package com.xeppaka.emi.domain.entities;
 
+import com.xeppaka.ddd.domain.BaseEntity;
 import com.xeppaka.emi.domain.Country;
+import com.xeppaka.emi.domain.value.OrderProduct;
 import com.xeppaka.emi.persistence.view.dto.ProductDto;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -18,86 +20,97 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-public class Order {
+public class Order extends BaseEntity {
     private static final Logger log = LoggerFactory.getLogger(Order.class);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     private static final DateTimeFormatter ATTACHMENT_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     private final String email;
     private final Country country;
-    private final Map<ProductDto, Integer> productsQuantity;
-    private final Set<UUID> posCategories;
-    private final Comparator<Map.Entry<ProductDto, Integer>> productDtoComparator;
+    private final List<OrderProduct> products;
+    private final Comparator<OrderProduct> productsComparator;
 
-    public Order(String email, Country country, Map<ProductDto, Integer> productsQuantity, Set<UUID> posCategories) {
+    public Order(String email, Country country, List<OrderProduct> products) {
         Validate.notEmpty(email);
         Validate.notNull(country);
-        Validate.notEmpty(productsQuantity);
-        Validate.notNull(posCategories);
+        Validate.notEmpty(products);
 
         this.email = email;
         this.country = country;
-        this.productsQuantity = productsQuantity;
-        this.posCategories = posCategories;
-        this.productDtoComparator = Comparator
-                .<Map.Entry<ProductDto, Integer>>comparingInt(p -> posCategories.contains(p.getKey().getCategoryId()) ? 1 : 0)
-                .thenComparing(p -> p.getKey().getName());
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Country getCountry() {
-        return country;
+        this.products = products;
+        this.productsComparator = Comparator
+                .<OrderProduct>comparingInt(product -> product.isMain() ? 0 : 1)
+                .thenComparing(OrderProduct::getCategoryName)
+                .thenComparing(OrderProduct::getName);
     }
 
     public String getCountryString() {
         return country.getCountry();
     }
 
-    public Map<ProductDto, Integer> getProductsQuantity() {
-        return productsQuantity;
-    }
-
-    public Set<UUID> getPosCategories() {
-        return posCategories;
-    }
-
     public double getTotalWithoutDiscount() {
-        double total = 0;
-
-        for (Map.Entry<ProductDto, Integer> p : productsQuantity.entrySet()) {
-            total += p.getKey().getPrice() / 100d * p.getValue();
-        }
-
-        return total;
+        return getTotalWithoutDiscount(this.products);
     }
 
     public double getTotalWithDiscount() {
+        return getTotalWithDiscount(this.products);
+    }
+
+    private double getTotalWithoutDiscount(Collection<OrderProduct> products) {
         double total = 0;
 
-        for (Map.Entry<ProductDto, Integer> p : productsQuantity.entrySet()) {
-            if (!posCategories.contains(p.getKey().getCategoryId())) {
-                total += p.getKey().getPrice() / 200d * p.getValue();
-            }
+        for (OrderProduct p : products) {
+            total += p.getOriginalPrice() * p.getQuantity();
         }
 
         return total;
     }
 
-    public void send() throws IOException {
-        sendWithPostfix();
+    private double getTotalWithDiscount(Collection<OrderProduct> products) {
+        double total = 0;
+
+        for (OrderProduct p : products) {
+            total += p.getDiscountPrice() * p.getQuantity();
+        }
+
+        return total;
+    }
+
+    private List<OrderProduct> getCertificateProducts() {
+        return products.stream().filter(OrderProduct::isCertificate).collect(Collectors.toList());
+    }
+
+    private List<OrderProduct> getFlammableProducts() {
+        return products.stream().filter(OrderProduct::isFlammable).collect(Collectors.toList());
+    }
+
+    private List<OrderProduct> getOtherProducts() {
+        return products.stream().filter(p -> !p.isFlammable() && !p.isCertificate()).collect(Collectors.toList());
+    }
+
+    public void send() {
+        try {
+            sendWithPostfix();
+        } catch (IOException e) {
+            log.error("Error occurred while sending order.", e);
+        }
     }
 
     private void sendWithPostfix() throws IOException {
-        final Path emailPath = prepareEmailBody();
+        final String from = "no-reply@emischool.com";
+        final String emiEmail = "prague@emischool.com";
+//        final String emiEmail = "kachalouski@protonmail.com";
+        final String orderCopyEmail = email;
+
+        log.info("Preparing email - from: {}, to E.Mi: {}, to order copy: {}.", from, emiEmail, orderCopyEmail);
+        final Path emailPath = prepareEmailBody(from, emiEmail, orderCopyEmail);
         try {
             final Runtime r = Runtime.getRuntime();
             final String[] commands = {
@@ -116,25 +129,24 @@ public class Order {
             log.error("Error while waiting process.");
             Thread.currentThread().interrupt();
         } finally {
-            // Files.delete(emailPath);
+            Files.delete(emailPath);
             log.info("Deleted file with email successfully: {}.", emailPath.toString());
         }
     }
 
-    private Path prepareEmailBody() throws IOException {
+    private Path prepareEmailBody(String from, String emiEmail, String orderCopyEmail) throws IOException {
         final String boundary = UUID.randomUUID().toString();
-        // final Path attachmentPath = prepareEmailAttachment();
         final String attachmentEmailFileName = MessageFormat.format("order-{0}-{1}.csv", country.toString(), LocalDateTime.now().format(ATTACHMENT_DATE_FORMATTER));
         final Path emailPath = Files
                 .createTempFile("e-mail-", ".tmp", PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-r--r--")));
         log.info("Created temporary file for e-mail: {}", emailPath.toString());
 
         try (final BufferedWriter os = new BufferedWriter(new FileWriter(emailPath.toFile()))) {
-            os.write("From: E.Mi International <no-reply@emischool.com>");
+            os.write(MessageFormat.format("From: E.Mi International <{0}>", from));
             os.newLine();
-            os.write("To: E.Mi International <prague@emischool.com>");
+            os.write(MessageFormat.format("To: E.Mi International <{0}>", emiEmail));
             os.newLine();
-            os.write(MessageFormat.format("CC: Order Copy <{0}>", email));
+            os.write(MessageFormat.format("CC: Order Copy <{0}>", orderCopyEmail));
             os.newLine();
             os.write(MessageFormat.format("Subject: New order from {0}.", country.getCountry()));
             os.newLine();
@@ -161,7 +173,7 @@ public class Order {
             os.write(MessageFormat.format("Content-Disposition: attachment; filename={0}", attachmentEmailFileName));
             os.newLine();
             os.newLine();
-            os.write(Base64.getEncoder().encodeToString(toCsv().getBytes("UTF-8")));
+            os.write(Base64.getEncoder().encodeToString(toCsv(products).getBytes("UTF-8")));
             os.newLine();
             os.write(MessageFormat.format("--{0}--", boundary));
         }
@@ -175,15 +187,48 @@ public class Order {
         final String country = MessageFormat.format("<div>Order country: {0}</div>\n", getCountryString());
         final String date = MessageFormat.format("<div>Order date: {0} (UTC)</div>\n", LocalDateTime.now().format(FORMATTER));
         final String space = "<div><br/></div>\n";
+        final String orderTotal = orderTotal();
 
-        final List<Map.Entry<ProductDto, Integer>> sortedProducts = new ArrayList<>(productsQuantity.entrySet());
-        sortedProducts.sort(productDtoComparator);
+        final List<OrderProduct> certificateProducts = getCertificateProducts();
+        final List<OrderProduct> flammableProducts = getFlammableProducts();
+        final List<OrderProduct> otherProducts = getOtherProducts();
+
+        final Optional<String> certificateProductsTable = certificateProducts.isEmpty() ? Optional.empty() : Optional.of(productsToHtmlTable(certificateProducts));
+        final Optional<String> flammableProductsTable = flammableProducts.isEmpty() ? Optional.empty() : Optional.of(productsToHtmlTable(flammableProducts));
+        final Optional<String> otherProductsTable = otherProducts.isEmpty() ? Optional.empty() : Optional.of(productsToHtmlTable(otherProducts));
+
+        final StringBuilder resultEmail = new StringBuilder(htmlBegin);
+        resultEmail.append(country).append(date).append(space);
+
+        final int tablesCount = certificateProductsTable.map(s -> 1).orElse(0) +
+                flammableProductsTable.map(s -> 1).orElse(0) +
+                otherProductsTable.map(s -> 1).orElse(0);
+
+        certificateProductsTable.ifPresent(s -> resultEmail.append(tableName("Certificates")).append(s).append(space));
+        flammableProductsTable.ifPresent(s -> resultEmail.append(tableName("Flammable products")).append(s).append(space));
+        otherProductsTable.ifPresent(s -> {
+            if (tablesCount > 1) {
+                resultEmail.append(tableName("Other products"));
+            }
+            resultEmail.append(s).append(space);
+        });
+
+        resultEmail.append(space).append(orderTotal).append(htmlEnd);
+
+        return resultEmail.toString();
+    }
+
+    private String tableName(String name) {
+        return MessageFormat.format("<p>{0}:</p>", name);
+    }
+
+    private String productsToHtmlTable(Collection<OrderProduct> products) {
+        final List<OrderProduct> sortedProducts = new ArrayList<>(products);
+        sortedProducts.sort(productsComparator);
         final StringBuilder tableRows = new StringBuilder();
         int idx = 0;
-        for (Map.Entry<ProductDto, Integer> e : sortedProducts) {
-            final ProductDto product = e.getKey();
-            final int quantity = e.getValue();
-            tableRows.append(productToHtml(++idx, product, quantity, !posCategories.contains(product.getCategoryId())));
+        for (OrderProduct product : sortedProducts) {
+            tableRows.append(productToHtml(++idx, product));
         }
 
         final String table = MessageFormat.format("<table style=\"width:100%; border-spacing: 0px; border-top: 1px solid black; border-right: 1px solid black;\">\n<thead>\n" +
@@ -205,12 +250,12 @@ public class Order {
                 "<tbody>\n" +
                 "{0}\n" +
                 "</tbody>\n" +
-                "</table>\n", tableRows.toString(), getTotalWithoutDiscount(), getTotalWithDiscount());
+                "</table>\n", tableRows.toString(), getTotalWithoutDiscount(products), getTotalWithDiscount(products));
 
-        return htmlBegin + country + date + space + table + htmlEnd;
+        return table;
     }
 
-    private String productToHtml(int idx, ProductDto product, int quantity, boolean isMain) {
+    private String productToHtml(int idx, OrderProduct product) {
         return MessageFormat.format("<tr>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{0}</td>" +
                         "<td style=\"border-bottom: 1px solid black; border-left: 1px solid black;\">{1}</td>" +
@@ -222,40 +267,42 @@ public class Order {
                         "</tr>\n",
                 idx,
                 product.getName(),
-                product.getPrice() / 100d, isMain ? (product.getPrice() / 200d) : 0,
-                quantity,
-                product.getPrice() / 100d * quantity,
-                isMain ? (product.getPrice() / 200d * quantity) : 0
+                product.getOriginalPrice(), product.getDiscountPrice(),
+                product.getQuantity(),
+                product.getOriginalTotal(), product.getDiscountTotal()
         );
     }
 
-    private String toCsv() {
-        final List<Map.Entry<ProductDto, Integer>> sortedProducts = new ArrayList<>(productsQuantity.entrySet());
-        sortedProducts.sort(productDtoComparator);
+    private String orderTotal() {
+        return MessageFormat.format("<span style=\"font-size: 100%;\">Order total without discount: {0}&#8364;.&nbsp;&nbsp;&nbsp;</span><span style=\"font-size: 120%;\">Order total with discount:&nbsp;</span><span style=\"font-weight: bold; font-size: 120%;\">{1}&#8364;.</span>", getTotalWithoutDiscount(), getTotalWithDiscount());
+    }
+
+    private String toCsv(Collection<OrderProduct> products) {
+        final List<OrderProduct> sortedProducts = new ArrayList<>(products);
+        sortedProducts.sort(productsComparator);
         final StringBuilder csvRows = new StringBuilder();
         csvRows.append("#:Product Name:Retail price (without VAT, in €):Discount price (without VAT, in €):Quantity:Retail price x Quantity (without discount, without VAT in €):Retail price x Quantity (with discount, without VAT in €)");
         csvRows.append("\r\n");
 
         int idx = 0;
-        for (Map.Entry<ProductDto, Integer> e : sortedProducts) {
-            final ProductDto product = e.getKey();
-            final int quantity = e.getValue();
-            csvRows.append(productToCsv(++idx, product, quantity, !posCategories.contains(product.getCategoryId())));
+        for (OrderProduct product : sortedProducts) {
+            csvRows.append(productToCsv(++idx, product));
             csvRows.append("\r\n");
         }
 
         return csvRows.toString();
     }
 
-    private String productToCsv(int idx, ProductDto product, int quantity, boolean isMain) {
+    private String productToCsv(int idx, OrderProduct product) {
         return MessageFormat.format(
                 "{0}:{1}:{2,number,#.###}:{3,number,#.###}:{4,number,#}:{5,number,#.###}:{6,number,#.###}",
                 idx,
                 product.getName(),
-                product.getPrice() / 100d, isMain ? (product.getPrice() / 200d) : 0,
-                quantity,
-                product.getPrice() / 100d * quantity,
-                isMain ? (product.getPrice() / 200d * quantity) : 0
+                product.getOriginalPrice(),
+                product.getDiscountPrice(),
+                product.getQuantity(),
+                product.getOriginalTotal(),
+                product.getDiscountTotal()
         );
     }
 
@@ -269,7 +316,7 @@ public class Order {
 
         if (!email.equals(order.email)) return false;
         if (country != order.country) return false;
-        return productsQuantity.equals(order.productsQuantity);
+        return products.equals(order.products);
     }
 
     @Override
@@ -277,7 +324,7 @@ public class Order {
         int result = super.hashCode();
         result = 31 * result + email.hashCode();
         result = 31 * result + country.hashCode();
-        result = 31 * result + productsQuantity.hashCode();
+        result = 31 * result + products.hashCode();
         return result;
     }
 
@@ -286,7 +333,7 @@ public class Order {
         return "Order{" +
                 "email='" + email + '\'' +
                 ", country=" + country +
-                ", productsQuantity=" + productsQuantity +
+                ", products=" + products +
                 '}';
     }
 }

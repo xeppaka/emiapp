@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { Route } from 'react-router';
+import {render} from 'react-dom';
+import {Provider} from 'react-redux';
+import {Route} from 'react-router';
 import PrivateRouteContainer from './containers/privateroutecontainer';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import {applyMiddleware, combineReducers, createStore} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createHistory from 'history/createBrowserHistory';
-import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux';
-import { HashRouter } from 'react-router-dom';
-import { createLogger } from 'redux-logger';
+import {ConnectedRouter, routerMiddleware, routerReducer} from 'react-router-redux';
+import {createLogger} from 'redux-logger';
 
 import '../../node_modules/bootstrap/dist/js/bootstrap.js';
 import '../../node_modules/bootstrap/scss/bootstrap.scss';

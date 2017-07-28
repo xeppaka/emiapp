@@ -10,9 +10,9 @@ class OrderProductItem extends React.Component {
         let isMain = product.isMain;
 
         let price = Number((product.price / 100).toFixed(3));
-        let discountPrice = isMain ? Number((product.price / 200).toFixed(3)) : 0;
+        let discountPrice = isMain ? Number((product.isCertificate ? product.price / 100 : product.price / 200).toFixed(3)) : 0;
         let calculatedTotalPrice = Number((product.price / 100 * product.quantity).toFixed(3));
-        let calculatedTotalPriceWithDiscount = product.isMain ? Number((product.price / 200 * product.quantity).toFixed(3)) : 0;
+        let calculatedTotalPriceWithDiscount = product.isMain ? Number(((product.isCertificate ? product.price / 100 : product.price / 200) * product.quantity).toFixed(3)) : 0;
 
         return (<tr>
             <th scope='row'>{this.props.idx}</th>

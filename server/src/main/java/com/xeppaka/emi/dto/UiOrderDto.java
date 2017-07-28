@@ -5,15 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
 
-public class OrderDto {
+public class UiOrderDto {
     private final String email;
     private final String country;
-    private final Collection<OrderProductDto> products;
+    private final Collection<UiOrderProductDto> products;
 
     @JsonCreator
-    public OrderDto(@JsonProperty("email") String email,
-                    @JsonProperty("country") String country,
-                    @JsonProperty("products") Collection<OrderProductDto> products) {
+    public UiOrderDto(@JsonProperty("email") String email,
+                      @JsonProperty("country") String country,
+                      @JsonProperty("products") Collection<UiOrderProductDto> products) {
         this.email = email;
         this.country = country;
         this.products = products;
@@ -27,7 +27,7 @@ public class OrderDto {
         return country;
     }
 
-    public Collection<OrderProductDto> getProducts() {
+    public Collection<UiOrderProductDto> getProducts() {
         return products;
     }
 }

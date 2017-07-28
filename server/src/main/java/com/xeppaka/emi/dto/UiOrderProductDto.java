@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
-public class OrderProductDto {
+public class UiOrderProductDto {
     private final UUID productId;
     private final int quantity;
 
     @JsonCreator
-    public OrderProductDto(@JsonProperty("productId") UUID productId,
-                           @JsonProperty("quantity") int quantity) {
+    public UiOrderProductDto(@JsonProperty("productId") UUID productId,
+                             @JsonProperty("quantity") int quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

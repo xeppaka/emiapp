@@ -25,10 +25,14 @@ import java.util.stream.Collectors;
 public class ProductsService {
     private static final Logger log = LoggerFactory.getLogger(ProductsService.class);
 
-    @Autowired
     private EmiCommandHandler emiCommandHandler;
-    @Autowired
     private ProductsRepository productsRepository;
+
+    @Autowired
+    public ProductsService(EmiCommandHandler emiCommandHandler, ProductsRepository productsRepository) {
+        this.emiCommandHandler = emiCommandHandler;
+        this.productsRepository = productsRepository;
+    }
 
     @Transactional
     public ProductDto createProduct(UserName userName, String name, int price, int multiplicity,

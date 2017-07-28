@@ -21,7 +21,7 @@ class MainProductItem extends React.Component {
     render() {
         let product = this.props.product;
         let calculatedPrice = Number((product.price / 100 * product.quantity).toFixed(3));
-        let calculatedPriceWithDiscount = Number((product.price / 200 * product.quantity).toFixed(3));
+        let calculatedPriceWithDiscount = Number(((product.isCertificate ? product.price / 100 : product.price / 200) * product.quantity).toFixed(3));
         let isAvailable = product.features.indexOf('AVAILABLE') >= 0;
         let isNew = product.features.indexOf('NEW') >= 0;
         let isFlammable = product.features.indexOf('FLAMMABLE') >= 0;
@@ -49,7 +49,7 @@ class MainProductItem extends React.Component {
                 {isFlammable ? <span>&nbsp;&nbsp;<SvgFlame width={20} height={20}/></span> : null}
             </td>
             <td>{Number((product.price / 100).toFixed(3))}</td>
-            <td>{Number((product.price / 200).toFixed(3))}</td>
+            <td>{Number((product.isCertificate ? product.price / 100 : product.price / 200).toFixed(3))}</td>
             <td>
                 <MainProductItemQuantity
                     productId={product.productId}

@@ -27,6 +27,7 @@ public class Product extends BaseEntity {
                    UUID categoryId, String note, int weight, Collection<ProductFeature> features,
                    String imageThumbnail, String image) {
         super(id);
+
         setName(name);
         setPrice(price);
         setCategoryId(categoryId);
@@ -80,6 +81,10 @@ public class Product extends BaseEntity {
         } else {
             this.productFeatures = EnumSet.copyOf(features);
         }
+    }
+
+    public boolean hasFeature(ProductFeature feature) {
+        return productFeatures.contains(feature);
     }
 
     public void setNote(String note) {
