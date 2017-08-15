@@ -1,4 +1,4 @@
-package com.xeppaka.emi.imp;
+package com.xeppaka.emi.imp.products;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xeppaka.emi.commands.CreateCategoryCommand;

@@ -2,6 +2,7 @@ package com.xeppaka.emi;
 
 import com.xeppaka.ddd.persistence.RepositoryException;
 import com.xeppaka.emi.domain.EmiWarehouse;
+import com.xeppaka.emi.imp.images.ImageImporter;
 import com.xeppaka.emi.persistence.state.EmiWarehouseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,5 +33,9 @@ public class EmiApplication {
 //        final ProductsImporter pi = new ProductsImporter();
 //        pi.doImport(emiWarehouse);
 //        warehouseRepository.save(UserName.SYSTEM_USER_NAME.getUserName(), emiWarehouse);
+
+//        final ImageImporter imageImporter = configurableApplicationContext.getBean(ImageImporter.class);
+//        imageImporter.importImages();
+//        configurableApplicationContext.close();
     }
 }

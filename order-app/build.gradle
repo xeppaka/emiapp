@@ -12,6 +12,7 @@ dependencies {
     compile 'com.h2database:h2:1.4.192'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.2'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.3'
+    compile 'com.typesafe.akka:akka-http_2.12:10.0.9'
     compileOnly 'javax.mail:javax.mail-api:1.5.6'
     runtime 'javax.mail:mail:1.4.7'
 

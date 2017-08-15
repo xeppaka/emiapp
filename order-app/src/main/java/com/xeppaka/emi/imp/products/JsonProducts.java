@@ -1,4 +1,4 @@
-package com.xeppaka.emi.imp;
+package com.xeppaka.emi.imp.products;
 
 import java.util.List;
 
